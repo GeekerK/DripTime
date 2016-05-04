@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DragLinearLayout">
+        <attr name="leftLayout" format="reference"/>
+        <attr name="rightLayout" format="reference"/>
+        <attr name="middleLayout" format="reference"/>
+        <attr name="leftLayoutPic" format="reference"/>
+        <attr name="rightLayoutPic" format="reference"/>
+        <attr name="leftLayoutReplacePic" format="reference"/>
+        <attr name="rightLayoutReplacePic" format="reference"/>
+    </declare-styleable>
+</resources>
