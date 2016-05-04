@@ -65,7 +65,7 @@ public class DragRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public int getItemCount() {
-        return 12;
+        return 20;
     }
 
     static class DragViewHolder extends RecyclerView.ViewHolder implements DragLayout.EventListener{
