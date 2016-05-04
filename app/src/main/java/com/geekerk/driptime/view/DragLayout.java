@@ -83,6 +83,8 @@ public class DragLayout extends ViewGroup {
         addView(leftLL);
         addView(middleLL);
         addView(rightLL);
+        View view = middleLL.findViewById(R.id.eventTitle);
+        Log.i(TAG,"clickable:"+view.isClickable()+" , longClickable："+view.isLongClickable()+" , contextClick:"+view.isContextClickable());
     }
 
     private void init(Context context) {
@@ -119,38 +121,35 @@ public class DragLayout extends ViewGroup {
     // -------------------------- 滑动相关 -------------------------
     float lastX;
 
-//    @Override
-//    public boolean onInterceptTouchEvent(MotionEvent ev) {
-//        switch (ev.getAction()) {
-//            case MotionEvent.ACTION_DOWN :
-//                Log.i(TAG, "onInterceptTouchEvent ACTION_DOWN");
-////                if (!scroller.isFinished()) {
-////                    scroller.abortAnimation();
-////                }
-//                lastX = ev.getX();
-//                velocityTracker.clear();
-//                velocityTracker.addMovement(ev);
-//                break;
-//            case MotionEvent.ACTION_MOVE :
-//                Log.i(TAG, "onInterceptTouchEvent ACTION_MOVE");
-//                float defX = ev.getX() - lastX;
-//                velocityTracker.addMovement(ev);
-//                velocityTracker.computeCurrentVelocity(1000);
-//                if (Math.abs(defX) >= scaledTouchSlop && Math.abs(velocityTracker.getXVelocity()) > Math.abs(velocityTracker.getYVelocity()))
-//                    return true;
-//        }
-//        return super.onInterceptTouchEvent(ev);
-//    }
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN :
+                Log.i(TAG, "onInterceptTouchEvent ACTION_DOWN");
+                lastX = ev.getX();
+                velocityTracker.clear();
+                velocityTracker.addMovement(ev);
+                break;
+            case MotionEvent.ACTION_MOVE :  //阻止checkbox获得Move事件
+                Log.i(TAG, "onInterceptTouchEvent ACTION_MOVE");
+                float defX = ev.getX() - lastX;
+                velocityTracker.addMovement(ev);
+                velocityTracker.computeCurrentVelocity(1000);
+                if (Math.abs(defX) >= scaledTouchSlop && Math.abs(velocityTracker.getXVelocity()) > Math.abs(velocityTracker.getYVelocity()))
+                    return true;
+                break;
+        }
+        return super.onInterceptTouchEvent(ev);
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN :
+            case MotionEvent.ACTION_DOWN :  //TextView不处理Down事件所以会将Down事件交给其上的组件处理，直到交给本组件处理，返回true来接管整个事件队列
                 Log.i(TAG, "onTouchEvent ACTION_DOWN");
                 lastX = event.getX();
-                velocityTracker = VelocityTracker.obtain();
                 velocityTracker.addMovement(event);
-                break;
+                return true;
             case MotionEvent.ACTION_MOVE:
                 Log.i(TAG, "onTouchEvent ACTION_MOVE");
                 float defX = event.getX() - lastX;
@@ -158,7 +157,6 @@ public class DragLayout extends ViewGroup {
                 velocityTracker.computeCurrentVelocity(1000);
                 //通过 X Y轴上速度的对比来判断是否是组件滑动
                 if (Math.abs(defX) >= scaledTouchSlop && Math.abs(velocityTracker.getXVelocity()) > Math.abs(velocityTracker.getYVelocity())) {
-
                     if (getScrollX() <= -layoutWidth && defX > 0)    //右移过头了
                         return false;
                     else if (getScrollX() >= layoutWidth && defX < 0)   //左移过头了
@@ -204,14 +202,9 @@ public class DragLayout extends ViewGroup {
                     lastX = event.getX();
                     return true;
                 }
-                else {
-                    velocityTracker.clear();
-                    return false;
-                }
+                break;
             case MotionEvent.ACTION_UP :
-                Log.i(TAG, "onTouchEvent ACTION_UP");
-                velocityTracker.recycle();
-                Log.i(TAG, "Status:"+currentStatus);
+                Log.i(TAG, "onTouchEvent ACTION_UP : Status:"+currentStatus);
                 if (currentStatus == STATUS.LeftNotHalf || currentStatus == STATUS.LeftPassHalf) {
                     scroller.startScroll(getScrollX(), 0 , layoutWidth -getScrollX(), 0);
                     //组件滑动过程中阻止父空间拦截事件
@@ -228,7 +221,7 @@ public class DragLayout extends ViewGroup {
                 invalidate();
                 break;
         }
-        return true;
+        return super.onTouchEvent(event);
     }
 
     @Override
