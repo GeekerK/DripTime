@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.geekerk.driptime.fragment.DragListFragment;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
+            getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, new DragListFragment()).commit();
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 
