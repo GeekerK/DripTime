@@ -3,7 +3,6 @@ package com.geekerk.driptime.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,16 +48,16 @@ public class DragRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (position==0)
-            ((TextViewHolder)holder).setTitle("未完成");
+        if (position == 0)
+            ((TextViewHolder) holder).setTitle("未完成");
         else if (position == 6)
-            ((TextViewHolder)holder).setTitle("已完成");
+            ((TextViewHolder) holder).setTitle("已完成");
         else {
-            ((DragViewHolder)holder).setEventTitle("事件清单："+position);
+            ((DragViewHolder) holder).setEventTitle("事件清单：" + position);
             if (position < 6)
-                ((DragViewHolder)holder).setPriorityColor((6-position)%4);
+                ((DragViewHolder) holder).setPriorityColor((6 - position) % 4);
             else {
-                ((DragViewHolder)holder).setPriorityColor(0);
+                ((DragViewHolder) holder).setPriorityColor(0);
             }
         }
     }
@@ -68,7 +67,7 @@ public class DragRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         return 20;
     }
 
-    static class DragViewHolder extends RecyclerView.ViewHolder implements DragLayout.EventListener{
+    static class DragViewHolder extends RecyclerView.ViewHolder implements DragLayout.EventListener {
         DragLayout dragLinearLayout;
         private Context context;
 
@@ -146,6 +145,7 @@ public class DragRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     public static class TextViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
+
         public TextViewHolder(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(android.R.id.text1);
