@@ -1,6 +1,5 @@
 package com.geekerk.driptime;
 
-import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
@@ -8,17 +7,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.ViewPropertyAnimator;
-import android.view.animation.AnimationSet;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 
 /**
  * Created by s21v on 2016/5/12.
