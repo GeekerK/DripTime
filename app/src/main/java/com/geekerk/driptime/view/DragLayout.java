@@ -24,6 +24,8 @@ import com.geekerk.driptime.R;
  */
 public class DragLayout extends ViewGroup {
     private static final String TAG = "DragLinearLayout";
+    // -------------------------- 滑动相关 -------------------------
+    float lastX;
     private ViewGroup middleLL, leftLL, rightLL; //中间，左边，右边的试图
     private int picResInLeftLayout, picResInRightLayout;    //左视图，右视图的原始图片
     private int replacePicResInLeftLayout, replacePicResInRightLayout;   //左视图，右视图的替换图片
@@ -31,31 +33,11 @@ public class DragLayout extends ViewGroup {
     private int scaledTouchSlop;
     private VelocityTracker velocityTracker;
     private Scroller scroller;
-
-    private enum STATUS {   //这里的参考系是手指滑动方向
-        LeftNotHalf, LeftPassHalf, Middle, RightPassHalf, RightNotHalf;
-        @Override
-        public String toString() {
-            switch (name()) {
-                case "LeftNotHalf":
-                    return "左移未过半";
-                case "LeftPassHalf":
-                    return "左移过半";
-                case "Middle":
-                    return "居中";
-                case "RightNotHalf":
-                    return "右移未过半";
-                case "RightPassHalf":
-                    return "右移过半";
-                default:
-                    return super.toString();
-            }
-        }
-    }
     private Enum<STATUS> currentStatus;
+    private EventListener mEventListener;
 
     public DragLayout(Context context) {
-        this(context, null ,0);
+        this(context, null, 0);
     }
 
     public DragLayout(Context context, AttributeSet attrs) {
@@ -84,7 +66,7 @@ public class DragLayout extends ViewGroup {
         addView(middleLL);
         addView(rightLL);
         View view = middleLL.findViewById(R.id.eventTitle);
-        Log.i(TAG,"clickable:"+view.isClickable()+" , longClickable："+view.isLongClickable()+" , contextClick:"+view.isContextClickable());
+        Log.i(TAG, "clickable:" + view.isClickable() + " , longClickable：" + view.isLongClickable() + " , contextClick:" + view.isContextClickable());
     }
 
     private void init(Context context) {
@@ -112,25 +94,22 @@ public class DragLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        for (int i=0; i<getChildCount(); i++) {
+        for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
-            child.layout(layoutWidth * (i-1), 0, layoutWidth * i, getMeasuredHeight());
+            child.layout(layoutWidth * (i - 1), 0, layoutWidth * i, getMeasuredHeight());
         }
     }
-
-    // -------------------------- 滑动相关 -------------------------
-    float lastX;
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN :
+            case MotionEvent.ACTION_DOWN:
                 Log.i(TAG, "onInterceptTouchEvent ACTION_DOWN");
                 lastX = ev.getX();
                 velocityTracker.clear();
                 velocityTracker.addMovement(ev);
                 break;
-            case MotionEvent.ACTION_MOVE :  //阻止checkbox获得Move事件
+            case MotionEvent.ACTION_MOVE:  //阻止checkbox获得Move事件
                 Log.i(TAG, "onInterceptTouchEvent ACTION_MOVE");
                 float defX = ev.getX() - lastX;
                 velocityTracker.addMovement(ev);
@@ -145,7 +124,7 @@ public class DragLayout extends ViewGroup {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN :  //TextView不处理Down事件所以会将Down事件交给其上的组件处理，直到交给本组件处理，返回true来接管整个事件队列
+            case MotionEvent.ACTION_DOWN:  //TextView不处理Down事件所以会将Down事件交给其上的组件处理，直到交给本组件处理，返回true来接管整个事件队列
                 Log.i(TAG, "onTouchEvent ACTION_DOWN");
                 lastX = event.getX();
                 velocityTracker.addMovement(event);
@@ -203,18 +182,18 @@ public class DragLayout extends ViewGroup {
                     return true;
                 }
                 break;
-            case MotionEvent.ACTION_UP :
-                Log.i(TAG, "onTouchEvent ACTION_UP : Status:"+currentStatus);
+            case MotionEvent.ACTION_UP:
+                Log.i(TAG, "onTouchEvent ACTION_UP : Status:" + currentStatus);
                 if (currentStatus == STATUS.LeftNotHalf || currentStatus == STATUS.LeftPassHalf) {
-                    scroller.startScroll(getScrollX(), 0 , layoutWidth -getScrollX(), 0);
+                    scroller.startScroll(getScrollX(), 0, layoutWidth - getScrollX(), 0);
                     //组件滑动过程中阻止父空间拦截事件
                     getParent().requestDisallowInterceptTouchEvent(true);
                 } else if (currentStatus == STATUS.RightPassHalf || currentStatus == STATUS.RightNotHalf) {
-                    scroller.startScroll(getScrollX(), 0 , -(layoutWidth +getScrollX()), 0);
+                    scroller.startScroll(getScrollX(), 0, -(layoutWidth + getScrollX()), 0);
                     //组件滑动过程中阻止父空间拦截事件
                     getParent().requestDisallowInterceptTouchEvent(true);
-                } else if(currentStatus == STATUS.Middle) {
-                    scroller.startScroll(getScrollX(), 0 , -getScrollX(), 0);
+                } else if (currentStatus == STATUS.Middle) {
+                    scroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
                     //组件滑动过程中阻止父空间拦截事件
                     getParent().requestDisallowInterceptTouchEvent(true);
                 }
@@ -227,26 +206,26 @@ public class DragLayout extends ViewGroup {
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
-        if(l == -layoutWidth) { //右移事件结束
-            if(currentStatus == STATUS.RightNotHalf) {
+        if (l == -layoutWidth) { //右移事件结束
+            if (currentStatus == STATUS.RightNotHalf) {
 //                Log.i(TAG, "左视图1的事件");
-                if (mEventListener!=null)
+                if (mEventListener != null)
                     mEventListener.onRightNotHalfEvent();
             } else if (currentStatus == STATUS.RightPassHalf) {
 //                Log.i(TAG, "左视图2的事件");
-                if (mEventListener!=null)
+                if (mEventListener != null)
                     mEventListener.onRightPassHalfEvent();
             }
-           getParent().requestDisallowInterceptTouchEvent(false);
+            getParent().requestDisallowInterceptTouchEvent(false);
         }
-        if(l == layoutWidth) {   //左移事件结束
+        if (l == layoutWidth) {   //左移事件结束
             if (currentStatus == STATUS.LeftNotHalf) {
 //                Log.i(TAG, "右视图1的事件");
-                if (mEventListener!=null)
+                if (mEventListener != null)
                     mEventListener.onLeftNotHalfEvent();
             } else if (currentStatus == STATUS.LeftPassHalf) {
 //                Log.i(TAG, "右视图2的事件");
-                if (mEventListener!=null)
+                if (mEventListener != null)
                     mEventListener.onLeftPassHalfEvent();
             }
             getParent().requestDisallowInterceptTouchEvent(false);
@@ -255,8 +234,8 @@ public class DragLayout extends ViewGroup {
             currentStatus = STATUS.Middle;
             leftLL.setBackgroundColor(Color.WHITE);
             rightLL.setBackgroundColor(Color.WHITE);
-            ((ImageView)leftLL.getChildAt(0)).setImageResource(picResInLeftLayout);
-            ((ImageView)rightLL.getChildAt(0)).setImageResource(picResInRightLayout);
+            ((ImageView) leftLL.getChildAt(0)).setImageResource(picResInLeftLayout);
+            ((ImageView) rightLL.getChildAt(0)).setImageResource(picResInRightLayout);
             getParent().requestDisallowInterceptTouchEvent(false);
         }
     }
@@ -276,36 +255,25 @@ public class DragLayout extends ViewGroup {
     }
     // --------------------- 滑动相关 end ---------------------
 
-    // ---------------------- 定义接口 -------------------------
-    public interface EventListener {
-        void onLeftNotHalfEvent();      //手指左移未到一半
-        void onLeftPassHalfEvent();     //手指左移过半
-        void onRightNotHalfEvent();     //手指右移未到一半
-        void onRightPassHalfEvent();    //手指右移过半
-    }
-
-    private EventListener mEventListener;
-
     public void setEventListener(EventListener mEventListener) {
         this.mEventListener = mEventListener;
     }
-    // ----------------------- 定义接口 end -----------------------
 
     // ----------------------- 外部接口 ---------------------
     public void setPriorityColor(int priority) {    //设置优先级颜色
         ImageView imageView = (ImageView) middleLL.findViewById(R.id.priority_iv);
         int color = Color.WHITE;
         switch (priority) {
-            case 0 :
+            case 0:
                 color = Color.WHITE;
                 break;
-            case 1 :
+            case 1:
                 color = Color.parseColor("#FBC02D");
                 break;
-            case 2 :
+            case 2:
                 color = Color.parseColor("#F57C00");
                 break;
-            case 3 :
+            case 3:
                 color = Color.parseColor("#D32F2F");
                 break;
         }
@@ -315,6 +283,40 @@ public class DragLayout extends ViewGroup {
     public void setEventTitle(String title) { //设置事件标题
         TextView textView = (TextView) middleLL.findViewById(R.id.eventTitle);
         textView.setText(title);
+    }
+    // ----------------------- 定义接口 end -----------------------
+
+    private enum STATUS {   //这里的参考系是手指滑动方向
+        LeftNotHalf, LeftPassHalf, Middle, RightPassHalf, RightNotHalf;
+
+        @Override
+        public String toString() {
+            switch (name()) {
+                case "LeftNotHalf":
+                    return "左移未过半";
+                case "LeftPassHalf":
+                    return "左移过半";
+                case "Middle":
+                    return "居中";
+                case "RightNotHalf":
+                    return "右移未过半";
+                case "RightPassHalf":
+                    return "右移过半";
+                default:
+                    return super.toString();
+            }
+        }
+    }
+
+    // ---------------------- 定义接口 -------------------------
+    public interface EventListener {
+        void onLeftNotHalfEvent();      //手指左移未到一半
+
+        void onLeftPassHalfEvent();     //手指左移过半
+
+        void onRightNotHalfEvent();     //手指右移未到一半
+
+        void onRightPassHalfEvent();    //手指右移过半
     }
     // ----------------------- 外部接口 end---------------------
 }

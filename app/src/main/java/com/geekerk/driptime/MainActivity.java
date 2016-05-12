@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 
-import com.geekerk.driptime.fragment.DragListFragment;
 import com.geekerk.driptime.nav.NavAdapter;
 
 import java.util.ArrayList;

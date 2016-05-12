@@ -6,10 +6,10 @@
 
     <ExpandableListView
         android:id="@+id/nav_menu"
-        android:dividerHeight="2dp"
-        android:divider="@mipmap/nav_divider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="@mipmap/nav_divider"
+        android:dividerHeight="2dp"
         android:groupIndicator="@null" />
 
 </merge>

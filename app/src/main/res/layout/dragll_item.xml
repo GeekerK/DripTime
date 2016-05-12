@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.geekerk.driptime.view.DragLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dragContent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:leftLayout="@layout/left_event_ll"
-    app:rightLayout="@layout/right_event_ll"
-    app:middleLayout="@layout/middle_event_ll"
-    app:leftLayoutReplacePic="@drawable/ic_menu_camera"
-    app:rightLayoutReplacePic="@drawable/ic_menu_gallery"
     app:leftLayoutPic="@drawable/ic_menu_manage"
+    app:leftLayoutReplacePic="@drawable/ic_menu_camera"
+    app:middleLayout="@layout/middle_event_ll"
+    app:rightLayout="@layout/right_event_ll"
     app:rightLayoutPic="@drawable/ic_menu_send"
-    android:id="@+id/dragContent"/>
+    app:rightLayoutReplacePic="@drawable/ic_menu_gallery" />

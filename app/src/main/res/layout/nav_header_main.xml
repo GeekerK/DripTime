@@ -1,44 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="125dp"
-        android:background="#FFFFFF"
-        android:orientation="vertical"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="125dp"
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-        <ImageView
-            android:id="@+id/nav_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@mipmap/nav_delete" />
+    <ImageView
+        android:id="@+id/nav_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@mipmap/nav_delete" />
 
-        <ImageView
-            android:id="@+id/nav_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="8dp"
-            android:background="@mipmap/nav_email" />
+    <ImageView
+        android:id="@+id/nav_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="8dp"
+        android:background="@mipmap/nav_email" />
 
-        <ImageView
-            android:id="@+id/nav_portrait"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:background="@mipmap/nav_avatar" />
+    <ImageView
+        android:id="@+id/nav_portrait"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@mipmap/nav_avatar" />
 
-        <TextView
-            android:id="@+id/nav_username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/nav_portrait"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
-            android:text="点滴时间"
-            android:textColor="#000000"
-            android:textSize="15sp" />
+    <TextView
+        android:id="@+id/nav_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nav_portrait"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="点滴时间"
+        android:textColor="#000000"
+        android:textSize="15sp" />
 
-    </RelativeLayout>
+</RelativeLayout>
