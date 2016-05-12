@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:background="#efefef">
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/logo"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="26dp"
+            android:contentDescription="@string/app_name"
+            android:id="@+id/iv_logo"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_logo"
+            android:layout_marginTop="10dp"
+            android:layout_alignLeft="@id/iv_logo"
+            android:text="Trip Time"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:gravity="center"/>
+
+        <RelativeLayout
+            android:layout_width="246dp"
+            android:layout_height="246dp"
+            android:background="@mipmap/welcome_clockbj"
+            android:layout_marginTop="115dp"
+            android:layout_centerHorizontal="true">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/welcome_clock03"
+                android:layout_centerInParent="true"
+                android:paddingLeft="60dp"
+                android:id="@+id/iv_minute"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/welcome_clock01"
+                android:layout_centerInParent="true"
+                android:paddingLeft="26dp"
+                android:id="@+id/iv_hour"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/welcome_clock02"
+                android:layout_centerInParent="true"
+                android:id="@+id/iv_second"
+                android:paddingLeft="88dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/welcome_clock0"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="174dp"
+        android:background="#fff">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="70dp">
+            <Button
+                android:layout_width="135dp"
+                android:layout_height="48dp"
+                android:text="register"
+                android:textAllCaps="true"
+                android:textSize="14sp"
+                android:background="@drawable/register_bt_bg"
+                android:id="@+id/bt_register"/>
+            <View android:layout_width="25dp"
+                android:layout_height="1dp"/>
+            <Button
+                android:layout_width="135dp"
+                android:layout_height="48dp"
+                android:text="sign in"
+                android:textAllCaps="true"
+                android:textSize="14sp"
+                android:textColor="#fff"
+                android:background="@drawable/signin_bt_bg"
+                android:id="@+id/bt_signin"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="skip"
+            android:textAllCaps="true"
+            android:textSize="10sp"
+            android:textColor="#8A000000"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="42dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/tv_skip"
+            android:clickable="true"/>
+    </RelativeLayout>
+</LinearLayout>
