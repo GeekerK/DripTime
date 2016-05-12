@@ -144,7 +144,7 @@ public class DragRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
-    static class TextViewHolder extends RecyclerView.ViewHolder {
+    public static class TextViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
         public TextViewHolder(View itemView) {
             super(itemView);

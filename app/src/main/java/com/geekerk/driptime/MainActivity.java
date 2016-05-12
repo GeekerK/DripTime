@@ -12,16 +12,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ExpandableListView;
 
 import com.geekerk.driptime.fragment.DragListFragment;
+import com.geekerk.driptime.nav.NavAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private ExpandableListView mNavMenu;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -40,8 +48,18 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavMenu = (ExpandableListView) drawer.findViewById(R.id.nav_menu);
+        List<String> list = new ArrayList<>();
+        list.add("Today");
+        list.add("All");
+        list.add("Nearly Seven Days");
+        list.add("Collection Box");
+        list.add("Completed");
+        list.add("Dustbin");
+        list.add("Add Item");
+        list.add("Settings");
+        mNavMenu.setAdapter(new NavAdapter(this, list, new ArrayList<List<String>>()));
+
     }
 
     @Override
@@ -81,22 +99,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, new DragListFragment()).commit();
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

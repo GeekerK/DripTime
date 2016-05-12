@@ -3,34 +3,67 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_Today"
+            android:icon="@mipmap/nav_today"
+            android:title="Today" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_All"
+            android:icon="@mipmap/nav_all"
+            android:title="All" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
-    </group>
+            android:id="@+id/nav_NearlySevenDays"
+            android:icon="@mipmap/nav_nearlysevendays"
+            android:title="Nearly Seven Days" />
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
+        <item
+            android:id="@+id/nav_NearlySevenDays1"
+            android:icon="@mipmap/nav_nearlysevendays"
+            android:title="Nearly Seven Days"
+            android:titleCondensed="">
+
+            <menu>
+                <item
+                    android:id="@+id/nav_NearlySevenDays111"
+                    android:icon="@mipmap/nav_nearlysevendays"
+                    android:title="Nearly Seven Days" />
+
+                <item
+                    android:id="@+id/nav_NearlySevenDays222"
+                    android:icon="@mipmap/nav_nearlysevendays"
+                    android:title="Nearly Seven Days" />
+
+                <item
+                    android:id="@+id/nav_NearlySevenDays333"
+                    android:icon="@mipmap/nav_nearlysevendays"
+                    android:title="Nearly Seven Days" />
+            </menu>
+        </item>
+
+        <item
+            android:id="@+id/nav_CollectionBox"
+            android:icon="@mipmap/nav_collectionbox"
+            android:title="Collection Box" />
+
+        <item
+            android:id="@+id/nav_Completed"
+            android:icon="@mipmap/nav_completed"
+            android:title="Completed" />
+
+        <item
+            android:id="@+id/nav_Dustbin"
+            android:icon="@mipmap/nav_dustbin"
+            android:title="Dustbin" />
+
+        <item
+            android:id="@+id/nav_AddItem"
+            android:icon="@mipmap/nav_additem"
+            android:title="Add Item" />
+
+        <item
+            android:id="@+id/nav_Settings"
+            android:icon="@mipmap/nav_settings"
+            android:title="Settings" />
+
+    </group>
 
 </menu>
