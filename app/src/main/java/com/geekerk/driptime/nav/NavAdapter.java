@@ -61,6 +61,9 @@ public final class NavAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
+        if (mItems.size() <= groupPosition) {
+            return 0;
+        }
         return mItems.get(groupPosition).size();
     }
 

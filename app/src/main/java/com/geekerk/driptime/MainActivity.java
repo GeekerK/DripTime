@@ -57,7 +57,8 @@ public class MainActivity extends AppCompatActivity
         list.add("Dustbin");
         list.add("Add Item");
         list.add("Settings");
-        mNavMenu.setAdapter(new NavAdapter(this, list, new ArrayList<List<String>>()));
+        ArrayList<List<String>> arrayList = new ArrayList<List<String>>();
+        mNavMenu.setAdapter(new NavAdapter(this, list, arrayList));
 
     }
 
