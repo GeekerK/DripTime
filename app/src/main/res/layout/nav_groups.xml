@@ -8,8 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="14dp"
-        android:background="@mipmap/nav_delete" />
+        android:layout_marginLeft="14dp" />
 
     <TextView
         android:id="@+id/nav_groups_name"
@@ -22,7 +21,7 @@
         android:textColor="#8A000000"
         android:textSize="15sp" />
 
-    <ImageView
+    <FrameLayout
         android:id="@+id/nav_groups_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,6 +29,21 @@
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="28dp"
-        android:gravity="center_vertical" />
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/sharp_black_circle" />
+
+        <TextView
+            android:id="@+id/nav_msg_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#FFFFFF" />
+
+    </FrameLayout>
 
 </RelativeLayout>

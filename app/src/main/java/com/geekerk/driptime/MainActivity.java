@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ExpandableListView;
 
 import com.geekerk.driptime.nav.NavAdapter;
+import com.geekerk.driptime.vo.NavBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +58,26 @@ public class MainActivity extends AppCompatActivity
         list.add("Dustbin");
         list.add("Add Item");
         list.add("Settings");
-        ArrayList<List<String>> arrayList = new ArrayList<List<String>>();
-        mNavMenu.setAdapter(new NavAdapter(this, list, arrayList));
+        ArrayList<List<String>> arrayList = new ArrayList<>();
+
+        List<NavBean> navBeanList = new ArrayList<>();
+        NavBean navBeanToday = new NavBean(R.mipmap.nav_today, "Today", 3);
+        NavBean navBeanAll = new NavBean(R.mipmap.nav_all, "All", 15);
+        NavBean navBeanNearlySevenDays = new NavBean(R.mipmap.nav_nearlysevendays, "Nearly Seven Days", 28);
+        NavBean navBeanCollectionBox = new NavBean(R.mipmap.nav_collectionbox, "Collection Box", 0);
+        NavBean navBeanCompleted = new NavBean(R.mipmap.nav_completed, "Completed", 0);
+        NavBean navBeanDustbin = new NavBean(R.mipmap.nav_dustbin, "Dustbin", 0);
+        NavBean navBeanAddItem = new NavBean(R.mipmap.nav_additem, "Add Item", 0);
+        NavBean navBeanSettings = new NavBean(R.mipmap.nav_settings, "Settings", 0);
+        navBeanList.add(navBeanToday);
+        navBeanList.add(navBeanAll);
+        navBeanList.add(navBeanNearlySevenDays);
+        navBeanList.add(navBeanCollectionBox);
+        navBeanList.add(navBeanCompleted);
+        navBeanList.add(navBeanDustbin);
+        navBeanList.add(navBeanAddItem);
+        navBeanList.add(navBeanSettings);
+        mNavMenu.setAdapter(new NavAdapter(this, navBeanList, arrayList));
 
     }
 

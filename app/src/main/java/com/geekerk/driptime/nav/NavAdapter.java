@@ -5,11 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.utils.LayoutUtil;
+import com.geekerk.driptime.vo.NavBean;
 
 import java.util.List;
 
@@ -21,10 +24,10 @@ import java.util.List;
  */
 public final class NavAdapter extends BaseExpandableListAdapter {
     private Context mContext;
-    private List<String> mGroups;
+    private List<NavBean> mGroups;
     private List<List<String>> mItems;
 
-    public NavAdapter(Context context, List<String> groups, List<List<String>> items) {
+    public NavAdapter(Context context, List<NavBean> groups, List<List<String>> items) {
         mContext = context;
         mGroups = groups;
         mItems = items;
@@ -49,8 +52,17 @@ public final class NavAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.nav_groups, null);
         view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutUtil.getPixelByDIP(mContext, 60)));
+
         TextView textView = (TextView) view.findViewById(R.id.nav_groups_name);
-        textView.setText(mGroups.get(groupPosition));
+        textView.setText(mGroups.get(groupPosition).getmNavName());
+
+        ImageView imageViewIcon = (ImageView) view.findViewById(R.id.nav_groups_icon);
+        imageViewIcon.setImageResource(mGroups.get(groupPosition).getmIconResource());
+
+        FrameLayout frameLayoutMsg = (FrameLayout) view.findViewById(R.id.nav_groups_msg);
+        TextView textViewMsg = (TextView) view.findViewById(R.id.nav_msg_num);
+        textViewMsg.setText(String.valueOf(mGroups.get(groupPosition).getmMsgNum()));
+        frameLayoutMsg.setVisibility(mGroups.get(groupPosition).getmMsgNum() == 0 ? View.INVISIBLE : View.VISIBLE);
         return view;
     }
 
