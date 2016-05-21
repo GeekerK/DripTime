@@ -23,12 +23,13 @@
             android:textColor="@android:color/black"
             android:gravity="center"/>
 
-        <RelativeLayout
+        <com.geekerk.driptime.view.ClockViewGroup
             android:layout_width="246dp"
             android:layout_height="246dp"
             android:background="@mipmap/welcome_clockbj"
             android:layout_marginTop="115dp"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            android:id="@+id/clock">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:src="@mipmap/welcome_clock0"
                 android:layout_centerInParent="true"/>
-        </RelativeLayout>
+        </com.geekerk.driptime.view.ClockViewGroup>
     </RelativeLayout>
 
     <RelativeLayout
