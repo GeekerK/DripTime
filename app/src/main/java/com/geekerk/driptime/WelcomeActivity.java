@@ -1,10 +1,14 @@
 package com.geekerk.driptime;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+
 import com.geekerk.driptime.view.ClockViewGroup;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +28,6 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         clockViewGroup = (ClockViewGroup) findViewById(R.id.clock);
-        executor = new ScheduledThreadPoolExecutor(1);
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -33,23 +36,19 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
             }
         };
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        initAnimation();
+        executor = new ScheduledThreadPoolExecutor(1);
         executor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 handler.sendEmptyMessage(CLOCK_GO);
             }
         },0, 1, TimeUnit.SECONDS);
+        initAnimation();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
         executor.shutdownNow();
     }
 
@@ -59,5 +58,19 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void clockGoAnimator() {
         clockViewGroup.clockGo();
+    }
+
+    public void doClick(View view) {
+        switch (view.getId()) {
+            case R.id.bt_register :
+                break;
+            case R.id.bt_signin :
+                Intent intent = new Intent(this, SigninActivity.class);
+                //共享元素过度动画
+                startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(this, findViewById(R.id.iv_logo), "share_logo").toBundle());
+                break;
+            case R.id.tv_skip :
+                break;
+        }
     }
 }

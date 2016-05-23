@@ -8,11 +8,7 @@ import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
-import com.geekerk.driptime.R;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -56,7 +52,6 @@ public class ClockViewGroup extends RelativeLayout {
         int hour = Integer.decode(date[0]);
         int minute = Integer.decode(date[1]);
         int second = Integer.decode(date[2]);
-
         //跟根据当前时间计算时分秒针转动的度数
         float hourDegrees = (float) ((hour-3)*30 + minute*0.5);
         float minuteDegrees = (float) ((minute-15)*6 + second*0.1);
