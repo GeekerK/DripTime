@@ -70,6 +70,9 @@ public class WelcomeActivity extends AppCompatActivity {
                 startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(this, findViewById(R.id.iv_logo), "share_logo").toBundle());
                 break;
             case R.id.tv_skip :
+                Intent intent1 = new Intent(this, MainActivity.class);
+                startActivity(intent1);
+//                finish();
                 break;
         }
     }

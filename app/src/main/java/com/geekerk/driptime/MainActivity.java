@@ -9,11 +9,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 
+import com.geekerk.driptime.fragment.ContentListFragment;
 import com.geekerk.driptime.nav.NavAdapter;
 import com.geekerk.driptime.vo.NavBean;
 
@@ -42,7 +45,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -79,6 +82,18 @@ public class MainActivity extends AppCompatActivity
         navBeanList.add(navBeanSettings);
         mNavMenu.setAdapter(new NavAdapter(this, navBeanList, arrayList));
 
+        mNavMenu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                switch (groupPosition) {
+                    case 0:
+                        getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer,new ContentListFragment()).commit();
+                        drawer.closeDrawer(GravityCompat.START);
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     @Override
