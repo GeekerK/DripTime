@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:text="Today"
+        android:text="@string/today"
         android:textSize="34sp"
         android:textColor="#fff"
         android:id="@+id/bar_title"

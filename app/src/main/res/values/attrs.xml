@@ -9,4 +9,9 @@
         <attr name="leftLayoutReplacePic" format="reference" />
         <attr name="rightLayoutReplacePic" format="reference" />
     </declare-styleable>
+
+    <declare-styleable name="FixedSpaceLinearLayout">
+        <attr name="headerBgImageId" format="reference"/>
+        <attr name="headerBgText" format="string"/>
+    </declare-styleable>
 </resources>

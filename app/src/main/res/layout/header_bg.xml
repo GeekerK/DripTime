@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Today"
+        android:text="@string/today"
         android:textColor="#fff"
         android:textSize="34sp" />
 </RelativeLayout>

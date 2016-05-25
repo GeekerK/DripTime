@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.geekerk.driptime.view.ListviewWithImageHeader
+    <com.geekerk.driptime.view.FixedSpaceLinearLayout
         android:id="@+id/contentList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        app:headerBgText="@string/today"
+        app:headerBgImageId="@mipmap/bj_today"
+        android:orientation="vertical"/>
 
     <include layout="@layout/header_bar" />
 </FrameLayout>
