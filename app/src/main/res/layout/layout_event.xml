@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="53dp"
+    android:background="@android:color/white"
+    android:orientation="horizontal">
+
+    <View
+        android:id="@+id/priority"
+        android:layout_width="3dp"
+        android:layout_height="match_parent"
+        android:background="@color/priority_first" />
+
+    <CheckBox
+        android:id="@+id/isDone_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:checked="true" />
+
+    <TextView
+        android:id="@+id/event_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="8dp"
+        android:gravity="center_vertical"
+        android:text="Add a task with multiple attributes"
+        android:textColor="@android:color/black"
+        android:textSize="14sp" />
+
+</LinearLayout>

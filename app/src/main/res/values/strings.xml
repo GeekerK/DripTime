@@ -9,4 +9,7 @@
     <string name="sign_in">Sign in</string>
     <string name="forget_password">Forget Password</string>
     <string name="today">Today</string>
+    <string name="action_search">Search</string>
+    <string name="action_edit">Edit</string>
+    <string name="complete">已完成</string>
 </resources>

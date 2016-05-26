@@ -1,6 +1,7 @@
 package com.geekerk.driptime;
 
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 
@@ -26,7 +28,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private ExpandableListView mNavMenu;
-
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +56,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         mNavMenu = (ExpandableListView) drawer.findViewById(R.id.nav_menu);
-        List<String> list = new ArrayList<>();
+        final List<String> list = new ArrayList<>();
         list.add("Today");
         list.add("All");
         list.add("Nearly Seven Days");
@@ -82,15 +86,22 @@ public class MainActivity extends AppCompatActivity
         navBeanList.add(navBeanSettings);
         mNavMenu.setAdapter(new NavAdapter(this, navBeanList, arrayList));
 
+        mNavMenu.setSelectedGroup(0);
+
         mNavMenu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                mCollapsingToolbarLayout.setTitle(list.get(groupPosition));
                 switch (groupPosition) {
                     case 0:
-                        getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer,new ContentListFragment()).commit();
-                        drawer.closeDrawer(GravityCompat.START);
+
+                        getSupportFragmentManager().beginTransaction()
+                                .add(R.id.fragmentContainer,new ContentListFragment())
+                                .addToBackStack("first")
+                                .commit();
                         break;
                 }
+                drawer.closeDrawer(GravityCompat.START);
                 return true;
             }
         });
@@ -121,8 +132,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
             return true;
+        } else if (id == R.id.action_edit) {
+
         }
 
         return super.onOptionsItemSelected(item);
