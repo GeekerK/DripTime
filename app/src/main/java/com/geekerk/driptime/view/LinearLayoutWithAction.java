@@ -12,7 +12,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Scroller;
-
 import com.geekerk.driptime.R;
 
 /**
@@ -23,6 +22,7 @@ public class LinearLayoutWithAction extends ViewGroup {
     private ImageView moveIv, editIv, deleteIv;
     private static final String TAG = "LinearLayoutWithAction";
     private int layoutEventHeight;
+    private int scrollDistance;
     private int touchSlop;
     private Scroller scroller;
     private VelocityTracker velocityTracker;
@@ -54,6 +54,7 @@ public class LinearLayoutWithAction extends ViewGroup {
         touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         velocityTracker = VelocityTracker.obtain();
         scroller = new Scroller(context);
+
     }
 
     public LinearLayoutWithAction(Context context, AttributeSet attrs) {
@@ -67,13 +68,13 @@ public class LinearLayoutWithAction extends ViewGroup {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
-
         measureChild(contentView, MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(layoutEventHeight,MeasureSpec.EXACTLY));
         measureChild(moveIv, layoutEventHeight, layoutEventHeight);
         measureChild(editIv, layoutEventHeight, layoutEventHeight);
         measureChild(deleteIv, layoutEventHeight, layoutEventHeight);
-        setMeasuredDimension(contentView.getMeasuredWidth()+layoutEventHeight*3, layoutEventHeight);
+        scrollDistance = layoutEventHeight*3;
+        setMeasuredDimension(contentView.getMeasuredWidth()+scrollDistance, layoutEventHeight);
     }
 
     @Override
@@ -96,89 +97,87 @@ public class LinearLayoutWithAction extends ViewGroup {
     private int currentStatus = STATUS_HIDE;
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN :
-                lastX = ev.getX();
-                velocityTracker.clear();
-                velocityTracker.addMovement(ev);
-                break;
-            case MotionEvent.ACTION_MOVE :
-                velocityTracker.addMovement(ev);
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                lastX = event.getX();
+                Log.i(TAG, "onTouchEvent ACTION_DOWN");
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                Log.i(TAG, "onTouchEvent ACTION_MOVE");
+                int defX = (int) (event.getX() - lastX);
+                lastX = event.getX();
+                velocityTracker.addMovement(event);
                 velocityTracker.computeCurrentVelocity(1000);
-                int defX = (int) (ev.getX() - lastX);
-                if(Math.abs(defX)>touchSlop &&
-                        Math.abs(velocityTracker.getXVelocity())>Math.abs(velocityTracker.getYVelocity())) {
+                if (Math.abs(velocityTracker.getXVelocity()) > Math.abs(velocityTracker.getYVelocity())) {
+                    getParent().requestDisallowInterceptTouchEvent(true);
                     if (currentStatus == STATUS_HIDE) {
                         if (defX < 0)   //完全隐藏且向左滑动
+                        {
+                            scrollBy(-defX, 0);
+                            currentStatus = STATUS_MOVE;
                             return true;
-                        else
+                        } else
                             return false;
                     } else if (currentStatus == STATUS_FULL_VISIBLE) {
                         if (defX > 0)   //完全显示且向右滑动
+                        {
+                            scrollBy(-defX, 0);
+                            currentStatus = STATUS_MOVE;
                             return true;
-                        else
+                        } else
                             return false;
                     } else if (currentStatus == STATUS_MOVE) {
-                        return true;    //滑动过程中拦截
+                        if (getScrollX() - defX < 0)  //右移过头
+                        {
+                            scrollTo(0, 0);
+                            currentStatus = STATUS_HIDE;
+                        } else if (getScrollX() - defX > scrollDistance)    //左移过头了
+                        {
+                            scrollTo(scrollDistance, 0);
+                            currentStatus = STATUS_FULL_VISIBLE;
+                        } else
+                            scrollBy(-defX, 0);
+                        return true;
                     }
                 }
                 break;
-        }
-        return super.onInterceptTouchEvent(ev);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        int defX = (int) (event.getX() - lastX);
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_MOVE :
-                if (currentStatus == STATUS_HIDE || currentStatus == STATUS_FULL_VISIBLE) {
-                    scrollBy(-defX, 0);
-                    currentStatus = STATUS_MOVE;
-                } else if (currentStatus == STATUS_MOVE) {
-                    if (getScrollX()-defX < 0)  //右移过头
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                Log.i(TAG, "onTouchEvent ACTION_UP");
+                stopNestedScroll();
+                defX = (int) (event.getX() - lastX);
+                lastX = event.getX();
+                if (defX < 0) {
+                    if (getScrollX() > layoutEventHeight)   //左移过1/3即认为是开启操作
                     {
-                        scrollTo(0, 0);
-                        currentStatus = STATUS_HIDE;
-                    }
-                    else if(getScrollX()-defX > layoutEventHeight*3)    //左移过头了
-                    {
-                        scrollTo(layoutEventHeight, 0);
+                        scroller.startScroll(getScrollX(), 0, scrollDistance - getScrollX(), 0);
                         currentStatus = STATUS_FULL_VISIBLE;
-                    }
-                    else
-                        scrollBy(-defX, 0);
-                }
-                break;
-            case MotionEvent.ACTION_UP :
-                if (defX<0) {
-                    if (getScrollX()>layoutEventHeight/2)   //左移过半
-                    {
-                        scroller.startScroll(getScrollX(), 0, layoutEventHeight-getScrollX(), 0);
-                        currentStatus = STATUS_FULL_VISIBLE;
-                    } else {    //左移未过半
+                    } else {    //左移未过1/3 认为是用户的误操作
                         scroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
                         currentStatus = STATUS_HIDE;
                     }
                 } else {
-                    if (getScrollX()>layoutEventHeight/2){  //右移未过半
-                        scroller.startScroll(getScrollX(), 0, layoutEventHeight-getScrollX(), 0);
+                    if (getScrollX() > layoutEventHeight*2) {  //右移未过1/3 认为是误操作
+                        scroller.startScroll(getScrollX(), 0, scrollDistance - getScrollX(), 0);
                         currentStatus = STATUS_FULL_VISIBLE;
-                    } else {    //右移过半
+                    } else {    //右移过1/3 即认为是关闭操作
                         scroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
                         currentStatus = STATUS_HIDE;
                     }
                 }
+                invalidate();
+                getParent().requestDisallowInterceptTouchEvent(false);
                 break;
         }
-        lastX = event.getX();
-        return true;
-    }
+    return super.onTouchEvent(event);
+}
 
     @Override
     public void computeScroll() {
-        if (scroller.computeScrollOffset())
-            scrollBy(scroller.getCurrX(), 0);
+        if (scroller.computeScrollOffset()) {
+            scrollTo(scroller.getCurrX(), 0);
+            postInvalidate();
+        }
     }
 }
