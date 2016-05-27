@@ -2,56 +2,69 @@ package com.geekerk.driptime.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Scroller;
+import android.widget.TextView;
+
 import com.geekerk.driptime.R;
 
 /**
+ * 在给定的内容布局右侧添加三个按钮
  * Created by s21v on 2016/5/26.
  */
-public class LinearLayoutWithAction extends ViewGroup {
-    private View contentView;
-    private ImageView moveIv, editIv, deleteIv;
+public class LinearLayoutWithAction extends ViewGroup implements View.OnClickListener {
     private static final String TAG = "LinearLayoutWithAction";
-    private int layoutEventHeight;
+    private View contentView;
+    private ImageView moveIv, editIv, deleteIv; //三个按钮的宽高等于布局的高度
+    private CheckBox isDoneCheck;
+    private int imageViewWidth; //按钮的宽度
+    private int layoutEventHeight;  //布局的高度（也是按钮的高度）
     private int scrollDistance;
-    private int touchSlop;
     private Scroller scroller;
     private VelocityTracker velocityTracker;
 
-    public LinearLayoutWithAction(Context context, int contentRes) {
+    public LinearLayoutWithAction(Context context, int contentRes, int layoutHeightDimen) {
         this(context, null, 0);
         contentView = LayoutInflater.from(context).inflate(contentRes, null);
         contentView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
+        isDoneCheck = (CheckBox) contentView.findViewById(R.id.isDone_checkbox);
+        isDoneCheck.setOnClickListener(this);
+
         moveIv = new ImageView(context);
+        moveIv.setId(R.id.moveButton);
         moveIv.setImageResource(R.mipmap.today_icon_move);
-        moveIv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        moveIv.setScaleType(ImageView.ScaleType.CENTER);
+        moveIv.setOnClickListener(this);
 
         editIv = new ImageView(context);
+        editIv.setId(R.id.modifyButton);
         editIv.setImageResource(R.mipmap.today_icon_modify);
-        editIv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        editIv.setScaleType(ImageView.ScaleType.CENTER);
+        editIv.setOnClickListener(this);
 
         deleteIv = new ImageView(context);
+        deleteIv.setId(R.id.deleteButton);
         deleteIv.setImageResource(R.mipmap.today_icon_delete);
-        deleteIv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        deleteIv.setScaleType(ImageView.ScaleType.CENTER);
+        deleteIv.setOnClickListener(this);
 
         addView(contentView);
         addView(moveIv);
         addView(editIv);
         addView(deleteIv);
 
-        layoutEventHeight = context.getResources().getDimensionPixelSize(R.dimen.layout_event_height);
-
-        touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+        imageViewWidth = context.getResources().getDimensionPixelSize(R.dimen.layout_event_height);
+        layoutEventHeight = context.getResources().getDimensionPixelSize(layoutHeightDimen);
         velocityTracker = VelocityTracker.obtain();
         scroller = new Scroller(context);
 
@@ -70,10 +83,10 @@ public class LinearLayoutWithAction extends ViewGroup {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         measureChild(contentView, MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(layoutEventHeight,MeasureSpec.EXACTLY));
-        measureChild(moveIv, layoutEventHeight, layoutEventHeight);
-        measureChild(editIv, layoutEventHeight, layoutEventHeight);
-        measureChild(deleteIv, layoutEventHeight, layoutEventHeight);
-        scrollDistance = layoutEventHeight*3;
+        measureChild(moveIv, imageViewWidth, layoutEventHeight);
+        measureChild(editIv, imageViewWidth, layoutEventHeight);
+        measureChild(deleteIv, imageViewWidth, layoutEventHeight);
+        scrollDistance = imageViewWidth*3;
         setMeasuredDimension(contentView.getMeasuredWidth()+scrollDistance, layoutEventHeight);
     }
 
@@ -81,8 +94,8 @@ public class LinearLayoutWithAction extends ViewGroup {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         contentView.layout(0, 0, contentView.getMeasuredWidth(), layoutEventHeight);
         for(int i=1; i<getChildCount(); i++)
-            getChildAt(i).layout(contentView.getMeasuredWidth()+(i-1)*layoutEventHeight, 0,
-                    contentView.getMeasuredWidth()+i*layoutEventHeight, layoutEventHeight);
+            getChildAt(i).layout(contentView.getMeasuredWidth()+(i-1)*imageViewWidth, 0,
+                    contentView.getMeasuredWidth()+i*imageViewWidth, layoutEventHeight);
     }
 
     @Override
@@ -91,6 +104,7 @@ public class LinearLayoutWithAction extends ViewGroup {
     }
 
     private float lastX;
+    private int defX;
     private static final int STATUS_FULL_VISIBLE = 2;
     private static final int STATUS_HIDE = 0;
     private static final int STATUS_MOVE = 1;
@@ -101,11 +115,9 @@ public class LinearLayoutWithAction extends ViewGroup {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 lastX = event.getX();
-                Log.i(TAG, "onTouchEvent ACTION_DOWN");
                 return true;
             case MotionEvent.ACTION_MOVE:
-                Log.i(TAG, "onTouchEvent ACTION_MOVE");
-                int defX = (int) (event.getX() - lastX);
+                defX = (int) (event.getX() - lastX);
                 lastX = event.getX();
                 velocityTracker.addMovement(event);
                 velocityTracker.computeCurrentVelocity(1000);
@@ -144,12 +156,8 @@ public class LinearLayoutWithAction extends ViewGroup {
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                Log.i(TAG, "onTouchEvent ACTION_UP");
-                stopNestedScroll();
-                defX = (int) (event.getX() - lastX);
-                lastX = event.getX();
                 if (defX < 0) {
-                    if (getScrollX() > layoutEventHeight)   //左移过1/3即认为是开启操作
+                    if (getScrollX() > imageViewWidth)   //左移过1/3即认为是开启操作
                     {
                         scroller.startScroll(getScrollX(), 0, scrollDistance - getScrollX(), 0);
                         currentStatus = STATUS_FULL_VISIBLE;
@@ -158,7 +166,7 @@ public class LinearLayoutWithAction extends ViewGroup {
                         currentStatus = STATUS_HIDE;
                     }
                 } else {
-                    if (getScrollX() > layoutEventHeight*2) {  //右移未过1/3 认为是误操作
+                    if (getScrollX() > imageViewWidth*2) {  //右移未过1/3 认为是误操作
                         scroller.startScroll(getScrollX(), 0, scrollDistance - getScrollX(), 0);
                         currentStatus = STATUS_FULL_VISIBLE;
                     } else {    //右移过1/3 即认为是关闭操作
@@ -179,5 +187,26 @@ public class LinearLayoutWithAction extends ViewGroup {
             scrollTo(scroller.getCurrX(), 0);
             postInvalidate();
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.moveButton :
+                Log.i(TAG, "moveButton");
+                break;
+            case R.id.modifyButton :
+                Log.i(TAG, "modifyButton");
+                break;
+            case R.id.deleteButton :
+                Log.i(TAG, "deleteButton");
+                break;
+            case R.id.isDone_checkbox :
+                Log.i(TAG, "isDone_checkbox");
+                break;
+        }
+        RecyclerView parent = (RecyclerView) getParent();
+        Log.i(TAG, "onClick layout Position:"+parent.getChildLayoutPosition(this));
+        Log.i(TAG, "onClick adapter Position:"+parent.getChildAdapterPosition(this));
     }
 }

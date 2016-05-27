@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="@dimen/layout_event_with_deadline_height"
     android:background="@android:color/white">
 
     <View
-        android:id="@+id/priority"
+        android:id="@+id/event_priority"
         android:layout_width="3dp"
         android:layout_height="match_parent"
         android:background="@color/priority_first" />
@@ -14,7 +14,7 @@
         android:id="@+id/isDone_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/priority"
+        android:layout_toRightOf="@id/event_priority"
         android:layout_alignBaseline="@id/event_title_tv" />
 
     <TextView

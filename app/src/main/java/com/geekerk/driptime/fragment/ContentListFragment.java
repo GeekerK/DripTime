@@ -9,14 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.EventRecyclerViewAdapter;
-import com.geekerk.driptime.view.FixedSpaceLinearLayout;
 import com.geekerk.driptime.vo.EventBean;
-
 import java.util.ArrayList;
 
 /**
@@ -37,7 +32,7 @@ public class ContentListFragment extends Fragment {
     private ArrayList<EventBean> getDummyData() {
         ArrayList<EventBean> dummyData = new ArrayList<>();
         for (int i=1; i<=10; i++) {
-            dummyData.add(new EventBean("待办事项 "+i, i%3==0 ? i+":0"+i:null));
+            dummyData.add(new EventBean("待办事项 "+i, i%3==0 ? i+":0"+i:null, i%3+1));
         }
         return dummyData;
     }
