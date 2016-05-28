@@ -13,6 +13,7 @@ import com.geekerk.driptime.R;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.EventBean;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -23,11 +24,13 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter {
     private ArrayList<EventBean> data;
     private ArrayList<EventBean> completeData;
     private Context context;
+    private SimpleDateFormat simpleDateFormat;
 
     public EventRecyclerViewAdapter(Context c, ArrayList<EventBean> data) {
         this.data = data;
         completeData = new ArrayList<>();
         context = c;
+        simpleDateFormat = new SimpleDateFormat("k:mm");
     }
 
     @Override
@@ -62,9 +65,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter {
             else
                 eventBean = completeData.get(position-data.size()-2);
             if(holder instanceof  EventHaveDeadlineViewHolder)
-                ((EventHaveDeadlineViewHolder)holder).setDeadlineTitle(eventBean.getDeadline());
+                ((EventHaveDeadlineViewHolder)holder).setDeadlineTitle(simpleDateFormat.format(eventBean.getDeadline()));
             ((EventViewHolder)holder).setEventTitle(eventBean.getTitle());
-            ((EventViewHolder)holder).setEventPriority(eventBean.getProrityColor());
+            ((EventViewHolder)holder).setEventPriority(eventBean.getProrityColorRes());
         }
     }
 

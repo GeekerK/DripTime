@@ -3,10 +3,16 @@ package com.geekerk.driptime.vo;
 import android.util.Log;
 
 import com.geekerk.driptime.R;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.Date;
 
 /**
  * Created by s21v on 2016/5/26.
  */
+@DatabaseTable(tableName = "table_event")
 public class EventBean {
     private static final String TAG = "EventBean";
 
@@ -32,15 +38,37 @@ public class EventBean {
         }
     }
 
+    @DatabaseField(columnName = "id", generatedId=true, dataType = DataType.INTEGER)
+    private int id;
+    @DatabaseField(columnName = "title", dataType = DataType.STRING)
     private String title;
-    private String deadline;
+    @DatabaseField(columnName = "deadline", dataType = DataType.DATE)
+    private Date deadline;
+    @DatabaseField(columnName = "release_time", dataType = DataType.DATE)
+    private Date releaseTime;
+    @DatabaseField(columnName = "priorityLevel", dataType = DataType.INTEGER)
+    private int priorityLevel;
+    @DatabaseField(columnName = "isFinished", dataType = DataType.BOOLEAN)
+    private boolean isFinished;
+
     private Priority priority;
 
-    public EventBean(String title, String deadline, int priorityLevel) {
+    public EventBean(int id, String title, Date deadline, Date releaseTime, int priorityLevel, boolean isFinished) {
+        this.id = id;
         this.title = title;
         this.deadline = deadline;
-        this.priority = Priority.getPriority(priorityLevel);
-        Log.i(TAG, this.priority.toString());
+        this.releaseTime = releaseTime;
+        this.priorityLevel = priorityLevel;
+        this.isFinished = isFinished;
+
+        for (Priority p : Priority.values()) {
+            if (p.level == priorityLevel)
+                priority = p;
+        }
+    }
+
+    public EventBean(String title, Date deadline, Date releaseTime, int priorityLevel, boolean isFinished) {
+        this(-1, title, deadline, releaseTime, priorityLevel, isFinished);
     }
 
     public String getTitle() {
@@ -51,15 +79,43 @@ public class EventBean {
         this.title = title;
     }
 
-    public String getDeadline() {
+    public Date getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(String deadline) {
+    public void setDeadline(Date deadline) {
         this.deadline = deadline;
     }
 
-    public int getProrityColor() {
+    public Date getReleaseTime() {
+        return releaseTime;
+    }
+
+    public void setReleaseTime(Date releaseTime) {
+        this.releaseTime = releaseTime;
+    }
+
+    public int getPriorityLevel() {
+        return priorityLevel;
+    }
+
+    public void setPriority(int priorityLevel) {
+        this.priorityLevel = priorityLevel;
+    }
+
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    public void setFinished(boolean finished) {
+        isFinished = finished;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getProrityColorRes() {
         return priority.colorRes;
     }
 }

@@ -13,6 +13,7 @@ import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.EventRecyclerViewAdapter;
 import com.geekerk.driptime.vo.EventBean;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by s21v on 2016/5/24.
@@ -32,7 +33,7 @@ public class ContentListFragment extends Fragment {
     private ArrayList<EventBean> getDummyData() {
         ArrayList<EventBean> dummyData = new ArrayList<>();
         for (int i=1; i<=10; i++) {
-            dummyData.add(new EventBean("待办事项 "+i, i%3==0 ? i+":0"+i:null, i%3+1));
+            dummyData.add(new EventBean("待办事项 "+i, i%3==0 ? new Date():null, new Date(), i%3+1, false));
         }
         return dummyData;
     }
