@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.geekerk.driptime.vo.EventBean;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -16,6 +17,11 @@ import java.sql.SQLException;
 public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "DripTime.db";
     private static final int DATABASE_VERSION = 1;
+    private Dao<EventBean, Integer> EventDao;
+
+    public DataBaseHelper(Context context) {
+        this(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
 
     public DataBaseHelper(Context context, String databaseName, SQLiteDatabase.CursorFactory factory, int databaseVersion) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -38,5 +44,11 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Dao<EventBean, Integer> getEventDao() throws SQLException {
+        if (EventDao == null)
+            EventDao = getDao(EventBean.class);
+        return EventDao;
     }
 }

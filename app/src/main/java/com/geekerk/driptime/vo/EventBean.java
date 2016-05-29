@@ -17,9 +17,10 @@ public class EventBean {
     private static final String TAG = "EventBean";
 
     public enum Priority {
-        FIRST_LEVEL(R.color.priority_first, 1),
-        SECOND_LEVEL(R.color.priority_second, 2),
-        THIRD_LEVEL(R.color.priority_third, 3);
+        FIRST_LEVEL(R.color.priority_first, 1), //非常紧急
+        SECOND_LEVEL(R.color.priority_second, 2),   //紧急
+        THIRD_LEVEL(R.color.priority_third, 3), //已完成
+        NORMAL_LEVEL(android.R.color.white, 0);
 
         private int level;
         private int colorRes;

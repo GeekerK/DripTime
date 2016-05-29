@@ -18,11 +18,17 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 
+import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.fragment.ContentListFragment;
 import com.geekerk.driptime.nav.NavAdapter;
+import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.NavBean;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -105,6 +111,9 @@ public class MainActivity extends AppCompatActivity
                 return true;
             }
         });
+
+        dataBaseHelper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
+        initData();
     }
 
     @Override
@@ -149,5 +158,30 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private DataBaseHelper dataBaseHelper;
+
+    @Override
+    protected void onDestroy() {
+        if (dataBaseHelper != null) {
+            OpenHelperManager.releaseHelper();
+            dataBaseHelper = null;
+        }
+        super.onDestroy();
+    }
+
+    private void initData() {
+        try {
+            Dao<EventBean, Integer> eventDao = dataBaseHelper.getEventDao();
+            eventDao.create(new EventBean("Add a task with multipleattribute",null, new Date(), 1, false));
+            eventDao.create(new EventBean("Set timezone in settings-Preference ",new Date(2016,5,29,14,0,0), new Date(), 4, false));
+            eventDao.create(new EventBean("完成演示的PPT文稿，梳理讲解脉络",null, new Date(), 2, false));
+            eventDao.create(new EventBean("新建一个目标清单，并完成",null, new Date(), 4, false));
+            eventDao.create(new EventBean("回复Rick的邮件",null, new Date(), 3, true));
+            eventDao.create(new EventBean("查找资料",null, new Date(), 3, true));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
