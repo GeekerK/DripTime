@@ -50,8 +50,9 @@ public class EventBean {
     private int priorityLevel;
     @DatabaseField(columnName = "isFinished", dataType = DataType.BOOLEAN)
     private boolean isFinished;
-
     private Priority priority;
+
+    public EventBean() {}
 
     public EventBean(int id, String title, Date deadline, Date releaseTime, int priorityLevel, boolean isFinished) {
         this.id = id;
