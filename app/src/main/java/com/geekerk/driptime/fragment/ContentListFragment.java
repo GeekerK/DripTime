@@ -1,5 +1,8 @@
 package com.geekerk.driptime.fragment;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +18,7 @@ import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.EventRecyclerViewAdapter;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventRawRowMapper;
+import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.EventBean;
 import com.j256.ormlite.dao.GenericRawResults;
 
@@ -70,6 +74,27 @@ public class ContentListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mAdapter = new EventRecyclerViewAdapter(getActivity(), getDummyData());
         recyclerView.setAdapter(mAdapter);
+        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+//            @Override
+//            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+//                int position = parent.getChildAdapterPosition(view);
+//                if (mAdapter.channelData.indexOfKey(position)<0) {
+//                    if (mAdapter.channelData.indexOfKey(position+1)<0 && position!=parent.getChildCount()-1)
+//                        outRect.set(0, 0, 0, 2);
+//                }
+//            }
+
+            @Override
+            public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                paint.setARGB(89, 100, 255, 255);
+                for (int i=0; i<parent.getChildCount()-1; i++) {
+                    View view = parent.getChildAt(i);
+                    if (view instanceof LinearLayoutWithAction && mAdapter.channelData.indexOfKey(i+1)<0)
+                        c.drawLine(0, view.getBottom(), view.getWidth(), view.getBottom()+20, paint);
+                }
+            }
+        });
         return recyclerView;
     }
 

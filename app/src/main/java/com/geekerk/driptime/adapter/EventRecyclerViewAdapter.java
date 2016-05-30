@@ -1,6 +1,8 @@
 package com.geekerk.driptime.adapter;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
@@ -24,10 +26,14 @@ import java.util.LinkedHashMap;
  */
 public class EventRecyclerViewAdapter extends RecyclerView.Adapter {
     private static final String TAG = "RecyclerViewAdapter";
-    private LinkedHashMap<String, ArrayList<EventBean>> data;
+    private static final int CHANNEL_VIEW_TYPE = 1;
+    private static final int EVENT_VIEW_TYPE = 2;
+    private static final int EVENT_VIEW_TYPE_HAVE_DEADLINE = 3;
+
+    private LinkedHashMap<String, ArrayList<EventBean>> data;   //栏目名称和对应的数据列表
+    public SparseArray<String> channelData;    //存放栏目的位置和文本
     private Context context;
     private SimpleDateFormat simpleDateFormat;
-    private SparseArray<String> channelData;    //存放栏目的位置和文本
 
     public EventRecyclerViewAdapter(Context c, LinkedHashMap<String, ArrayList<EventBean>> data) {
         this.data = data;
@@ -58,7 +64,6 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter {
         if (holder instanceof ChannelViewHolder) {
                 ((ChannelViewHolder)holder).setTitle(channelData.get(position));
         } else {
-            Log.i(TAG, "position:"+position);
             EventBean eventBean = getEventAtPosition(position);
             if(holder instanceof  EventHaveDeadlineViewHolder)
                 ((EventHaveDeadlineViewHolder)holder).setDeadlineTitle(simpleDateFormat.format(eventBean.getDeadline()));
@@ -77,10 +82,6 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter {
         return itemCount;
     }
 
-    private static final int CHANNEL_VIEW_TYPE = 1;
-    private static final int EVENT_VIEW_TYPE = 2;
-    private static final int EVENT_VIEW_TYPE_HAVE_DEADLINE = 3;
-
     @Override
     public int getItemViewType(int position) {
         if (channelData.indexOfKey(position) >= 0)
@@ -94,24 +95,22 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter {
         }
     }
 
-    private EventBean getEventAtPosition(int positioin) {
-        int currentIndex = 0;
+    private EventBean getEventAtPosition(int position) {
+        int currentIndex = -1;
         for (int i=0; i<channelData.size(); i++) {
-            if (positioin < channelData.keyAt(i)) {
-                currentIndex = i-1;
+            if (position < channelData.keyAt(i)) {
                 break;
             } else
                 currentIndex++;
         }
-        String currentChannel = channelData.valueAt(currentIndex);
+        String currentChannel = channelData.valueAt(currentIndex); //所在的栏目
         ArrayList<EventBean> list = data.get(currentChannel);
 
         int offset = 1;
         for (int i=0; i<currentIndex; i++) {
-            offset += data.get(channelData.valueAt(i)).size()+1;
+            offset += (data.get(channelData.valueAt(i)).size()+1);  //设置偏移量
         }
-
-        return list.get(positioin-offset);
+        return list.get(position-offset);
     }
 
     class ChannelViewHolder extends RecyclerView.ViewHolder {
