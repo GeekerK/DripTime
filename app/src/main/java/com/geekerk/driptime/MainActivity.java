@@ -21,13 +21,16 @@ import android.widget.ExpandableListView;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.fragment.ContentListFragment;
 import com.geekerk.driptime.nav.NavAdapter;
+import com.geekerk.driptime.utils.DateUtil;
 import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.NavBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +38,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private ExpandableListView mNavMenu;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
+    private static final String BASE_QUERY =
+            "select * from table_event where release_time between datetime(?) and datetime(?) order by id DESC";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +105,6 @@ public class MainActivity extends AppCompatActivity
                 mCollapsingToolbarLayout.setTitle(list.get(groupPosition));
                 switch (groupPosition) {
                     case 0:
-
                         getSupportFragmentManager().beginTransaction()
                                 .add(R.id.fragmentContainer,new ContentListFragment())
                                 .addToBackStack("first")
@@ -113,7 +117,13 @@ public class MainActivity extends AppCompatActivity
         });
 
         dataBaseHelper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
+        //初始化数据库
         initData();
+        //加载fragment
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragmentContainer,
+                        ContentListFragment.getInstance(BASE_QUERY, DateUtil.getQueryBetweenDay()))
+                .commit();
     }
 
     @Override
@@ -146,7 +156,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.action_edit) {
 
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -171,13 +180,21 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
+    public DataBaseHelper getDataBaseHelper() {
+        if (dataBaseHelper == null)
+            dataBaseHelper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
+        return dataBaseHelper;
+    }
+
+    //添加模拟数据
     private void initData() {
         try {
             Dao<EventBean, Integer> eventDao = dataBaseHelper.getEventDao();
-            eventDao.create(new EventBean("Add a task with multipleattribute",null, new Date(), 1, false));
-            eventDao.create(new EventBean("Set timezone in settings-Preference ",new Date(2016,5,29,14,0,0), new Date(), 4, false));
+            eventDao.executeRaw("delete from table_event");
+            eventDao.create(new EventBean("Add a task with multiple attribute",null, new Date(), 1, false));
+            eventDao.create(new EventBean("Set timezone in settings-Preference ",new Date(116,5,29,14,0,0), new Date(), 0, false));
             eventDao.create(new EventBean("完成演示的PPT文稿，梳理讲解脉络",null, new Date(), 2, false));
-            eventDao.create(new EventBean("新建一个目标清单，并完成",null, new Date(), 4, false));
+            eventDao.create(new EventBean("新建一个目标清单，并完成",null, new Date(), 0, false));
             eventDao.create(new EventBean("回复Rick的邮件",null, new Date(), 3, true));
             eventDao.create(new EventBean("查找资料",null, new Date(), 3, true));
         } catch (SQLException e) {

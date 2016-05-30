@@ -43,7 +43,7 @@ public class EventBean {
     private int id;
     @DatabaseField(columnName = "title", dataType = DataType.STRING)
     private String title;
-    @DatabaseField(columnName = "deadline", dataType = DataType.DATE)
+    @DatabaseField(columnName = "deadline")
     private Date deadline;
     @DatabaseField(columnName = "release_time", dataType = DataType.DATE)
     private Date releaseTime;
@@ -101,8 +101,12 @@ public class EventBean {
         return priorityLevel;
     }
 
-    public void setPriority(int priorityLevel) {
+    public void setPriorityLevel(int priorityLevel) {
         this.priorityLevel = priorityLevel;
+        for (Priority p : Priority.values()) {
+            if (p.level == priorityLevel)
+                priority = p;
+        }
     }
 
     public boolean isFinished() {
@@ -115,6 +119,10 @@ public class EventBean {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getProrityColorRes() {

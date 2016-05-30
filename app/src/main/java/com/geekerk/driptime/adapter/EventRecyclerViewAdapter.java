@@ -3,6 +3,7 @@ package com.geekerk.driptime.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,22 +16,24 @@ import com.geekerk.driptime.vo.EventBean;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Created by s21v on 2016/5/26.
  */
 public class EventRecyclerViewAdapter extends RecyclerView.Adapter {
     private static final String TAG = "RecyclerViewAdapter";
-    private ArrayList<EventBean> data;
-    private ArrayList<EventBean> completeData;
+    private LinkedHashMap<String, ArrayList<EventBean>> data;
     private Context context;
     private SimpleDateFormat simpleDateFormat;
+    private SparseArray<String> channelData;    //存放栏目的位置和文本
 
-    public EventRecyclerViewAdapter(Context c, ArrayList<EventBean> data) {
+    public EventRecyclerViewAdapter(Context c, LinkedHashMap<String, ArrayList<EventBean>> data) {
         this.data = data;
-        completeData = new ArrayList<>();
         context = c;
         simpleDateFormat = new SimpleDateFormat("k:mm");
+        channelData = new SparseArray<>();
     }
 
     @Override
@@ -53,17 +56,10 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ChannelViewHolder) {
-            if (position == 0)
-                ((ChannelViewHolder)holder).setTitle("今天, 5月4日 星期三");
-            else
-                ((ChannelViewHolder)holder).setTitle("已完成");
+                ((ChannelViewHolder)holder).setTitle(channelData.get(position));
         } else {
             Log.i(TAG, "position:"+position);
-            EventBean eventBean;
-            if (position-1 < data.size())
-                eventBean = data.get(position-1);
-            else
-                eventBean = completeData.get(position-data.size()-2);
+            EventBean eventBean = getEventAtPosition(position);
             if(holder instanceof  EventHaveDeadlineViewHolder)
                 ((EventHaveDeadlineViewHolder)holder).setDeadlineTitle(simpleDateFormat.format(eventBean.getDeadline()));
             ((EventViewHolder)holder).setEventTitle(eventBean.getTitle());
@@ -73,7 +69,12 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return data.size()+completeData.size()+2;
+        int itemCount = 0;
+        for (String barTitleString : data.keySet()){
+            channelData.put(itemCount, barTitleString);
+            itemCount += data.get(barTitleString).size()+1;
+        }
+        return itemCount;
     }
 
     private static final int CHANNEL_VIEW_TYPE = 1;
@@ -82,15 +83,35 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0 || position == 1+data.size())
+        if (channelData.indexOfKey(position) >= 0)
             return CHANNEL_VIEW_TYPE;
         else {
-            if (data.get(position-1).getDeadline() == null) {
+            if (getEventAtPosition(position).getDeadline() == null) {
                 return EVENT_VIEW_TYPE;
             } else {
                 return EVENT_VIEW_TYPE_HAVE_DEADLINE;
             }
         }
+    }
+
+    private EventBean getEventAtPosition(int positioin) {
+        int currentIndex = 0;
+        for (int i=0; i<channelData.size(); i++) {
+            if (positioin < channelData.keyAt(i)) {
+                currentIndex = i-1;
+                break;
+            } else
+                currentIndex++;
+        }
+        String currentChannel = channelData.valueAt(currentIndex);
+        ArrayList<EventBean> list = data.get(currentChannel);
+
+        int offset = 1;
+        for (int i=0; i<currentIndex; i++) {
+            offset += data.get(channelData.valueAt(i)).size()+1;
+        }
+
+        return list.get(positioin-offset);
     }
 
     class ChannelViewHolder extends RecyclerView.ViewHolder {
