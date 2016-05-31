@@ -14,10 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
-
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.fragment.ContentListFragment;
 import com.geekerk.driptime.nav.NavAdapter;
@@ -26,11 +23,8 @@ import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.NavBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
-
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -40,6 +34,7 @@ public class MainActivity extends AppCompatActivity
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private static final String BASE_QUERY =
             "select * from table_event where release_time between datetime(?) and datetime(?) order by id DESC";
+    private static final String QUERY_ALL = "select * from table_event order by id DESC";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +46,7 @@ public class MainActivity extends AppCompatActivity
 
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,11 +99,33 @@ public class MainActivity extends AppCompatActivity
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 mCollapsingToolbarLayout.setTitle(list.get(groupPosition));
                 switch (groupPosition) {
-                    case 0:
-                        getSupportFragmentManager().beginTransaction()
-                                .add(R.id.fragmentContainer,new ContentListFragment())
-                                .addToBackStack("first")
-                                .commit();
+                    case 0: //today
+                        ContentListFragment fragment = (ContentListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
+                        if(fragment == null)
+                            getSupportFragmentManager().beginTransaction()
+                                    .add(R.id.fragmentContainer, ContentListFragment.getInstance(BASE_QUERY, DateUtil.getQueryBetweenDay()), "contentList")
+                                    .commit();
+                        else
+                            fragment.changeData(BASE_QUERY, DateUtil.getQueryBetweenDay());
+                        break;
+                    case 1: //All
+                        ContentListFragment fragment1 = (ContentListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
+                        if(fragment1 == null)
+                            getSupportFragmentManager().beginTransaction()
+                                    .add(R.id.fragmentContainer, ContentListFragment.getInstance(QUERY_ALL))
+                                    .commit();
+                        else
+                            fragment1.changeData(QUERY_ALL);
+                        break;
+                    case 2: //week
+                        ContentListFragment fragment2 = (ContentListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
+                        if (fragment2 == null)
+                            getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.fragmentContainer,
+                                            ContentListFragment.getInstance(BASE_QUERY, DateUtil.getQueryBetweenWeek()),"contentList")
+                                    .commit();
+                        else
+                            fragment2.changeData(BASE_QUERY, DateUtil.getQueryBetweenWeek());
                         break;
                 }
                 drawer.closeDrawer(GravityCompat.START);
@@ -117,13 +134,14 @@ public class MainActivity extends AppCompatActivity
         });
 
         dataBaseHelper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
-        //初始化数据库
-        initData();
+//        //初始化数据库
+//        initData();
         //加载fragment
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragmentContainer,
-                        ContentListFragment.getInstance(BASE_QUERY, DateUtil.getQueryBetweenDay()))
+                        ContentListFragment.getInstance(BASE_QUERY, DateUtil.getQueryBetweenWeek()), "contentList")
                 .commit();
+        mCollapsingToolbarLayout.setTitle("Today");
     }
 
     @Override
@@ -191,12 +209,17 @@ public class MainActivity extends AppCompatActivity
         try {
             Dao<EventBean, Integer> eventDao = dataBaseHelper.getEventDao();
             eventDao.executeRaw("delete from table_event");
+            eventDao.create(new EventBean("测试测试4",null, new Date(116,4,26,16,0,0), 0, false));
+            eventDao.create(new EventBean("测试测试3",null, new Date(116,4,27,16,0,0), 0, false));
+            eventDao.create(new EventBean("测试测试2",null, new Date(116,4,28,16,0,0), 0, false));
+            eventDao.create(new EventBean("测试测试1",null, new Date(116,4,29,16,0,0), 0, false));
             eventDao.create(new EventBean("Add a task with multiple attribute",null, new Date(), 1, false));
-            eventDao.create(new EventBean("Set timezone in settings-Preference ",new Date(116,5,29,14,0,0), new Date(), 0, false));
+            eventDao.create(new EventBean("Set timezone in settings-Preference ",new Date(116,4,29,14,0,0), new Date(), 0, false));
             eventDao.create(new EventBean("完成演示的PPT文稿，梳理讲解脉络",null, new Date(), 2, false));
             eventDao.create(new EventBean("新建一个目标清单，并完成",null, new Date(), 0, false));
             eventDao.create(new EventBean("回复Rick的邮件",null, new Date(), 3, true));
             eventDao.create(new EventBean("查找资料",null, new Date(), 3, true));
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

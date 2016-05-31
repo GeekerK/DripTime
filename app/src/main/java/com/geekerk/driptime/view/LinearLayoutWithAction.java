@@ -13,8 +13,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Scroller;
-import android.widget.TextView;
-
 import com.geekerk.driptime.R;
 
 /**
@@ -67,7 +65,6 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
         layoutEventHeight = context.getResources().getDimensionPixelSize(layoutHeightDimen);
         velocityTracker = VelocityTracker.obtain();
         scroller = new Scroller(context);
-
     }
 
     public LinearLayoutWithAction(Context context, AttributeSet attrs) {
@@ -82,20 +79,20 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         measureChild(contentView, MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(layoutEventHeight,MeasureSpec.EXACTLY));
+                MeasureSpec.makeMeasureSpec(layoutEventHeight, MeasureSpec.EXACTLY));
         measureChild(moveIv, imageViewWidth, layoutEventHeight);
         measureChild(editIv, imageViewWidth, layoutEventHeight);
         measureChild(deleteIv, imageViewWidth, layoutEventHeight);
-        scrollDistance = imageViewWidth*3;
-        setMeasuredDimension(contentView.getMeasuredWidth()+scrollDistance, layoutEventHeight);
+        scrollDistance = imageViewWidth * 3;
+        setMeasuredDimension(contentView.getMeasuredWidth() + scrollDistance, layoutEventHeight);
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         contentView.layout(0, 0, contentView.getMeasuredWidth(), layoutEventHeight);
-        for(int i=1; i<getChildCount(); i++)
-            getChildAt(i).layout(contentView.getMeasuredWidth()+(i-1)*imageViewWidth, 0,
-                    contentView.getMeasuredWidth()+i*imageViewWidth, layoutEventHeight);
+        for (int i = 1; i < getChildCount(); i++)
+            getChildAt(i).layout(contentView.getMeasuredWidth() + (i - 1) * imageViewWidth, 0,
+                    contentView.getMeasuredWidth() + i * imageViewWidth, layoutEventHeight);
     }
 
     @Override
@@ -166,7 +163,7 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
                         currentStatus = STATUS_HIDE;
                     }
                 } else {
-                    if (getScrollX() > imageViewWidth*2) {  //右移未过1/3 认为是误操作
+                    if (getScrollX() > imageViewWidth * 2) {  //右移未过1/3 认为是误操作
                         scroller.startScroll(getScrollX(), 0, scrollDistance - getScrollX(), 0);
                         currentStatus = STATUS_FULL_VISIBLE;
                     } else {    //右移过1/3 即认为是关闭操作
@@ -178,8 +175,8 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
                 getParent().requestDisallowInterceptTouchEvent(false);
                 break;
         }
-    return super.onTouchEvent(event);
-}
+        return super.onTouchEvent(event);
+    }
 
     @Override
     public void computeScroll() {
@@ -189,24 +186,40 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
         }
     }
 
+    public interface EventDealInterface {
+        void checkFinish(int position);
+        void moveEventAtPosition(int position);
+        void deleteEventAtPosition(int position);
+        void modifyEventAtPosition(int position);
+    }
+
+    private EventDealInterface eventDealInterface;
+
+    public void setEventDealInterface(EventDealInterface eventDealInterface) {
+        this.eventDealInterface = eventDealInterface;
+    }
+
     @Override
     public void onClick(View v) {
+        RecyclerView parent = (RecyclerView) getParent();
+        int position = parent.getChildAdapterPosition(this);
         switch (v.getId()) {
-            case R.id.moveButton :
+            case R.id.moveButton:
                 Log.i(TAG, "moveButton");
+                eventDealInterface.moveEventAtPosition(position);
                 break;
-            case R.id.modifyButton :
+            case R.id.modifyButton:
                 Log.i(TAG, "modifyButton");
+                eventDealInterface.modifyEventAtPosition(position);
                 break;
-            case R.id.deleteButton :
+            case R.id.deleteButton:
                 Log.i(TAG, "deleteButton");
+                eventDealInterface.deleteEventAtPosition(position);
                 break;
-            case R.id.isDone_checkbox :
+            case R.id.isDone_checkbox:
                 Log.i(TAG, "isDone_checkbox");
+                eventDealInterface.checkFinish(position);
                 break;
         }
-        RecyclerView parent = (RecyclerView) getParent();
-        Log.i(TAG, "onClick layout Position:"+parent.getChildLayoutPosition(this));
-        Log.i(TAG, "onClick adapter Position:"+parent.getChildAdapterPosition(this));
     }
 }

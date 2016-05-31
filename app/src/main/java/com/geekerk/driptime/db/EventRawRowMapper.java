@@ -6,7 +6,6 @@ import com.j256.ormlite.dao.RawRowMapper;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by s21v on 2016/5/30.

@@ -27,12 +27,14 @@ public class DateUtil {
         String[] result = new String[2];
         Date now = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        result[1] = simpleDateFormat.format(now);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
         calendar.add(Calendar.DAY_OF_MONTH, -7);
         result[0] = simpleDateFormat.format(calendar.getTime());
+
+        calendar.add(Calendar.DAY_OF_MONTH, 8);
+        result[1] = simpleDateFormat.format(calendar.getTime());
         return result;
     }
 }
