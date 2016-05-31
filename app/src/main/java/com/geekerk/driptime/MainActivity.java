@@ -134,12 +134,12 @@ public class MainActivity extends AppCompatActivity
         });
 
         dataBaseHelper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
-//        //初始化数据库
-//        initData();
+        //初始化数据库
+        initData();
         //加载fragment
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragmentContainer,
-                        ContentListFragment.getInstance(BASE_QUERY, DateUtil.getQueryBetweenWeek()), "contentList")
+                        ContentListFragment.getInstance(BASE_QUERY, DateUtil.getQueryBetweenDay()), "contentList")
                 .commit();
         mCollapsingToolbarLayout.setTitle("Today");
     }
