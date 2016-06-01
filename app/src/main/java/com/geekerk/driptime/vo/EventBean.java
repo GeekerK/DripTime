@@ -126,4 +126,16 @@ public class EventBean {
     public int getProrityColorRes() {
         return priority.colorRes;
     }
+
+    @Override
+    public String toString() {
+        return "EventBean{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", deadline=" + deadline +
+                ", releaseTime=" + releaseTime +
+                ", priorityLevel=" + priorityLevel +
+                ", isFinished=" + isFinished +
+                '}';
+    }
 }

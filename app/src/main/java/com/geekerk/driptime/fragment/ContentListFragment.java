@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,34 +92,11 @@ public class ContentListFragment extends Fragment {
     }
 
     //从本地数据库获得数据
-    private LinkedHashMap<String, ArrayList<EventBean>> queryLocalDatabase() {
-        LinkedHashMap<String, ArrayList<EventBean>> data = new LinkedHashMap<>();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("M月d日 E");
-        ArrayList<EventBean> dummyData = new ArrayList<>();
-        ArrayList<EventBean> completeDate = new ArrayList<>();
-        String lastTime = "";
-        String time = "";
+    private ArrayList<EventBean> queryLocalDatabase() {
+        ArrayList<EventBean> data = new ArrayList<>();
         try {
             GenericRawResults<EventBean> results = dataBaseHelper.getEventDao().queryRaw(query, new EventRawRowMapper() ,queryArgs);
-            for(EventBean event : results) {
-                if (event.isFinished())
-                    completeDate.add(event);
-                else {
-                    time = simpleDateFormat.format(event.getReleaseTime());
-                    if (event.getReleaseTime().getDate() == new Date().getDate())
-                        time = "今天 "+time;
-                    if (lastTime.equals(""))
-                        lastTime = time;
-                    if (!time.equals(lastTime)) {  //时间不同说明是新的时间事件序列开始了
-                        data.put(lastTime, dummyData);  //保存之前的数据
-                        dummyData = new ArrayList<>();
-                        lastTime = time;
-                    }
-                    dummyData.add(event);
-                }
-            }
-            data.put(time, dummyData);
-            data.put("已完成", completeDate);
+            data.addAll(results.getResults());
         } catch (SQLException e) {
             e.printStackTrace();
         }
