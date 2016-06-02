@@ -136,7 +136,6 @@ public class EventBean {
                 ", releaseTime=" + releaseTime +
                 ", priorityLevel=" + priorityLevel +
                 ", isFinished=" + isFinished +
-                ", priority=" + priority +
                 '}';
     }
 }

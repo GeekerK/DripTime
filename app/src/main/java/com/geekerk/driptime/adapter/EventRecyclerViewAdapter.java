@@ -1,6 +1,7 @@
 package com.geekerk.driptime.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,7 +16,6 @@ import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.EventBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,17 +31,17 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
     private static final int EVENT_VIEW_TYPE = 2;
     private static final int EVENT_VIEW_TYPE_HAVE_DEADLINE = 3;
 
-    private ArrayList<EventBean> databaseResult;
+    private ArrayList<EventBean> dataFromDB;
     private LinkedHashMap<String, ArrayList<EventBean>> data;   //栏目名称和对应的数据列表
     public SparseArray<String> channelData;    //存放栏目的位置和文本
     private Context context;
     private SimpleDateFormat simpleDateFormat;
     private int itemCount;
 
-    public EventRecyclerViewAdapter(Context c, ArrayList<EventBean> data) {
+    public EventRecyclerViewAdapter(Context c, ArrayList<EventBean> dataFromDB) {
         context = c;
         simpleDateFormat = new SimpleDateFormat("k:mm");
-        setData(data);
+        setData(dataFromDB);
     }
 
     @Override
@@ -68,15 +68,17 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         if (holder instanceof ChannelViewHolder) {
             ((ChannelViewHolder) holder).setTitle(channelData.get(position));
         } else {
+            Log.i(TAG,"onBindViewHolder position:"+position);
             EventBean eventBean = getEventAtPosition(position);
-            if (eventBean.isFinished()) {
-                Log.i(TAG, "onBindViewHolder:"+eventBean.toString());
-                ((EventViewHolder)holder).setFinish();
-            }
-            if (holder instanceof EventHaveDeadlineViewHolder)
-                ((EventHaveDeadlineViewHolder) holder).setDeadlineTitle(simpleDateFormat.format(eventBean.getDeadline()));
             ((EventViewHolder) holder).setEventTitle(eventBean.getTitle());
             ((EventViewHolder) holder).setEventPriority(eventBean.getProrityColorRes());
+            if(eventBean.isFinished()) {
+                ((EventViewHolder) holder).setEventFinish(true);
+            } else{
+                ((EventViewHolder) holder).setEventFinish(false);
+                if (holder instanceof EventHaveDeadlineViewHolder)
+                    ((EventHaveDeadlineViewHolder) holder).setDeadlineTitle(simpleDateFormat.format(eventBean.getDeadline()));
+            }
         }
     }
 
@@ -116,9 +118,24 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         return list.get(position - offset);
     }
 
+    private int getPositionById(int id) {
+        int position = 0;
+        for(int i=0; i<data.size(); i++) {
+            ArrayList<EventBean> list = data.get(channelData.valueAt(i));
+            for(int j=0; j<list.size(); j++){
+                position++;
+                EventBean eventBean = list.get(j);
+                if (eventBean.getId() == id)
+                    return position;
+            }
+            position++;
+        }
+        return 0;
+    }
+
     //设置数据源
-    public void setData(ArrayList<EventBean> databaseResult) {
-        this.databaseResult = databaseResult;
+    public void setData(ArrayList<EventBean> dataFromDB) {
+        this.dataFromDB = dataFromDB;
         parseData();
         notifyDataSetChanged();
     }
@@ -129,8 +146,8 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         ArrayList<EventBean> dummyData = new ArrayList<>();
         ArrayList<EventBean> completeDate = new ArrayList<>();
         String lastTime = "";
-        String time = "";
-        for (EventBean event : databaseResult) {
+        String time;
+        for (EventBean event : dataFromDB) {
             if (event.isFinished())
                 completeDate.add(event);
             else {
@@ -150,34 +167,41 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         if(!TextUtils.isEmpty(lastTime))
             data.put(lastTime, dummyData);
         data.put("已完成", completeDate);
-
         channelData = new SparseArray<>();
         itemCount = 0;
         for (String barTitleString : data.keySet()) {
             channelData.put(itemCount, barTitleString);
             itemCount += data.get(barTitleString).size() + 1;
         }
-
-//        Log.i(TAG,data.toString());
     }
 
     //处理点击完成事件
     public void checkFinish(int position) {
-        DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
+        int preItemCount = itemCount;
         EventBean eventBean = getEventAtPosition(position);
+        int id = eventBean.getId();
         eventBean.setFinished(!eventBean.isFinished());
-        try {
-            helper.getEventDao().update(eventBean);
-            parseData();
-            notifyDataSetChanged();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
-            helper = null;
-        }
+        eventBean.setPriorityLevel(3);
+        parseData();
+        //查找根据id查找移动后的位置
+        int toPosition = getPositionById(id);
+        int postItemCount = itemCount;
+        if (preItemCount != postItemCount) {
+            Log.i(TAG, "from:"+(position-1)+", to:"+(toPosition-position+1));
+            notifyItemRangeChanged(position-1, toPosition-position+1);
+        } else
+            notifyItemRangeChanged(position, toPosition-position);
 
-        Log.i(TAG, "databaseResult:"+databaseResult.toString());
+
+//        Log.i(TAG,"fromPosition:"+position+", toPosition:"+toPosition);
+//        notifyItemMoved(position-1,toPosition);
+//        DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
+//        try {
+//            helper.getEventDao().update(getEventAtPosition(position));
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+
     }
 
     //移动
@@ -187,6 +211,8 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     //删除
     public void deleteEventAtPosition(int position) {
+        int id = getEventAtPosition(position).getId();
+        dataFromDB.remove(getPositionById(id));
 
     }
 
@@ -208,14 +234,12 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
     }
 
     class EventViewHolder extends RecyclerView.ViewHolder {
-        View view;
         TextView eventTitle;
         View eventPriority;
         CheckBox eventFinish;
 
         public EventViewHolder(View itemView) {
             super(itemView);
-            view = itemView;
             eventTitle = (TextView) itemView.findViewById(R.id.event_title_tv);
             eventPriority = itemView.findViewById(R.id.event_priority);
             eventFinish = (CheckBox) itemView.findViewById(R.id.isDone_checkbox);
@@ -229,9 +253,16 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
             eventPriority.setBackgroundResource(colorRes);
         }
 
-        public void setFinish() {
-            eventFinish.setChecked(true);
-            eventFinish.setEnabled(false);
+        public void setEventFinish(boolean isFinish){
+            eventFinish.setChecked(isFinish);
+            if (isFinish)
+            {
+                eventFinish.setEnabled(false);
+                eventTitle.setTextColor(Color.argb(89, 0, 0, 0));
+            } else {
+                eventFinish.setEnabled(true);
+                eventTitle.setTextColor(Color.BLACK);
+            }
         }
     }
 

@@ -91,9 +91,7 @@ public class MainActivity extends AppCompatActivity
         navBeanList.add(navBeanAddItem);
         navBeanList.add(navBeanSettings);
         mNavMenu.setAdapter(new NavAdapter(this, navBeanList, arrayList));
-
         mNavMenu.setSelectedGroup(0);
-
         mNavMenu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
