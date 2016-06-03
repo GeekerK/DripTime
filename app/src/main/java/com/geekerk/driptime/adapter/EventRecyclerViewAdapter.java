@@ -68,8 +68,8 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         if (holder instanceof ChannelViewHolder) {
             ((ChannelViewHolder) holder).setTitle(channelData.get(position));
         } else {
-            Log.i(TAG,"onBindViewHolder position:"+position);
             EventBean eventBean = getEventAtPosition(position);
+            ((EventViewHolder) holder).initScrollX();
             ((EventViewHolder) holder).setEventTitle(eventBean.getTitle());
             ((EventViewHolder) holder).setEventPriority(eventBean.getProrityColorRes());
             if(eventBean.isFinished()) {
@@ -177,31 +177,19 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     //处理点击完成事件
     public void checkFinish(int position) {
-        int preItemCount = itemCount;
         EventBean eventBean = getEventAtPosition(position);
-        int id = eventBean.getId();
         eventBean.setFinished(!eventBean.isFinished());
-        eventBean.setPriorityLevel(3);
-        parseData();
-        //查找根据id查找移动后的位置
-        int toPosition = getPositionById(id);
-        int postItemCount = itemCount;
-        if (preItemCount != postItemCount) {
-            Log.i(TAG, "from:"+(position-1)+", to:"+(toPosition-position+1));
-            notifyItemRangeChanged(position-1, toPosition-position+1);
-        } else
-            notifyItemRangeChanged(position, toPosition-position);
-
-
-//        Log.i(TAG,"fromPosition:"+position+", toPosition:"+toPosition);
-//        notifyItemMoved(position-1,toPosition);
-//        DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
-//        try {
-//            helper.getEventDao().update(getEventAtPosition(position));
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-
+        DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
+        try {
+            helper.getEventDao().update(eventBean);
+            parseData();
+            notifyDataSetChanged();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            eventBean.setFinished(!eventBean.isFinished()); //出错还原操作
+        } finally {
+            OpenHelperManager.releaseHelper();
+        }
     }
 
     //移动
@@ -211,9 +199,16 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     //删除
     public void deleteEventAtPosition(int position) {
-        int id = getEventAtPosition(position).getId();
-        dataFromDB.remove(getPositionById(id));
-
+        EventBean eventBean = getEventAtPosition(position);
+        DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
+        try {
+            helper.getEventDao().delete(eventBean);
+            dataFromDB.remove(eventBean);
+            parseData();
+            notifyDataSetChanged();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     //修改
@@ -237,9 +232,11 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         TextView eventTitle;
         View eventPriority;
         CheckBox eventFinish;
+        View linearWithAction;
 
         public EventViewHolder(View itemView) {
             super(itemView);
+            linearWithAction = itemView;
             eventTitle = (TextView) itemView.findViewById(R.id.event_title_tv);
             eventPriority = itemView.findViewById(R.id.event_priority);
             eventFinish = (CheckBox) itemView.findViewById(R.id.isDone_checkbox);
@@ -263,6 +260,10 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
                 eventFinish.setEnabled(true);
                 eventTitle.setTextColor(Color.BLACK);
             }
+        }
+
+        public void initScrollX() {
+            linearWithAction.setScrollX(0);
         }
     }
 
