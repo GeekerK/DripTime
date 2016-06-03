@@ -114,7 +114,7 @@ public class EventBean {
     public void setFinished(boolean finished) {
         isFinished = finished;
         if (isFinished)
-            priorityLevel = 3;  //已完成
+            setPriorityLevel(3);  //已完成
     }
 
     public int getId() {

@@ -15,7 +15,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/event_priority"
-        android:layout_alignBaseline="@id/event_title_tv" />
+        android:layout_alignBaseline="@id/event_title_tv"
+        android:background="@drawable/checkbox"
+        android:button="@null"/>
 
     <TextView
         android:id="@+id/event_title_tv"
