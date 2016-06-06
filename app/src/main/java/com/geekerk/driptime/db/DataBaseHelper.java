@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.ListBean;
+import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
@@ -15,9 +16,10 @@ import java.sql.SQLException;
  */
 public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "DripTime.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
     private Dao<EventBean, Integer> EventDao;
     private Dao<ListBean, Integer> ListDao;
+    private Dao<UserBean, Integer> UserDao;
 
     public DataBaseHelper(Context context) {
         this(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -31,7 +33,8 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource) {
         try {
             TableUtils.createTable(connectionSource, EventBean.class);
-            TableUtils.clearTable(connectionSource, ListBean.class);
+            TableUtils.createTable(connectionSource, ListBean.class);
+            TableUtils.createTable(connectionSource, UserBean.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -42,6 +45,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             TableUtils.dropTable(connectionSource, EventBean.class, true);
             TableUtils.dropTable(connectionSource, ListBean.class, true);
+            TableUtils.dropTable(connectionSource, UserBean.class, true);
             onCreate(sqLiteDatabase, connectionSource);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -58,5 +62,11 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
         if (ListDao == null)
             ListDao = getDao(ListBean.class);
         return ListDao;
+    }
+
+    public Dao<UserBean, Integer> getUserDao() throws SQLException {
+        if (UserDao == null)
+            UserDao = getDao(UserBean.class);
+        return UserDao;
     }
 }

@@ -42,7 +42,8 @@
         android:background="@drawable/signin_bg_signinactivity"
         android:text="@string/register"
         android:textColor="#fff"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:onClick="doClick"/>
 
     <LinearLayout
         android:layout_width="match_parent"

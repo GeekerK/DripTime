@@ -13,6 +13,8 @@ public class ListBean {
     private int id;
     @DatabaseField(columnName = "listName")
     private String name;
+    @DatabaseField(canBeNull = false, columnName = "userID", foreign = true)
+    private UserBean user;  //外键
 
     public ListBean (){}
 
@@ -36,11 +38,11 @@ public class ListBean {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "ListBean{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+    public UserBean getUser() {
+        return user;
+    }
+
+    public void setUser(UserBean user) {
+        this.user = user;
     }
 }

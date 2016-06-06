@@ -81,7 +81,7 @@ public class WelcomeActivity extends AppCompatActivity {
             case R.id.tv_skip:
                 Intent intent3 = new Intent(this, MainActivity.class);
                 startActivity(intent3);
-//                finish();
+                finish();
                 break;
         }
     }

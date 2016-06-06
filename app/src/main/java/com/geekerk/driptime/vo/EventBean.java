@@ -27,6 +27,8 @@ public class EventBean {
     private boolean isFinished;
     @DatabaseField(foreign = true, columnName = "listId", canBeNull = true)
     private ListBean list;  //清单，是一个外键
+    @DatabaseField(foreign = true, columnName = "userId", canBeNull = false)
+    private UserBean user;  //用户，外键且不能为空
     private Priority priority;
 
     public EventBean() {}
@@ -115,17 +117,12 @@ public class EventBean {
         this.list = list;
     }
 
-    @Override
-    public String toString() {
-        return "EventBean{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", deadline=" + deadline +
-                ", releaseTime=" + releaseTime +
-                ", priorityLevel=" + priorityLevel +
-                ", isFinished=" + isFinished +
-                ", list=" + list +
-                '}';
+    public UserBean getUser() {
+        return user;
+    }
+
+    public void setUser(UserBean user) {
+        this.user = user;
     }
 
     public enum Priority {

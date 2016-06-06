@@ -17,4 +17,5 @@
     <string name="username">Username</string>
     <string name="enteremail">Enter E-mail</string>
     <string name="input_password">Enter Password</string>
+    <string name="inputIsEmpty">Is Empty</string>
 </resources>
