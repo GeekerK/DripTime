@@ -12,4 +12,8 @@
     <string name="action_search">Search</string>
     <string name="action_edit">Edit</string>
     <string name="complete">已完成</string>
+    <string name="switch_to_login">Switch to login</string>
+    <string name="register">Register</string>
+    <string name="username">Username</string>
+    <string name="enteremail">Enter E-mail</string>
 </resources>

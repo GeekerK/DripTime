@@ -6,24 +6,28 @@ import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 /**
- * Created by Administrator on 2016/5/23.
+ * Created by s21v on 2016/6/6.
  */
-public class SigninActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
     ImageView waveIv;
+    EditText usernameEt, emailEt, passwordEt;
     AnimatorSet waveAnimatorSet;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signin);
-
+        setContentView(R.layout.activity_register);
         waveIv = (ImageView) findViewById(R.id.wave);
+        usernameEt = (EditText) findViewById(R.id.username_et);
+        emailEt = (EditText) findViewById(R.id.email_et);
+        passwordEt = (EditText) findViewById(R.id.password_et);
 
         ObjectAnimator waveFadeAnimator, waveScaleXAnimator, waveScaleYAnimator;
 

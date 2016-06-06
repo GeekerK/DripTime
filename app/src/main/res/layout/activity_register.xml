@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@mipmap/bj_login"
     android:fitsSystemWindows="true">
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,37 +21,63 @@
         android:layout_marginBottom="65dp" />
 
     <TextView
-        android:id="@+id/no_account_sign_up"
+        android:id="@+id/switch_to_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="26dp"
-        android:text="@string/no_account_sign_up"
+        android:text="@string/switch_to_login"
         android:textColor="#fff"
         android:textSize="10sp" />
 
     <Button
-        android:id="@+id/bt_signin"
-        android:transitionName="bt_signin"
+        android:id="@+id/bt_register"
+        android:transitionName="bt_register"
         android:layout_width="300dp"
         android:layout_height="48dp"
-        android:layout_above="@id/no_account_sign_up"
+        android:layout_above="@id/switch_to_login"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="36dp"
         android:background="@drawable/signin_bg_signinactivity"
-        android:text="@string/sign_in"
+        android:text="@string/register"
         android:textColor="#fff"
         android:textSize="14sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/bt_signin"
-        android:layout_alignRight="@id/bt_signin"
+        android:layout_above="@id/bt_register"
+        android:layout_alignRight="@id/bt_register"
         android:layout_marginBottom="42dp"
         android:layout_marginLeft="14dp"
         android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="44dp"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/register_icon_name" />
+
+            <EditText
+                android:id="@+id/username_et"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="@string/username"
+                android:textColor="#fff"
+                android:textColorHint="#fff" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginLeft="45dp"
+            android:background="#fff" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,7 +95,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@null"
-                android:hint="Enter E-mail"
+                android:hint="@string/enteremail"
                 android:textColor="#fff"
                 android:textColorHint="#fff" />
         </LinearLayout>
@@ -98,16 +123,9 @@
                 android:layout_weight="1"
                 android:background="@null"
                 android:inputType="textPassword"
+                android:text="password"
                 android:textColor="#fff" />
 
-            <TextView
-                android:id="@+id/forgetPW_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="@string/forget_password"
-                android:textColor="#89ffffff"
-                android:textSize="10sp" />
         </LinearLayout>
 
         <View

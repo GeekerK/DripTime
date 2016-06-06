@@ -12,7 +12,6 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
-
         </activity>
 
         <activity
@@ -27,6 +26,10 @@
         <!-- 透明系统栏-->
         <activity
             android:name=".SigninActivity"
+            android:theme="@style/ImageTranslucentTheme" />
+
+        <activity
+            android:name=".RegisterActivity"
             android:theme="@style/ImageTranslucentTheme" />
     </application>
 
