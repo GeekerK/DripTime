@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Scroller;
+
 import com.geekerk.driptime.R;
 
 /**
@@ -21,6 +22,9 @@ import com.geekerk.driptime.R;
  */
 public class LinearLayoutWithAction extends ViewGroup implements View.OnClickListener {
     private static final String TAG = "LinearLayoutWithAction";
+    private static final int STATUS_FULL_VISIBLE = 2;
+    private static final int STATUS_HIDE = 0;
+    private static final int STATUS_MOVE = 1;
     private View contentView;
     private ImageView moveIv, editIv, deleteIv; //三个按钮的宽高等于布局的高度
     private CheckBox isDoneCheck;
@@ -29,7 +33,10 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
     private int scrollDistance;
     private Scroller scroller;
     private VelocityTracker velocityTracker;
-
+    private float lastX;
+    private int defX;
+    private int currentStatus = STATUS_HIDE;
+    private EventDealInterface eventDealInterface;
     public LinearLayoutWithAction(Context context, int contentRes, int layoutHeightDimen) {
         this(context, null, 0);
         contentView = LayoutInflater.from(context).inflate(contentRes, null);
@@ -66,11 +73,9 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
         velocityTracker = VelocityTracker.obtain();
         scroller = new Scroller(context);
     }
-
     public LinearLayoutWithAction(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
-
     public LinearLayoutWithAction(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
@@ -99,13 +104,6 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
     protected void onDraw(Canvas canvas) {
         dispatchDraw(canvas);
     }
-
-    private float lastX;
-    private int defX;
-    private static final int STATUS_FULL_VISIBLE = 2;
-    private static final int STATUS_HIDE = 0;
-    private static final int STATUS_MOVE = 1;
-    private int currentStatus = STATUS_HIDE;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -186,15 +184,6 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
         }
     }
 
-    public interface EventDealInterface {
-        void checkFinish(int position);
-        void moveEventAtPosition(int position);
-        void deleteEventAtPosition(int position);
-        void modifyEventAtPosition(int position);
-    }
-
-    private EventDealInterface eventDealInterface;
-
     public void setEventDealInterface(EventDealInterface eventDealInterface) {
         this.eventDealInterface = eventDealInterface;
     }
@@ -221,5 +210,15 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
                 eventDealInterface.checkFinish(position);
                 break;
         }
+    }
+
+    public interface EventDealInterface {
+        void checkFinish(int position);
+
+        void moveEventAtPosition(int position);
+
+        void deleteEventAtPosition(int position);
+
+        void modifyEventAtPosition(int position);
     }
 }

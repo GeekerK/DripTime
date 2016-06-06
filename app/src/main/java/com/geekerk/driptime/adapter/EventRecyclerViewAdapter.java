@@ -4,18 +4,19 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.EventBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,15 +26,14 @@ import java.util.LinkedHashMap;
 /**
  * Created by s21v on 2016/5/26.
  */
-public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements LinearLayoutWithAction.EventDealInterface{
+public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements LinearLayoutWithAction.EventDealInterface {
     private static final String TAG = "RecyclerViewAdapter";
     private static final int CHANNEL_VIEW_TYPE = 1;
     private static final int EVENT_VIEW_TYPE = 2;
     private static final int EVENT_VIEW_TYPE_HAVE_DEADLINE = 3;
-
+    public SparseArray<String> channelData;    //存放栏目的位置和文本
     private ArrayList<EventBean> dataFromDB;
     private LinkedHashMap<String, ArrayList<EventBean>> data;   //栏目名称和对应的数据列表
-    public SparseArray<String> channelData;    //存放栏目的位置和文本
     private Context context;
     private SimpleDateFormat simpleDateFormat;
     private int itemCount;
@@ -72,9 +72,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
             ((EventViewHolder) holder).initScrollX();
             ((EventViewHolder) holder).setEventTitle(eventBean.getTitle());
             ((EventViewHolder) holder).setEventPriority(eventBean.getProrityColorRes());
-            if(eventBean.isFinished()) {
+            if (eventBean.isFinished()) {
                 ((EventViewHolder) holder).setEventFinish(true);
-            } else{
+            } else {
                 ((EventViewHolder) holder).setEventFinish(false);
                 if (holder instanceof EventHaveDeadlineViewHolder)
                     ((EventHaveDeadlineViewHolder) holder).setDeadlineTitle(simpleDateFormat.format(eventBean.getDeadline()));
@@ -120,9 +120,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     private int getPositionById(int id) {
         int position = 0;
-        for(int i=0; i<data.size(); i++) {
+        for (int i = 0; i < data.size(); i++) {
             ArrayList<EventBean> list = data.get(channelData.valueAt(i));
-            for(int j=0; j<list.size(); j++){
+            for (int j = 0; j < list.size(); j++) {
                 position++;
                 EventBean eventBean = list.get(j);
                 if (eventBean.getId() == id)
@@ -164,7 +164,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
                 dummyData.add(event);
             }
         }
-        if(!TextUtils.isEmpty(lastTime))
+        if (!TextUtils.isEmpty(lastTime))
             data.put(lastTime, dummyData);
         data.put("已完成", completeDate);
         channelData = new SparseArray<>();
@@ -218,6 +218,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     class ChannelViewHolder extends RecyclerView.ViewHolder {
         TextView textview;
+
         public ChannelViewHolder(View itemView) {
             super(itemView);
             textview = (TextView) itemView.findViewById(R.id.channel_title);
@@ -250,10 +251,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
             eventPriority.setBackgroundResource(colorRes);
         }
 
-        public void setEventFinish(boolean isFinish){
+        public void setEventFinish(boolean isFinish) {
             eventFinish.setChecked(isFinish);
-            if (isFinish)
-            {
+            if (isFinish) {
                 eventFinish.setEnabled(false);
                 eventTitle.setTextColor(Color.argb(89, 0, 0, 0));
             } else {

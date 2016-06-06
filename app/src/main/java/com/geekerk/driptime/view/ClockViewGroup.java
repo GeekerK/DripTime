@@ -9,6 +9,7 @@ import android.graphics.PaintFlagsDrawFilter;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -53,9 +54,9 @@ public class ClockViewGroup extends RelativeLayout {
         int minute = Integer.decode(date[1]);
         int second = Integer.decode(date[2]);
         //跟根据当前时间计算时分秒针转动的度数
-        float hourDegrees = (float) ((hour-3)*30 + minute*0.5);
-        float minuteDegrees = (float) ((minute-15)*6 + second*0.1);
-        float secondDegrees = (second-15)*6;
+        float hourDegrees = (float) ((hour - 3) * 30 + minute * 0.5);
+        float minuteDegrees = (float) ((minute - 15) * 6 + second * 0.1);
+        float secondDegrees = (second - 15) * 6;
 
         //动画
         ObjectAnimator hourAnimator = ObjectAnimator.ofFloat(hourIv, "rotation", hourDegrees);
@@ -69,9 +70,9 @@ public class ClockViewGroup extends RelativeLayout {
 
     public void clockGo() {
         //时分秒针每秒转到的度数
-        float hourDegrees = hourIv.getRotation()+0.008f;
-        float minuteDegrees = minuteIv.getRotation()+0.1f;
-        float secondDegrees = secondIv.getRotation()+6;
+        float hourDegrees = hourIv.getRotation() + 0.008f;
+        float minuteDegrees = minuteIv.getRotation() + 0.1f;
+        float secondDegrees = secondIv.getRotation() + 6;
 
         //ObjectAnimator.ofFloat的最后一个参数是动画结束的位置，所以之前的计算要用偏移量加上之前的旋转角度
         ObjectAnimator hourAnimator = ObjectAnimator.ofFloat(hourIv, "rotation", hourDegrees);
