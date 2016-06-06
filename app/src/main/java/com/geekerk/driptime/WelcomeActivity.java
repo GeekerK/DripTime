@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.geekerk.driptime.view.ClockViewGroup;
+
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -17,10 +18,10 @@ import java.util.concurrent.TimeUnit;
  * Created by s21v on 2016/5/12.
  */
 public class WelcomeActivity extends AppCompatActivity {
-    private ScheduledThreadPoolExecutor executor;
-    private Handler handler;
     private static final int CLOCK_GO = 1;
     private static final String TAG = "WelcomeActivity";
+    private ScheduledThreadPoolExecutor executor;
+    private Handler handler;
     private ClockViewGroup clockViewGroup;
 
     @Override
@@ -42,7 +43,7 @@ public class WelcomeActivity extends AppCompatActivity {
             public void run() {
                 handler.sendEmptyMessage(CLOCK_GO);
             }
-        },0, 1, TimeUnit.SECONDS);
+        }, 0, 1, TimeUnit.SECONDS);
         initAnimation();
     }
 
@@ -53,7 +54,7 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void initAnimation() {
-            clockViewGroup.initClock();
+        clockViewGroup.initClock();
     }
 
     private void clockGoAnimator() {
@@ -62,14 +63,14 @@ public class WelcomeActivity extends AppCompatActivity {
 
     public void doClick(View view) {
         switch (view.getId()) {
-            case R.id.bt_register :
+            case R.id.bt_register:
                 break;
-            case R.id.bt_signin :
+            case R.id.bt_signin:
                 Intent intent = new Intent(this, SigninActivity.class);
                 //共享元素过度动画
                 startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(this, findViewById(R.id.iv_logo), "share_logo").toBundle());
                 break;
-            case R.id.tv_skip :
+            case R.id.tv_skip:
                 Intent intent1 = new Intent(this, MainActivity.class);
                 startActivity(intent1);
 //                finish();

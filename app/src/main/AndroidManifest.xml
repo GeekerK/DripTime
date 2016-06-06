@@ -15,7 +15,9 @@
 
         </activity>
 
-        <activity android:name=".WelcomeActivity" android:launchMode="singleTop">
+        <activity
+            android:name=".WelcomeActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -23,7 +25,9 @@
         </activity>
 
         <!-- 透明系统栏-->
-        <activity android:name=".SigninActivity" android:theme="@style/ImageTranslucentTheme"/>
+        <activity
+            android:name=".SigninActivity"
+            android:theme="@style/ImageTranslucentTheme" />
     </application>
 
 </manifest>

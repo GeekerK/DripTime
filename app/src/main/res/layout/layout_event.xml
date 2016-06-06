@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:background="@drawable/checkbox"
-        android:button="@null"/>
+        android:button="@null" />
 
     <TextView
         android:id="@+id/event_title_tv"

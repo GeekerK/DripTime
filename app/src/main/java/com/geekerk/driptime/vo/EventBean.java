@@ -1,10 +1,10 @@
 package com.geekerk.driptime.vo;
 
-import android.util.Log;
 import com.geekerk.driptime.R;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import java.util.Date;
 
 /**
@@ -13,31 +13,7 @@ import java.util.Date;
 @DatabaseTable(tableName = "table_event")
 public class EventBean {
     private static final String TAG = "EventBean";
-
-    public enum Priority {
-        FIRST_LEVEL(R.color.priority_first, 1), //非常紧急
-        SECOND_LEVEL(R.color.priority_second, 2),   //紧急
-        THIRD_LEVEL(R.color.priority_third, 3), //已完成
-        NORMAL_LEVEL(android.R.color.white, 0);
-
-        private int level;
-        private int colorRes;
-
-        Priority(int colorRes, int level) {
-            this.level = level;
-            this.colorRes = colorRes;
-        }
-
-        public static Priority getPriority(int level) {
-            for (Priority priority : Priority.values()) {
-                if (priority.level == level)
-                    return priority;
-            }
-            return null;
-        }
-    }
-
-    @DatabaseField(columnName = "id", generatedId=true, dataType = DataType.INTEGER)
+    @DatabaseField(columnName = "id", generatedId = true, dataType = DataType.INTEGER)
     private int id;
     @DatabaseField(columnName = "title", dataType = DataType.STRING)
     private String title;
@@ -50,8 +26,8 @@ public class EventBean {
     @DatabaseField(columnName = "isFinished", dataType = DataType.BOOLEAN)
     private boolean isFinished;
     private Priority priority;
-
-    public EventBean() {}
+    public EventBean() {
+    }
 
     public EventBean(int id, String title, Date deadline, Date releaseTime, int priorityLevel, boolean isFinished) {
         this.id = id;
@@ -139,5 +115,28 @@ public class EventBean {
                 ", priorityLevel=" + priorityLevel +
                 ", isFinished=" + isFinished +
                 '}';
+    }
+
+    public enum Priority {
+        FIRST_LEVEL(R.color.priority_first, 1), //非常紧急
+        SECOND_LEVEL(R.color.priority_second, 2),   //紧急
+        THIRD_LEVEL(R.color.priority_third, 3), //已完成
+        NORMAL_LEVEL(android.R.color.white, 0);
+
+        private int level;
+        private int colorRes;
+
+        Priority(int colorRes, int level) {
+            this.level = level;
+            this.colorRes = colorRes;
+        }
+
+        public static Priority getPriority(int level) {
+            for (Priority priority : Priority.values()) {
+                if (priority.level == level)
+                    return priority;
+            }
+            return null;
+        }
     }
 }

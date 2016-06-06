@@ -14,23 +14,23 @@
         android:id="@+id/isDone_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/event_priority"
         android:layout_alignBaseline="@id/event_title_tv"
+        android:layout_toRightOf="@id/event_priority"
         android:background="@drawable/checkbox"
-        android:button="@null"/>
+        android:button="@null" />
 
     <TextView
         android:id="@+id/event_title_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
         android:layout_marginBottom="9dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="18dp"
+        android:layout_toRightOf="@id/isDone_checkbox"
         android:gravity="center_vertical"
         android:text="Add a task with multiple attributes"
         android:textColor="@android:color/black"
-        android:textSize="14sp"
-        android:layout_toRightOf="@id/isDone_checkbox"/>
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/event_deadline_tv"
@@ -39,6 +39,6 @@
         android:layout_alignLeft="@id/event_title_tv"
         android:layout_below="@id/event_title_tv"
         android:text="12:34 567年8月9日 星期五"
-        android:textSize="11sp"
-        android:textColor="#89000000"/>
+        android:textColor="#89000000"
+        android:textSize="11sp" />
 </RelativeLayout>

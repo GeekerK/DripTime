@@ -1,62 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
+
     <RelativeLayout
-        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="#efefef">
-        <ImageView android:layout_width="wrap_content"
+
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/logo"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="26dp"
             android:contentDescription="@string/app_name"
-            android:id="@+id/iv_logo"
-            android:transitionName="share_logo"/>
+            android:src="@mipmap/logo"
+            android:transitionName="share_logo" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/iv_logo"
             android:layout_below="@id/iv_logo"
             android:layout_marginTop="10dp"
-            android:layout_alignLeft="@id/iv_logo"
+            android:gravity="center"
             android:text="Trip Time"
-            android:textSize="14sp"
             android:textColor="@android:color/black"
-            android:gravity="center"/>
+            android:textSize="14sp" />
 
         <com.geekerk.driptime.view.ClockViewGroup
+            android:id="@+id/clock"
             android:layout_width="246dp"
             android:layout_height="246dp"
-            android:background="@mipmap/welcome_clockbj"
-            android:layout_marginTop="115dp"
             android:layout_centerHorizontal="true"
-            android:id="@+id/clock">
+            android:layout_marginTop="115dp"
+            android:background="@mipmap/welcome_clockbj">
+
             <ImageView
+                android:id="@+id/iv_minute"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/welcome_clock03"
                 android:layout_centerInParent="true"
                 android:paddingLeft="60dp"
-                android:id="@+id/iv_minute"/>
+                android:src="@mipmap/welcome_clock03" />
+
             <ImageView
+                android:id="@+id/iv_hour"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/welcome_clock01"
                 android:layout_centerInParent="true"
                 android:paddingLeft="26dp"
-                android:id="@+id/iv_hour"/>
+                android:src="@mipmap/welcome_clock01" />
+
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/welcome_clock02"
-                android:layout_centerInParent="true"
                 android:id="@+id/iv_second"
-                android:paddingLeft="88dp"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingLeft="88dp"
+                android:src="@mipmap/welcome_clock02" />
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/welcome_clock0"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true"
+                android:src="@mipmap/welcome_clock0" />
         </com.geekerk.driptime.view.ClockViewGroup>
     </RelativeLayout>
 
@@ -64,48 +75,53 @@
         android:layout_width="match_parent"
         android:layout_height="174dp"
         android:background="#fff">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="70dp">
+            android:layout_marginBottom="70dp"
+            android:orientation="horizontal">
+
             <Button
+                android:id="@+id/bt_register"
                 android:layout_width="135dp"
                 android:layout_height="48dp"
+                android:background="@drawable/register_bt_bg"
+                android:onClick="doClick"
                 android:text="register"
                 android:textAllCaps="true"
-                android:textSize="14sp"
-                android:background="@drawable/register_bt_bg"
-                android:id="@+id/bt_register"
-                android:onClick="doClick"/>
-            <View android:layout_width="25dp"
-                android:layout_height="1dp"/>
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="25dp"
+                android:layout_height="1dp" />
+
             <Button
+                android:id="@+id/bt_signin"
                 android:layout_width="135dp"
                 android:layout_height="48dp"
+                android:background="@drawable/signin_bt_bg"
+                android:onClick="doClick"
                 android:text="sign in"
                 android:textAllCaps="true"
-                android:textSize="14sp"
                 android:textColor="#fff"
-                android:background="@drawable/signin_bt_bg"
-                android:id="@+id/bt_signin"
-                android:onClick="doClick"/>
+                android:textSize="14sp" />
         </LinearLayout>
 
         <TextView
+            android:id="@+id/tv_skip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="42dp"
+            android:clickable="true"
+            android:onClick="doClick"
             android:text="skip"
             android:textAllCaps="true"
-            android:textSize="10sp"
             android:textColor="#8A000000"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="42dp"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/tv_skip"
-            android:clickable="true"
-            android:onClick="doClick"/>
+            android:textSize="10sp" />
     </RelativeLayout>
 </LinearLayout>
