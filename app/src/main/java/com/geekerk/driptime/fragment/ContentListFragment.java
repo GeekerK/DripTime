@@ -8,6 +8,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -46,6 +49,7 @@ public class ContentListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         dataBaseHelper = ((MainActivity) getActivity()).getDataBaseHelper();
         if (savedInstanceState != null) {
             query = savedInstanceState.getString("query");
@@ -88,6 +92,23 @@ public class ContentListFragment extends Fragment {
         outState.putStringArray("query_args", queryArgs);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_common_list, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_search) {
+            return true;
+        } else if (id == R.id.action_edit) {
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    
     //从本地数据库获得数据
     private ArrayList<EventBean> queryLocalDatabase() {
         ArrayList<EventBean> data = new ArrayList<>();

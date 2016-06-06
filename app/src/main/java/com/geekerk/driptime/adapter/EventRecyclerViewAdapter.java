@@ -15,6 +15,7 @@ import com.geekerk.driptime.R;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.EventBean;
+import com.geekerk.driptime.vo.ListBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.sql.SQLException;
@@ -202,8 +203,13 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         EventBean eventBean = getEventAtPosition(position);
         DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
         try {
-            helper.getEventDao().delete(eventBean);
+            //将事件放入垃圾箱
+            ListBean listBean = helper.getListDao().queryForId(1);
+            eventBean.setList(listBean);
+            helper.getEventDao().update(eventBean);
+            //在删除缓存数据
             dataFromDB.remove(eventBean);
+            //更新数据源
             parseData();
             notifyDataSetChanged();
         } catch (SQLException e) {

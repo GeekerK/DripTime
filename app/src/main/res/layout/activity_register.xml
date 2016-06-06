@@ -123,8 +123,9 @@
                 android:layout_weight="1"
                 android:background="@null"
                 android:inputType="textPassword"
-                android:text="password"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                android:textColorHint="#fff"
+                android:hint="@string/input_password"/>
 
         </LinearLayout>
 

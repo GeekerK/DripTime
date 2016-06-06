@@ -20,6 +20,7 @@ import com.geekerk.driptime.fragment.ContentListFragment;
 import com.geekerk.driptime.nav.NavAdapter;
 import com.geekerk.driptime.utils.DateUtil;
 import com.geekerk.driptime.vo.EventBean;
+import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.NavBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
@@ -154,29 +155,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_search) {
-            return true;
-        } else if (id == R.id.action_edit) {
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -205,6 +183,7 @@ public class MainActivity extends AppCompatActivity
     //添加模拟数据
     private void initData() {
         try {
+            //------ 事件 ------
             Dao<EventBean, Integer> eventDao = dataBaseHelper.getEventDao();
             eventDao.executeRaw("delete from table_event");
             eventDao.create(new EventBean("测试测试4", null, new Date(116, 4, 26, 16, 0, 0), 0, false));
@@ -218,6 +197,10 @@ public class MainActivity extends AppCompatActivity
             eventDao.create(new EventBean("回复Rick的邮件", null, new Date(), 3, true));
             eventDao.create(new EventBean("查找资料", null, new Date(), 3, true));
 
+            //------ 清单 ------
+//            Dao<ListBean, Integer> listDao = dataBaseHelper.getListDao();
+//            listDao.create(new ListBean("垃圾桶"));
+//            listDao.create(new ListBean("收集箱"));
         } catch (SQLException e) {
             e.printStackTrace();
         }

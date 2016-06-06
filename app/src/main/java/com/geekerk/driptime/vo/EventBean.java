@@ -25,9 +25,11 @@ public class EventBean {
     private int priorityLevel;
     @DatabaseField(columnName = "isFinished", dataType = DataType.BOOLEAN)
     private boolean isFinished;
+    @DatabaseField(foreign = true, columnName = "listId", canBeNull = true)
+    private ListBean list;  //清单，是一个外键
     private Priority priority;
-    public EventBean() {
-    }
+
+    public EventBean() {}
 
     public EventBean(int id, String title, Date deadline, Date releaseTime, int priorityLevel, boolean isFinished) {
         this.id = id;
@@ -105,6 +107,14 @@ public class EventBean {
         return priority.colorRes;
     }
 
+    public ListBean getList() {
+        return list;
+    }
+
+    public void setList(ListBean list) {
+        this.list = list;
+    }
+
     @Override
     public String toString() {
         return "EventBean{" +
@@ -114,6 +124,7 @@ public class EventBean {
                 ", releaseTime=" + releaseTime +
                 ", priorityLevel=" + priorityLevel +
                 ", isFinished=" + isFinished +
+                ", list=" + list +
                 '}';
     }
 
