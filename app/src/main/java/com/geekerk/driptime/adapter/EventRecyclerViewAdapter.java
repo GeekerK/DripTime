@@ -1,28 +1,36 @@
 package com.geekerk.driptime.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.db.DataBaseHelper;
+import com.geekerk.driptime.db.EventDao;
+import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.ListBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-
+import com.j256.ormlite.misc.TransactionManager;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * Created by s21v on 2016/5/26.
@@ -195,25 +203,77 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     //移动
     public void moveEventAtPosition(int position) {
+        //获得用户的清单列表
+        int userId = context.getSharedPreferences("user", Context.MODE_PRIVATE).getInt("currentUserID", -1);
+        DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
+        List<ListBean> userList = null;
+        try {
+            ListDao listDao = new ListDao(helper.getListDao());
+            userList = listDao.queryByUserId(userId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            OpenHelperManager.releaseHelper();
+            helper = null;
+        }
 
+        EventBean eventBean = getEventAtPosition(position);
+        ListBean currenList = eventBean.getList();
+        int checkItem = -1; //列表中的位置，如果没有事件没有归属的清单为-1
+        if (currenList != null) {
+            if (userList != null) {
+                for (ListBean list : userList) {
+                    checkItem++;
+                    if (list.getId() == currenList.getId())
+                        break;
+                }
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.move2list).setSingleChoiceItems(new ListBeanAdapter(userList, context), checkItem,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO: 2016/6/7 将事件归到清单中
+                    }
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+        }).show();
     }
 
     //删除
     public void deleteEventAtPosition(int position) {
-        EventBean eventBean = getEventAtPosition(position);
-        DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
+        final EventBean eventBean = getEventAtPosition(position);
+        final DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
+        final int userId = sharedPreferences.getInt("currentUserID", -1);
         try {
-            //将事件放入垃圾箱
-            ListBean listBean = helper.getListDao().queryForId(1);
-            eventBean.setList(listBean);
-            helper.getEventDao().update(eventBean);
-            //在删除缓存数据
-            dataFromDB.remove(eventBean);
-            //更新数据源
-            parseData();
-            notifyDataSetChanged();
+            //事务处理：将事件放入垃圾箱
+            int result = TransactionManager.callInTransaction(helper.getConnectionSource(), new Callable<Integer>() {
+                @Override
+                public Integer call() throws Exception {
+                    ListDao listDao = new ListDao(helper.getListDao());
+                    ListBean dustbinList = listDao.queryByUserIdAndListname(userId, "垃圾桶");
+                    eventBean.setList(dustbinList);
+                    EventDao eventDao = new EventDao(helper.getEventDao());
+                    eventDao.update(eventBean);
+                    return 1;
+                }
+            });
+            if (result == 1) {
+                //在删除缓存数据
+                dataFromDB.remove(eventBean);
+                //更新数据源
+                parseData();
+                notifyDataSetChanged();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
+            Toast.makeText(context, "Oops! This is Error!", Toast.LENGTH_SHORT).show();
         }
     }
 

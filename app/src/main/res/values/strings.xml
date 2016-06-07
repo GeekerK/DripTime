@@ -18,4 +18,9 @@
     <string name="enteremail">Enter E-mail</string>
     <string name="input_password">Enter Password</string>
     <string name="inputIsEmpty">Is Empty</string>
+    <string name="emailRepeat">Error : Registered Email !</string>
+    <string name="move2list">Move To List</string>
+    <string name="cancel">Cancel</string>
+    <string name="password_error">Password Input Error !</string>
+    <string name="email_error">Email Input Error</string>
 </resources>

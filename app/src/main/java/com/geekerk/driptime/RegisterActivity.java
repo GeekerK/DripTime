@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -19,13 +20,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.geekerk.driptime.db.DataBaseHelper;
+import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.db.UserDao;
 import com.geekerk.driptime.utils.SecureUtil;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.misc.TransactionManager;
 
 import java.nio.charset.Charset;
 import java.sql.SQLException;
+import java.util.concurrent.Callable;
 
 /**
  * Created by s21v on 2016/6/6.
@@ -89,28 +93,55 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    //增加对于重复Email的检查
-    //注册完成后初始化与该用户有关数据库清单（回收站和收集箱）
     public void doClick(View view) {
         if (view.getId() == R.id.bt_register) {
-            if (TextUtils.isEmpty(usernameEt.getText())) {
+            if (TextUtils.isEmpty(usernameEt.getText())) {  //检查用户名是否为空
                 Toast.makeText(this, "UserName "+getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
                 return;
-            } else if (TextUtils.isEmpty(emailEt.getText())) {
-                Toast.makeText(this, "Email "+getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
-                return;
-            } else if (TextUtils.isEmpty(passwordEt.getText())) {
+            } else if (TextUtils.isEmpty(passwordEt.getText())) {   //检查密码是否为空
                 Toast.makeText(this, "Password "+getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
                 return;
-            } else {
+            }else if (TextUtils.isEmpty(emailEt.getText())) {   //检查邮箱是否为空
+                Toast.makeText(this, "Email "+getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
+                return;
+            }  else {
                 DataBaseHelper helper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
                 try {
-                    UserDao userDao = new UserDao(helper.getUserDao());
-                    userDao.create(usernameEt.getText().toString(), emailEt.getText().toString(), SecureUtil.encodeBase64(passwordEt.getText().toString()));
-                    UserBean userBean = userDao.queryByEmail(emailEt.getText().toString());
-                    String passwordSHA = SecureUtil.decodeBase64(userBean.getPassword());
-                    if (passwordSHA.equals(new String(SecureUtil.SHA1(passwordEt.getText().toString()),Charset.forName("utf-8")))) {
-                        Log.i("RegisterActivity", "equals!!!!!!!!!!!!");
+                    final UserDao userDao = new UserDao(helper.getUserDao());
+                    final UserBean userBean = new UserBean(usernameEt.getText().toString(),
+                            emailEt.getText().toString(),
+                            SecureUtil.encodeBase64(passwordEt.getText().toString()));  //密码加密
+                    //事务操作：添加用户，初始化用户清单
+                    final ListDao listDao = new ListDao(helper.getListDao());
+                    int result = TransactionManager.callInTransaction(helper.getConnectionSource(), new Callable<Integer>() {
+                        @Override
+                        public Integer call() throws Exception {
+                            //检查邮箱是否已被注册
+                            if (userDao.queryByEmail(userBean.getEmail()) == null) {
+                                int i = userDao.create(userBean);
+                                listDao.initUserList(userBean);
+                                return i;
+                            } else
+                                return -1;
+                        }
+                    });
+
+                    //用户注册成功
+                    if (result == 1) {
+                        result = userDao.refresh(userBean);
+                        if (result == 1) {
+                            //将当前用户id写入sharePreference
+                            SharedPreferences preference = getSharedPreferences("user", MODE_PRIVATE);
+                            preference.edit().putInt("currentUserID", userBean.getId()).commit();
+                            //成功注册后跳转到主页面
+                            Intent intent = new Intent(this, MainActivity.class);
+                            intent.putExtra("currentUser", userBean);
+                            startActivity(intent);
+                            finish();
+                        }
+                    } else if (result == -1) {
+                        //输入的邮箱已被注册
+                        Toast.makeText(this, R.string.emailRepeat, Toast.LENGTH_SHORT).show();
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();

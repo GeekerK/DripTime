@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,7 +19,9 @@ import com.geekerk.driptime.MainActivity;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.EventRecyclerViewAdapter;
 import com.geekerk.driptime.db.DataBaseHelper;
+import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.EventRawRowMapper;
+import com.geekerk.driptime.db.UserDao;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.EventBean;
 import com.j256.ormlite.dao.GenericRawResults;
@@ -113,7 +116,8 @@ public class ContentListFragment extends Fragment {
     private ArrayList<EventBean> queryLocalDatabase() {
         ArrayList<EventBean> data = new ArrayList<>();
         try {
-            GenericRawResults<EventBean> results = dataBaseHelper.getEventDao().queryRaw(query, new EventRawRowMapper(), queryArgs);
+            EventDao eventDao = new EventDao(dataBaseHelper.getEventDao());
+            GenericRawResults<EventBean> results = eventDao.queryRaw(query, new EventRawRowMapper(), queryArgs);
             data.addAll(results.getResults());
         } catch (SQLException e) {
             e.printStackTrace();

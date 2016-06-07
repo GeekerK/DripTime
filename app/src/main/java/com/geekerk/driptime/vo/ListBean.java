@@ -18,6 +18,10 @@ public class ListBean {
 
     public ListBean (){}
 
+    public ListBean (int id) {
+        this.id = id;
+    }
+
     public ListBean (String listName) {
         name = listName;
     }
@@ -44,5 +48,14 @@ public class ListBean {
 
     public void setUser(UserBean user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "ListBean{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", user=" + user +
+                '}';
     }
 }

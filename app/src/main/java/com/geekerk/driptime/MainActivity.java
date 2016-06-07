@@ -10,21 +10,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
-
 import com.geekerk.driptime.db.DataBaseHelper;
+import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.fragment.ContentListFragment;
 import com.geekerk.driptime.nav.NavAdapter;
 import com.geekerk.driptime.utils.DateUtil;
 import com.geekerk.driptime.vo.EventBean;
-import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.NavBean;
+import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.dao.Dao;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,12 +30,15 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String TAG = "MainActivity";
     private static final String BASE_QUERY =
             "select * from table_event where release_time between datetime(?) and datetime(?) order by id DESC";
-    private static final String QUERY_ALL = "select * from table_event order by id DESC";
+
+    private static final String QUERY_ALL = "select * from table_event order by id DESC"; //改这里where userId = ? and listId <> ? or listId is null
     private ExpandableListView mNavMenu;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private DataBaseHelper dataBaseHelper;
+    private UserBean currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,10 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        if (savedInstanceState != null)
+            currentUser = (UserBean) savedInstanceState.getSerializable("currentUser");
+        else
+            currentUser = (UserBean) getIntent().getSerializableExtra("currentUser");
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -58,6 +62,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -128,6 +133,15 @@ public class MainActivity extends AppCompatActivity
                         else
                             fragment2.changeData(BASE_QUERY, DateUtil.getQueryBetweenWeek());
                         break;
+                    case 3: //Collection Box
+
+                        break;
+                    case 4: //Completed
+
+                        break;
+                    case 5: //Dustbin
+
+                        break;
                 }
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
@@ -143,6 +157,12 @@ public class MainActivity extends AppCompatActivity
                         ContentListFragment.getInstance(BASE_QUERY, DateUtil.getQueryBetweenDay()), "contentList")
                 .commit();
         mCollapsingToolbarLayout.setTitle("Today");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("currentUser", currentUser);
     }
 
     @Override
@@ -184,23 +204,18 @@ public class MainActivity extends AppCompatActivity
     private void initData() {
         try {
             //------ 事件 ------
-            Dao<EventBean, Integer> eventDao = dataBaseHelper.getEventDao();
-            eventDao.executeRaw("delete from table_event");
-            eventDao.create(new EventBean("测试测试4", null, new Date(116, 4, 26, 16, 0, 0), 0, false));
-            eventDao.create(new EventBean("测试测试3", null, new Date(116, 4, 27, 16, 0, 0), 0, false));
-            eventDao.create(new EventBean("测试测试2", null, new Date(116, 4, 28, 16, 0, 0), 0, false));
-            eventDao.create(new EventBean("测试测试1", null, new Date(116, 4, 29, 16, 0, 0), 0, false));
-            eventDao.create(new EventBean("Add a task with multiple attribute", null, new Date(), 1, false));
-            eventDao.create(new EventBean("Set timezone in settings-Preference ", new Date(116, 4, 29, 14, 0, 0), new Date(), 0, false));
-            eventDao.create(new EventBean("完成演示的PPT文稿，梳理讲解脉络", null, new Date(), 2, false));
-            eventDao.create(new EventBean("新建一个目标清单，并完成", null, new Date(), 0, false));
-            eventDao.create(new EventBean("回复Rick的邮件", null, new Date(), 3, true));
-            eventDao.create(new EventBean("查找资料", null, new Date(), 3, true));
-
-            //------ 清单 ------
-//            Dao<ListBean, Integer> listDao = dataBaseHelper.getListDao();
-//            listDao.create(new ListBean("垃圾桶"));
-//            listDao.create(new ListBean("收集箱"));
+            EventDao eventDao = new EventDao(dataBaseHelper.getEventDao());
+            eventDao.deleteAll();
+            eventDao.create(new EventBean("测试测试4", null, new Date(116, 4, 26, 16, 0, 0), 0, false, currentUser));
+            eventDao.create(new EventBean("测试测试3", null, new Date(116, 4, 27, 16, 0, 0), 0, false, currentUser));
+            eventDao.create(new EventBean("测试测试2", null, new Date(116, 4, 28, 16, 0, 0), 0, false, currentUser));
+            eventDao.create(new EventBean("测试测试1", null, new Date(116, 4, 29, 16, 0, 0), 0, false, currentUser));
+            eventDao.create(new EventBean("Add a task with multiple attribute", null, new Date(), 1, false, currentUser));
+            eventDao.create(new EventBean("Set timezone in settings-Preference ", new Date(116, 4, 29, 14, 0, 0), new Date(), 0, false, currentUser));
+            eventDao.create(new EventBean("完成演示的PPT文稿，梳理讲解脉络", null, new Date(), 2, false, currentUser));
+            eventDao.create(new EventBean("新建一个目标清单，并完成", null, new Date(), 0, false, currentUser));
+            eventDao.create(new EventBean("回复Rick的邮件", null, new Date(), 3, true, currentUser));
+            eventDao.create(new EventBean("查找资料", null, new Date(), 3, true, currentUser));
         } catch (SQLException e) {
             e.printStackTrace();
         }

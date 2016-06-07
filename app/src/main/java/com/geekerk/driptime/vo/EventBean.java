@@ -33,22 +33,22 @@ public class EventBean {
 
     public EventBean() {}
 
-    public EventBean(int id, String title, Date deadline, Date releaseTime, int priorityLevel, boolean isFinished) {
+    public EventBean(int id, String title, Date deadline, Date releaseTime, int priorityLevel, boolean isFinished, UserBean user) {
         this.id = id;
         this.title = title;
         this.deadline = deadline;
         this.releaseTime = releaseTime;
         this.priorityLevel = priorityLevel;
         this.isFinished = isFinished;
-
+        this.user = user;
         for (Priority p : Priority.values()) {
             if (p.level == priorityLevel)
                 priority = p;
         }
     }
 
-    public EventBean(String title, Date deadline, Date releaseTime, int priorityLevel, boolean isFinished) {
-        this(-1, title, deadline, releaseTime, priorityLevel, isFinished);
+    public EventBean(String title, Date deadline, Date releaseTime, int priorityLevel, boolean isFinished, UserBean user) {
+        this(-1, title, deadline, releaseTime, priorityLevel, isFinished, user);
     }
 
     public String getTitle() {
@@ -123,6 +123,21 @@ public class EventBean {
 
     public void setUser(UserBean user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "EventBean{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", deadline=" + deadline +
+                ", releaseTime=" + releaseTime +
+                ", priorityLevel=" + priorityLevel +
+                ", isFinished=" + isFinished +
+                ", list=" + list +
+                ", user=" + user +
+                ", priority=" + priority +
+                '}';
     }
 
     public enum Priority {

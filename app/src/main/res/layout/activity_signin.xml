@@ -30,7 +30,8 @@
         android:layout_marginBottom="26dp"
         android:text="@string/no_account_sign_up"
         android:textColor="#fff"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        android:onClick="doClick"/>
 
     <Button
         android:id="@+id/bt_signin"
@@ -43,7 +44,8 @@
         android:background="@drawable/signin_bg_signinactivity"
         android:text="@string/sign_in"
         android:textColor="#fff"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:onClick="doClick"/>
 
     <LinearLayout
         android:layout_width="match_parent"

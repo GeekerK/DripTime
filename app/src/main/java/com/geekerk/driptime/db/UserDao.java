@@ -3,6 +3,7 @@ package com.geekerk.driptime.db;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.dao.Dao;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -16,23 +17,18 @@ public class UserDao {
         this.userDao = userDao;
     }
 
-    public void create(String name, String email, String password) {
-        UserBean userBean = new UserBean(name, email, password);
-        try {
-            userDao.create(userBean);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public int create(UserBean userBean) throws SQLException{
+        return userDao.create(userBean);
     }
 
-    public UserBean queryByEmail(String email) {
-        try {
+    public UserBean queryByEmail(String email) throws SQLException{
             List<UserBean> resultList = userDao.queryForEq("userEmail", email);
             if (resultList!=null && resultList.size()==1)
                 return resultList.get(0);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         return null;
+    }
+
+    public int refresh(UserBean userBean) throws SQLException {
+        return userDao.refresh(userBean);
     }
 }
