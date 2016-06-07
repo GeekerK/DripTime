@@ -320,10 +320,8 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         public void setEventFinish(boolean isFinish) {
             eventFinish.setChecked(isFinish);
             if (isFinish) {
-                eventFinish.setEnabled(false);
                 eventTitle.setTextColor(Color.argb(89, 0, 0, 0));
             } else {
-                eventFinish.setEnabled(true);
                 eventTitle.setTextColor(Color.BLACK);
             }
         }

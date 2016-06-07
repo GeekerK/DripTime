@@ -10,12 +10,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
+import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.fragment.ContentListFragment;
 import com.geekerk.driptime.nav.NavAdapter;
 import com.geekerk.driptime.utils.DateUtil;
@@ -31,10 +31,12 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "MainActivity";
+    //查询指定用户在一段时间内的所有未放到垃圾箱的事件，按ID降序
     private static final String BASE_QUERY =
-            "select * from table_event where release_time between datetime(?) and datetime(?) order by id DESC";
-
-    private static final String QUERY_ALL = "select * from table_event order by id DESC"; //改这里where userId = ? and listId <> ? or listId is null
+            "select * from table_event where userId = ? and listId <> ? or listId is null and release_time between datetime(?) and datetime(?) order by id DESC";
+    //查询指定用户的所有未放到垃圾箱的事件，按ID降序
+    private static final String QUERY_ALL = "select * from table_event where userId = ? and listId <> ? or listId is null order by id DESC";
+    private int userId, dustinListId;
     private ExpandableListView mNavMenu;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private DataBaseHelper dataBaseHelper;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity
         else
             currentUser = (UserBean) getIntent().getSerializableExtra("currentUser");
 
+        //快速新建按钮
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,34 +107,36 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 mCollapsingToolbarLayout.setTitle(list.get(groupPosition));
+
                 switch (groupPosition) {
                     case 0: //today
                         ContentListFragment fragment = (ContentListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
+                        String[] args = DateUtil.getQueryBetweenDay();
                         if (fragment == null)
                             getSupportFragmentManager().beginTransaction()
-                                    .add(R.id.fragmentContainer, ContentListFragment.getInstance(BASE_QUERY, DateUtil.getQueryBetweenDay()), "contentList")
+                                    .add(R.id.fragmentContainer, ContentListFragment.getInstance(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]), "contentList")
                                     .commit();
                         else
-                            fragment.changeData(BASE_QUERY, DateUtil.getQueryBetweenDay());
+                            fragment.changeData(BASE_QUERY,  String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
                         break;
                     case 1: //All
                         ContentListFragment fragment1 = (ContentListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
                         if (fragment1 == null)
                             getSupportFragmentManager().beginTransaction()
-                                    .add(R.id.fragmentContainer, ContentListFragment.getInstance(QUERY_ALL))
+                                    .add(R.id.fragmentContainer, ContentListFragment.getInstance(QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId)))
                                     .commit();
                         else
                             fragment1.changeData(QUERY_ALL);
                         break;
                     case 2: //week
                         ContentListFragment fragment2 = (ContentListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
+                        String[] args1 = DateUtil.getQueryBetweenWeek();
                         if (fragment2 == null)
                             getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.fragmentContainer,
-                                            ContentListFragment.getInstance(BASE_QUERY, DateUtil.getQueryBetweenWeek()), "contentList")
+                                    .replace(R.id.fragmentContainer, ContentListFragment.getInstance(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]), "contentList")
                                     .commit();
                         else
-                            fragment2.changeData(BASE_QUERY, DateUtil.getQueryBetweenWeek());
+                            fragment2.changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]);
                         break;
                     case 3: //Collection Box
 
@@ -149,12 +154,21 @@ public class MainActivity extends AppCompatActivity
         });
 
         dataBaseHelper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
+        userId = currentUser.getId();
+        dustinListId = 0;
+        try {
+            ListDao listDao = new ListDao(dataBaseHelper.getListDao());
+            dustinListId = listDao.queryByUserIdAndListname(userId, "垃圾桶").getId();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         //初始化数据库
         initData();
         //加载fragment
+        String[] arg = DateUtil.getQueryBetweenDay();
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragmentContainer,
-                        ContentListFragment.getInstance(BASE_QUERY, DateUtil.getQueryBetweenDay()), "contentList")
+                        ContentListFragment.getInstance(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), arg[0], arg[1]), "contentList")
                 .commit();
         mCollapsingToolbarLayout.setTitle("Today");
     }
