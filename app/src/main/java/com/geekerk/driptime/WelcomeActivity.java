@@ -29,6 +29,7 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+
         clockViewGroup = (ClockViewGroup) findViewById(R.id.clock);
         handler = new Handler() {
             @Override
@@ -77,11 +78,14 @@ public class WelcomeActivity extends AppCompatActivity {
                 startActivity(intent2, ActivityOptionsCompat.makeSceneTransitionAnimation(this,
                         Pair.create(findViewById(R.id.iv_logo), "share_logo"),
                         Pair.create(findViewById(R.id.bt_signin), "bt_signin")).toBundle());
+                finish();
                 break;
             case R.id.tv_skip:
-                Intent intent3 = new Intent(this, MainActivity.class);
-                startActivity(intent3);
+                Intent intentSkip = new Intent(this, MainActivity.class);
+                startActivity(intentSkip);
                 finish();
+                break;
+            default:
                 break;
         }
     }
