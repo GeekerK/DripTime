@@ -196,10 +196,14 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
             case R.id.moveButton:
                 Log.i(TAG, "moveButton");
                 eventDealInterface.moveEventAtPosition(position);
+                scroller.startScroll(getScrollX(), 0 ,-getScrollX(), 0);
+                invalidate();
                 break;
             case R.id.modifyButton:
                 Log.i(TAG, "modifyButton");
                 eventDealInterface.modifyEventAtPosition(position);
+                scroller.startScroll(getScrollX(), 0 ,-getScrollX(), 0);
+                invalidate();
                 break;
             case R.id.deleteButton:
                 Log.i(TAG, "deleteButton");

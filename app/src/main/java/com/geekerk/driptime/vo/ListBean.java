@@ -58,4 +58,12 @@ public class ListBean {
                 ", user=" + user +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ListBean listBean = (ListBean) o;
+        return id == listBean.id;
+    }
 }

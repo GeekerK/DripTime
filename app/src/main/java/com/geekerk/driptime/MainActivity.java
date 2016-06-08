@@ -33,10 +33,15 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "MainActivity";
     //查询指定用户在一段时间内的所有未放到垃圾箱的事件，按ID降序
     private static final String BASE_QUERY =
-            "select * from table_event where userId = ? and listId <> ? or listId is null and release_time between datetime(?) and datetime(?) order by id DESC";
+            "select * from table_event where userId = ? and (listId <> ? or listId is null) and release_time between datetime(?) and datetime(?) order by id DESC";
     //查询指定用户的所有未放到垃圾箱的事件，按ID降序
-    private static final String QUERY_ALL = "select * from table_event where userId = ? and listId <> ? or listId is null order by id DESC";
-    private int userId, dustinListId;
+    private static final String QUERY_ALL = "select * from table_event where userId = ? and (listId <> ? or listId is null) order by id DESC";
+    //查询指定用户下指定清单的所有事件，按ID降序
+    private static final String QUERY_IN_LIST = "select * from table_event where userId = ? and listId = ? order by id DESC";
+    //查询指定用户未放到垃圾箱的所有已完成的事件
+    private static final String QUERY_COMPLETED = "select * from table_event where userId = ? and isFinished = 1 and (listId <> ? or listId is null) order by id DESC";
+    //当前用户Id，当前用户垃圾箱，收件箱ID
+    private int userId, dustinListId, collectBoxListId;
     private ExpandableListView mNavMenu;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private DataBaseHelper dataBaseHelper;
@@ -126,7 +131,7 @@ public class MainActivity extends AppCompatActivity
                                     .add(R.id.fragmentContainer, ContentListFragment.getInstance(QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId)))
                                     .commit();
                         else
-                            fragment1.changeData(QUERY_ALL);
+                            fragment1.changeData(QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId));
                         break;
                     case 2: //week
                         ContentListFragment fragment2 = (ContentListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
@@ -139,13 +144,31 @@ public class MainActivity extends AppCompatActivity
                             fragment2.changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]);
                         break;
                     case 3: //Collection Box
-
+                        ContentListFragment fragment3 = (ContentListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
+                        if (fragment3 == null)
+                            getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.fragmentContainer, ContentListFragment.getInstance(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId)), "contentList")
+                                    .commit();
+                        else
+                            fragment3.changeData(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
                         break;
                     case 4: //Completed
-
+                        ContentListFragment fragment4 = (ContentListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
+                        if (fragment4 == null)
+                            getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.fragmentContainer, ContentListFragment.getInstance(QUERY_COMPLETED, String.valueOf(userId), String.valueOf(dustinListId)), "contentList")
+                                    .commit();
+                        else
+                            fragment4.changeData(QUERY_COMPLETED, String.valueOf(userId), String.valueOf(dustinListId));
                         break;
                     case 5: //Dustbin
-
+                        ContentListFragment fragment5 = (ContentListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
+                        if (fragment5 == null)
+                            getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.fragmentContainer, ContentListFragment.getInstance(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(dustinListId)), "contentList")
+                                    .commit();
+                        else
+                            fragment5.changeData(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(dustinListId));
                         break;
                 }
                 drawer.closeDrawer(GravityCompat.START);
@@ -156,9 +179,11 @@ public class MainActivity extends AppCompatActivity
         dataBaseHelper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
         userId = currentUser.getId();
         dustinListId = 0;
+        collectBoxListId = 0;
         try {
             ListDao listDao = new ListDao(dataBaseHelper.getListDao());
             dustinListId = listDao.queryByUserIdAndListname(userId, "垃圾桶").getId();
+            collectBoxListId = listDao.queryByUserIdAndListname(userId, "收集箱").getId();
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -217,25 +217,28 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
             helper = null;
         }
 
-        EventBean eventBean = getEventAtPosition(position);
-        ListBean currenList = eventBean.getList();
-        int checkItem = -1; //列表中的位置，如果没有事件没有归属的清单为-1
-        if (currenList != null) {
-            if (userList != null) {
-                for (ListBean list : userList) {
-                    checkItem++;
-                    if (list.getId() == currenList.getId())
-                        break;
-                }
-            }
-        }
+        final EventBean eventBean = getEventAtPosition(position);
+        int checkItem = userList.indexOf(eventBean.getList());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        final List<ListBean> finalUserList = userList;
         builder.setTitle(R.string.move2list).setSingleChoiceItems(new ListBeanAdapter(userList, context), checkItem,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // TODO: 2016/6/7 将事件归到清单中
+                        DataBaseHelper helper1 = OpenHelperManager.getHelper(context, DataBaseHelper.class);
+                        ListBean selectedList = finalUserList.get(which);
+                        try {
+                            EventDao eventDao = new EventDao(helper1.getEventDao());
+                            eventBean.setList(selectedList);
+                            eventDao.update(eventBean);
+                            dialog.dismiss();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        } finally {
+                            OpenHelperManager.releaseHelper();
+                            helper1 = null;
+                        }
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override

@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.geekerk.driptime.R;
 import com.geekerk.driptime.vo.ListBean;
 import java.util.List;
 
