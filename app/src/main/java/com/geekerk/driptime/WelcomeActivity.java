@@ -1,6 +1,8 @@
 package com.geekerk.driptime;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -8,10 +10,20 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 
+import com.geekerk.driptime.db.DataBaseHelper;
+import com.geekerk.driptime.db.ListDao;
+import com.geekerk.driptime.db.UserDao;
 import com.geekerk.driptime.view.ClockViewGroup;
+import com.geekerk.driptime.vo.UserBean;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.misc.TransactionManager;
 
+import java.sql.SQLException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -79,9 +91,38 @@ public class WelcomeActivity extends AppCompatActivity {
                         Pair.create(findViewById(R.id.bt_signin), "bt_signin")).toBundle());
                 break;
             case R.id.tv_skip:
-                Intent intent3 = new Intent(this, MainActivity.class);
-                startActivity(intent3);
-                finish();
+                DataBaseHelper helper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
+                try {
+                    final UserDao userDao = new UserDao(helper.getUserDao());
+                    final ListDao listDao = new ListDao(helper.getListDao());
+                    UserBean result = TransactionManager.callInTransaction(helper.getConnectionSource(),
+                            new Callable<UserBean>() {
+                                @Override
+                                public UserBean call() throws Exception {
+                                    UserBean user = userDao.queryByEmail(Build.DEVICE);
+                                    if (user == null) {
+                                        user = new UserBean(Build.DEVICE, Build.DEVICE, Build.DEVICE);
+                                        userDao.create(user);
+                                        listDao.initUserList(user);
+                                        userDao.refresh(user);
+                                    }
+                                    return user;
+                                }
+                            });
+                    //将当前用户id写入sharePreference
+                    SharedPreferences preference = getSharedPreferences("user", MODE_PRIVATE);
+                    preference.edit().putInt("currentUserID", result.getId()).commit();
+                    //成功注册后跳转到主页面
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.putExtra("currentUser", result);
+                    startActivity(intent);
+                    finish();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    OpenHelperManager.releaseHelper();
+                    helper = null;
+                }
                 break;
         }
     }
