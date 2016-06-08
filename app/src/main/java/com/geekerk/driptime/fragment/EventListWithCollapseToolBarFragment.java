@@ -115,7 +115,7 @@ public class EventListWithCollapseToolBarFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-    
+
     //从本地数据库获得数据
     private ArrayList<EventBean> queryLocalDatabase() {
         ArrayList<EventBean> data = new ArrayList<>();
