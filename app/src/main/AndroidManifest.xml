@@ -24,7 +24,7 @@
 
         <!-- 透明系统栏-->
         <activity
-            android:name=".SigninActivity"
+            android:name=".SignInActivity"
             android:launchMode="singleTop"
             android:theme="@style/ImageTranslucentTheme" />
 

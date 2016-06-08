@@ -27,7 +27,7 @@ import java.sql.SQLException;
 /**
  * Created by Administrator on 2016/5/23.
  */
-public class SigninActivity extends AppCompatActivity {
+public class SignInActivity extends AppCompatActivity {
     ImageView waveIv;
     AnimatorSet waveAnimatorSet;
     EditText emailEt, passwordEt;
@@ -117,7 +117,7 @@ public class SigninActivity extends AppCompatActivity {
                 }
             }
         } else if (view.getId() == R.id.no_account_sign_up) {
-            Intent intent = new Intent(SigninActivity.this, RegisterActivity.class);
+            Intent intent = new Intent(SignInActivity.this, RegisterActivity.class);
             startActivity(intent);
         }
     }

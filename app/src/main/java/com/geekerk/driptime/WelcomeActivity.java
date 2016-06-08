@@ -30,17 +30,17 @@ import java.util.concurrent.TimeUnit;
  */
 public class WelcomeActivity extends AppCompatActivity {
     private static final int CLOCK_GO = 1;
-    private static final String TAG = "WelcomeActivity";
-    private ScheduledThreadPoolExecutor executor;
-    private Handler handler;
-    private ClockViewGroup clockViewGroup;
+    private ScheduledThreadPoolExecutor mExecutor;
+    private Handler mHandler;
+    private ClockViewGroup mClockViewGroup;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        clockViewGroup = (ClockViewGroup) findViewById(R.id.clock);
-        handler = new Handler() {
+
+        mClockViewGroup = (ClockViewGroup) findViewById(R.id.clock);
+        mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 if (CLOCK_GO == msg.what) {
@@ -48,11 +48,11 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
             }
         };
-        executor = new ScheduledThreadPoolExecutor(1);
-        executor.scheduleAtFixedRate(new Runnable() {
+        mExecutor = new ScheduledThreadPoolExecutor(1);
+        mExecutor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                handler.sendEmptyMessage(CLOCK_GO);
+                mHandler.sendEmptyMessage(CLOCK_GO);
             }
         }, 0, 1, TimeUnit.SECONDS);
         initAnimation();
@@ -61,30 +61,30 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        executor.shutdownNow();
+        mExecutor.shutdownNow();
     }
 
     private void initAnimation() {
-        clockViewGroup.initClock();
+        mClockViewGroup.initClock();
     }
 
     private void clockGoAnimator() {
-        clockViewGroup.clockGo();
+        mClockViewGroup.clockGo();
     }
 
     public void doClick(View view) {
         switch (view.getId()) {
             case R.id.bt_register:
-                Intent intent1 = new Intent(this, RegisterActivity.class);
+                Intent intentRegister = new Intent(this, RegisterActivity.class);
                 //共享元素过度动画
-                startActivity(intent1, ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                startActivity(intentRegister, ActivityOptionsCompat.makeSceneTransitionAnimation(this,
                         Pair.create(findViewById(R.id.iv_logo), "share_logo"),
                         Pair.create(findViewById(R.id.bt_register), "bt_register")).toBundle());
                 break;
             case R.id.bt_signin:
-                Intent intent2 = new Intent(this, SigninActivity.class);
+                Intent intentSignIn = new Intent(this, SignInActivity.class);
                 //共享元素过度动画
-                startActivity(intent2, ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                startActivity(intentSignIn, ActivityOptionsCompat.makeSceneTransitionAnimation(this,
                         Pair.create(findViewById(R.id.iv_logo), "share_logo"),
                         Pair.create(findViewById(R.id.bt_signin), "bt_signin")).toBundle());
                 break;
@@ -121,6 +121,8 @@ public class WelcomeActivity extends AppCompatActivity {
                     OpenHelperManager.releaseHelper();
                     helper = null;
                 }
+                break;
+            default:
                 break;
         }
     }
