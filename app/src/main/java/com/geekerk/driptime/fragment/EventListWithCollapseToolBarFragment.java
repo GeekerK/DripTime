@@ -4,9 +4,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,12 +33,13 @@ import java.util.ArrayList;
  * Created by s21v on 2016/5/24.
  */
 public class EventListWithCollapseToolBarFragment extends Fragment {
-    private static final String TAG = "ContentListFragment";
+    private static final String TAG = "EventListWithCollapseToolBarFragment";
     private RecyclerView recyclerView;
     private DataBaseHelper dataBaseHelper;
     private String query;
     private String[] queryArgs;
     private EventRecyclerViewAdapter mAdapter;
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
 
     public static EventListWithCollapseToolBarFragment getInstance(String query, String... query_Args) {
         EventListWithCollapseToolBarFragment fragment = new EventListWithCollapseToolBarFragment();
@@ -66,8 +69,10 @@ public class EventListWithCollapseToolBarFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_main, container, false);
-        recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_contentlist, container, false);
+        View view = inflater.inflate(R.layout.app_bar_main, container, false);
+        mCollapsingToolbarLayout = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
+        mCollapsingToolbarLayout.setTitle("Today");
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mAdapter = new EventRecyclerViewAdapter(getActivity(), queryLocalDatabase());
         recyclerView.setAdapter(mAdapter);
@@ -84,7 +89,7 @@ public class EventListWithCollapseToolBarFragment extends Fragment {
                 }
             }
         });
-        return recyclerView;
+        return view;
     }
 
     @Override
@@ -129,5 +134,9 @@ public class EventListWithCollapseToolBarFragment extends Fragment {
         query = baseQuery;
         this.queryArgs = queryArgs;
         mAdapter.setData(queryLocalDatabase());
+    }
+
+    public void setToolBarTitle(String s) {
+        mCollapsingToolbarLayout.setTitle(s);
     }
 }
