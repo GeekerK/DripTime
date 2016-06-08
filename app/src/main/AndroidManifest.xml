@@ -15,7 +15,7 @@
 
         <activity
             android:name=".WelcomeActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -25,12 +25,12 @@
         <!-- 透明系统栏-->
         <activity
             android:name=".SignInActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:theme="@style/ImageTranslucentTheme" />
 
         <activity
             android:name=".RegisterActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:theme="@style/ImageTranslucentTheme" />
     </application>
 
