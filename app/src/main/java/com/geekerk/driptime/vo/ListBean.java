@@ -16,13 +16,14 @@ public class ListBean {
     @DatabaseField(canBeNull = false, columnName = "userID", foreign = true)
     private UserBean user;  //外键
 
-    public ListBean (){}
+    public ListBean() {
+    }
 
-    public ListBean (int id) {
+    public ListBean(int id) {
         this.id = id;
     }
 
-    public ListBean (String listName) {
+    public ListBean(String listName) {
         name = listName;
     }
 

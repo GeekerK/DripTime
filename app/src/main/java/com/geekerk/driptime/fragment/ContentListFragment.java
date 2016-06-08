@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +20,6 @@ import com.geekerk.driptime.adapter.EventRecyclerViewAdapter;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.EventRawRowMapper;
-import com.geekerk.driptime.db.UserDao;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.EventBean;
 import com.j256.ormlite.dao.GenericRawResults;
@@ -111,7 +109,7 @@ public class ContentListFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-    
+
     //从本地数据库获得数据
     private ArrayList<EventBean> queryLocalDatabase() {
         ArrayList<EventBean> data = new ArrayList<>();

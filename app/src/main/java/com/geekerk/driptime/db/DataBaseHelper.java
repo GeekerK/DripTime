@@ -2,6 +2,7 @@ package com.geekerk.driptime.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.UserBean;
@@ -9,6 +10,7 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+
 import java.sql.SQLException;
 
 /**

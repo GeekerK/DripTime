@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
@@ -24,6 +24,7 @@ import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.ListBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.misc.TransactionManager;
+
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -241,10 +242,10 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
                         }
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
         }).show();
     }
 

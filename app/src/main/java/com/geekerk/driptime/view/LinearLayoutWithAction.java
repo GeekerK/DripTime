@@ -37,6 +37,7 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
     private int defX;
     private int currentStatus = STATUS_HIDE;
     private EventDealInterface eventDealInterface;
+
     public LinearLayoutWithAction(Context context, int contentRes, int layoutHeightDimen) {
         this(context, null, 0);
         contentView = LayoutInflater.from(context).inflate(contentRes, null);
@@ -73,9 +74,11 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
         velocityTracker = VelocityTracker.obtain();
         scroller = new Scroller(context);
     }
+
     public LinearLayoutWithAction(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
+
     public LinearLayoutWithAction(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
@@ -196,13 +199,13 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
             case R.id.moveButton:
                 Log.i(TAG, "moveButton");
                 eventDealInterface.moveEventAtPosition(position);
-                scroller.startScroll(getScrollX(), 0 ,-getScrollX(), 0);
+                scroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
                 invalidate();
                 break;
             case R.id.modifyButton:
                 Log.i(TAG, "modifyButton");
                 eventDealInterface.modifyEventAtPosition(position);
-                scroller.startScroll(getScrollX(), 0 ,-getScrollX(), 0);
+                scroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
                 invalidate();
                 break;
             case R.id.deleteButton:

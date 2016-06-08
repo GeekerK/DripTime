@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.ListDao;
@@ -23,6 +24,7 @@ import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.NavBean;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -122,7 +124,7 @@ public class MainActivity extends AppCompatActivity
                                     .add(R.id.fragmentContainer, ContentListFragment.getInstance(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]), "contentList")
                                     .commit();
                         else
-                            fragment.changeData(BASE_QUERY,  String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
+                            fragment.changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
                         break;
                     case 1: //All
                         ContentListFragment fragment1 = (ContentListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
