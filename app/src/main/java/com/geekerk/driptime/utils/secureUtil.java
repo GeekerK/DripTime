@@ -30,7 +30,7 @@ public class SecureUtil {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA");
             digest.update(input.getBytes());
-            return  digest.digest();
+            return digest.digest();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

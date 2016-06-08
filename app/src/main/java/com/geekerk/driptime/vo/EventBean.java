@@ -31,7 +31,8 @@ public class EventBean {
     private UserBean user;  //用户，外键且不能为空
     private Priority priority;
 
-    public EventBean() {}
+    public EventBean() {
+    }
 
     public EventBean(int id, String title, Date deadline, Date releaseTime, int priorityLevel, boolean isFinished, UserBean user) {
         this.id = id;

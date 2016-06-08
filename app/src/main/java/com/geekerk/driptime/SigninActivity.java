@@ -9,12 +9,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.geekerk.driptime.db.DataBaseHelper;
@@ -74,19 +72,19 @@ public class SigninActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(waveAnimatorSet.isStarted()) {
+        if (waveAnimatorSet.isStarted()) {
             waveAnimatorSet.end();
         }
     }
 
     public void doClick(View view) {
         //点击登陆按钮
-        if(view.getId() == R.id.bt_signin) {
-            if(TextUtils.isEmpty(emailEt.getText())){
-                Toast.makeText(this, "Email "+getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
+        if (view.getId() == R.id.bt_signin) {
+            if (TextUtils.isEmpty(emailEt.getText())) {
+                Toast.makeText(this, "Email " + getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
                 return;
-            } else if(TextUtils.isEmpty(passwordEt.getText())) {
-                Toast.makeText(this, "Password "+getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
+            } else if (TextUtils.isEmpty(passwordEt.getText())) {
+                Toast.makeText(this, "Password " + getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
                 return;
             } else {
                 DataBaseHelper helper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
@@ -118,7 +116,7 @@ public class SigninActivity extends AppCompatActivity {
                     helper = null;
                 }
             }
-        } else if(view.getId() == R.id.no_account_sign_up) {
+        } else if (view.getId() == R.id.no_account_sign_up) {
             Intent intent = new Intent(SigninActivity.this, RegisterActivity.class);
             startActivity(intent);
         }

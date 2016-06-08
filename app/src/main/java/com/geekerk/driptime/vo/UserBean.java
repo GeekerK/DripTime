@@ -2,6 +2,7 @@ package com.geekerk.driptime.vo;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import java.io.Serializable;
 
 /**
@@ -21,7 +22,8 @@ public class UserBean implements Serializable {
     @DatabaseField(columnName = "password")
     private String password;
 
-    public UserBean(){}
+    public UserBean() {
+    }
 
     public UserBean(int id) {
         this.id = id;

@@ -11,8 +11,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:label="@string/app_name"></activity>
 
         <activity
             android:name=".WelcomeActivity"
@@ -26,13 +25,13 @@
         <!-- 透明系统栏-->
         <activity
             android:name=".SigninActivity"
-            android:theme="@style/ImageTranslucentTheme"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop"
+            android:theme="@style/ImageTranslucentTheme" />
 
         <activity
             android:name=".RegisterActivity"
-            android:theme="@style/ImageTranslucentTheme"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop"
+            android:theme="@style/ImageTranslucentTheme" />
     </application>
 
 </manifest>

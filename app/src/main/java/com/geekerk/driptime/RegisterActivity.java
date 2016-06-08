@@ -3,17 +3,14 @@ package com.geekerk.driptime;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,7 +24,6 @@ import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.misc.TransactionManager;
 
-import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 
@@ -88,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(waveAnimatorSet.isStarted()) {
+        if (waveAnimatorSet.isStarted()) {
             waveAnimatorSet.end();
         }
     }
@@ -96,15 +92,15 @@ public class RegisterActivity extends AppCompatActivity {
     public void doClick(View view) {
         if (view.getId() == R.id.bt_register) {
             if (TextUtils.isEmpty(usernameEt.getText())) {  //检查用户名是否为空
-                Toast.makeText(this, "UserName "+getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "UserName " + getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
                 return;
             } else if (TextUtils.isEmpty(passwordEt.getText())) {   //检查密码是否为空
-                Toast.makeText(this, "Password "+getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Password " + getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
                 return;
-            }else if (TextUtils.isEmpty(emailEt.getText())) {   //检查邮箱是否为空
-                Toast.makeText(this, "Email "+getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
+            } else if (TextUtils.isEmpty(emailEt.getText())) {   //检查邮箱是否为空
+                Toast.makeText(this, "Email " + getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
                 return;
-            }  else {
+            } else {
                 DataBaseHelper helper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
                 try {
                     final UserDao userDao = new UserDao(helper.getUserDao());
