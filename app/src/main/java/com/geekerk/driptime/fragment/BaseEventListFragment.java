@@ -5,14 +5,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-
 import com.geekerk.driptime.MainActivity;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.EventRawRowMapper;
 import com.geekerk.driptime.vo.EventBean;
 import com.j256.ormlite.dao.GenericRawResults;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 

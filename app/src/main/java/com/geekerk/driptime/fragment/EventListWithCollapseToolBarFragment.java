@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,19 +20,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.geekerk.driptime.MainActivity;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.EventRecyclerViewAdapter;
-import com.geekerk.driptime.db.DataBaseHelper;
-import com.geekerk.driptime.db.EventDao;
-import com.geekerk.driptime.db.EventRawRowMapper;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
-import com.geekerk.driptime.vo.EventBean;
-import com.j256.ormlite.dao.GenericRawResults;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
 
 /**
  * Created by s21v on 2016/5/24.

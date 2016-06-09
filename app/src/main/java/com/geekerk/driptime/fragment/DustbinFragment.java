@@ -13,7 +13,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.DustbinEventListViewAdapter;
 
@@ -28,6 +30,7 @@ public class DustbinFragment extends BaseEventListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dustbin, container, false);
+
         //------ 设置toolbar ------
         mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
@@ -37,16 +40,19 @@ public class DustbinFragment extends BaseEventListFragment {
         mDrawer.setDrawerListener(toggle);
         toggle.syncState();
         //------ end --------
+
         ListView listView = (ListView) view.findViewById(android.R.id.list);
         mAdapter = new DustbinEventListViewAdapter(getContext(), queryLocalDatabase());
         listView.setAdapter(mAdapter);
+        TextView emptyView = (TextView) view.findViewById(R.id.empty);
+        listView.setEmptyView(emptyView);
         return view;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.fragment_common_list, menu);
+        inflater.inflate(R.menu.fragment_dustbin_list, menu);
     }
 
     @Override
@@ -54,8 +60,6 @@ public class DustbinFragment extends BaseEventListFragment {
         int id = item.getItemId();
         if (id == R.id.action_search) {
             return true;
-        } else if (id == R.id.action_edit) {
-
         }
         return super.onOptionsItemSelected(item);
     }
