@@ -5,10 +5,16 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,46 +38,19 @@ import java.util.ArrayList;
 /**
  * Created by s21v on 2016/5/24.
  */
-public class EventListWithCollapseToolBarFragment extends Fragment {
-    private static final String TAG = "EventListWithCollapseToolBarFragment";
+public class EventListWithCollapseToolBarFragment extends BaseEventListFragment {
+    private static final String TAG = "CollapseToolBarFragment";
     private RecyclerView recyclerView;
-    private DataBaseHelper dataBaseHelper;
-    private String query;
-    private String[] queryArgs;
     private EventRecyclerViewAdapter mAdapter;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
-
-    public static EventListWithCollapseToolBarFragment getInstance(String query, String... query_Args) {
-        EventListWithCollapseToolBarFragment fragment = new EventListWithCollapseToolBarFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("query", query);
-        bundle.putStringArray("query_args", query_Args);
-        fragment.setArguments(bundle);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        dataBaseHelper = ((MainActivity) getActivity()).getDataBaseHelper();
-        if (savedInstanceState != null) {
-            query = savedInstanceState.getString("query");
-            queryArgs = savedInstanceState.getStringArray("query_args");
-        } else {
-            query = getArguments().getString("query");
-            queryArgs = getArguments().getStringArray("query_args");
-        }
-        setRetainInstance(true);
-        queryLocalDatabase();
-    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.app_bar_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_today, container, false);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
-        mCollapsingToolbarLayout.setTitle("Today");
+        if (!TextUtils.isEmpty(mToolbarTitle))
+            mCollapsingToolbarLayout.setTitle(mToolbarTitle);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mAdapter = new EventRecyclerViewAdapter(getActivity(), queryLocalDatabase());
@@ -89,14 +68,25 @@ public class EventListWithCollapseToolBarFragment extends Fragment {
                 }
             }
         });
-        return view;
-    }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("query", query);
-        outState.putStringArray("query_args", queryArgs);
+        //------ 设置toolbar ------
+        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(), mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.setDrawerListener(toggle);
+        toggle.syncState();
+        //------ end --------
+
+        //快速新建按钮
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+        return view;
     }
 
     @Override
@@ -116,27 +106,11 @@ public class EventListWithCollapseToolBarFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    //从本地数据库获得数据
-    private ArrayList<EventBean> queryLocalDatabase() {
-        ArrayList<EventBean> data = new ArrayList<>();
-        try {
-            EventDao eventDao = new EventDao(dataBaseHelper.getEventDao());
-            GenericRawResults<EventBean> results = eventDao.queryRaw(query, new EventRawRowMapper(), queryArgs);
-            data.addAll(results.getResults());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return data;
-    }
-
     //改变查询条件，重新读取加载数据
     public void changeData(String baseQuery, String... queryArgs) {
-        query = baseQuery;
-        this.queryArgs = queryArgs;
+        mCollapsingToolbarLayout.setTitle(mToolbarTitle);
+        mQuery = baseQuery;
+        this.mQueryArgs = queryArgs;
         mAdapter.setData(queryLocalDatabase());
-    }
-
-    public void setToolBarTitle(String s) {
-        mCollapsingToolbarLayout.setTitle(s);
     }
 }

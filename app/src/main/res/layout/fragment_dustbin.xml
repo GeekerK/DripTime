@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:theme="@style/AppTheme.AppBarOverlay"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.geekerk.driptime.MainActivity">
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toolbar"
+        android:background="?colorPrimary"
+        android:minHeight="?android:actionBarSize"/>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@android:id/list"
+        android:divider="@mipmap/nav_divider"
+        android:dividerHeight="2dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@android:id/empty"
+        android:gravity="center"
+        android:text="垃圾桶很整洁"
+        android:textAppearance="?android:textAppearanceLarge"/>
+</LinearLayout>

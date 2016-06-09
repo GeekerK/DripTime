@@ -10,12 +10,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.ListDao;
+import com.geekerk.driptime.fragment.BaseEventListFragment;
+import com.geekerk.driptime.fragment.DustbinFragment;
 import com.geekerk.driptime.fragment.EventListWithCollapseToolBarFragment;
 import com.geekerk.driptime.nav.NavAdapter;
 import com.geekerk.driptime.utils.DateUtil;
@@ -23,6 +27,7 @@ import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.NavBean;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -88,73 +93,86 @@ public class MainActivity extends AppCompatActivity
         navBeanList.add(navBeanAddItem);
         navBeanList.add(navBeanSettings);
         mNavMenu.setAdapter(new NavAdapter(this, navBeanList, arrayList));
-        mNavMenu.setSelectedGroup(0);
         mNavMenu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                switch (groupPosition) {
-                    case 0: //today
-                        EventListWithCollapseToolBarFragment fragment = (EventListWithCollapseToolBarFragment) getSupportFragmentManager().findFragmentByTag("contentList");
-                        String[] args = DateUtil.getQueryBetweenDay();
-                        if (fragment == null)
-                            getSupportFragmentManager().beginTransaction()
-                                    .add(R.id.fragmentContainer, EventListWithCollapseToolBarFragment.getInstance(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]), "contentList")
-                                    .commit();
-                        else
-                            fragment.changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
-                        fragment.setToolBarTitle(list.get(groupPosition));
-                        break;
-                    case 1: //All
-                        EventListWithCollapseToolBarFragment fragment1 = (EventListWithCollapseToolBarFragment) getSupportFragmentManager().findFragmentByTag("contentList");
-                        if (fragment1 == null)
-                            getSupportFragmentManager().beginTransaction()
-                                    .add(R.id.fragmentContainer, EventListWithCollapseToolBarFragment.getInstance(QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId)))
-                                    .commit();
-                        else
-                            fragment1.changeData(QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId));
-                        fragment1.setToolBarTitle(list.get(groupPosition));
-                        break;
-                    case 2: //week
-                        EventListWithCollapseToolBarFragment fragment2 = (EventListWithCollapseToolBarFragment) getSupportFragmentManager().findFragmentByTag("contentList");
-                        String[] args1 = DateUtil.getQueryBetweenWeek();
-                        if (fragment2 == null)
-                            getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.fragmentContainer, EventListWithCollapseToolBarFragment.getInstance(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]), "contentList")
-                                    .commit();
-                        else
-                            fragment2.changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]);
-                        fragment2.setToolBarTitle(list.get(groupPosition));
-                        break;
-                    case 3: //Collection Box
-                        EventListWithCollapseToolBarFragment fragment3 = (EventListWithCollapseToolBarFragment) getSupportFragmentManager().findFragmentByTag("contentList");
-                        if (fragment3 == null)
-                            getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.fragmentContainer, EventListWithCollapseToolBarFragment.getInstance(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId)), "contentList")
-                                    .commit();
-                        else
-                            fragment3.changeData(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
-                        fragment3.setToolBarTitle(list.get(groupPosition));
-                        break;
-                    case 4: //Completed
-                        EventListWithCollapseToolBarFragment fragment4 = (EventListWithCollapseToolBarFragment) getSupportFragmentManager().findFragmentByTag("contentList");
-                        if (fragment4 == null)
-                            getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.fragmentContainer, EventListWithCollapseToolBarFragment.getInstance(QUERY_COMPLETED, String.valueOf(userId), String.valueOf(dustinListId)), "contentList")
-                                    .commit();
-                        else
-                            fragment4.changeData(QUERY_COMPLETED, String.valueOf(userId), String.valueOf(dustinListId));
-                        fragment4.setToolBarTitle(list.get(groupPosition));
-                        break;
-                    case 5: //Dustbin
-                        EventListWithCollapseToolBarFragment fragment5 = (EventListWithCollapseToolBarFragment) getSupportFragmentManager().findFragmentByTag("contentList");
-                        if (fragment5 == null)
-                            getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.fragmentContainer, EventListWithCollapseToolBarFragment.getInstance(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(dustinListId)), "contentList")
-                                    .commit();
-                        else
-                            fragment5.changeData(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(dustinListId));
-                        fragment5.setToolBarTitle(list.get(groupPosition));
-                        break;
+                BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
+                try {
+                    switch (groupPosition) {
+                        case 0: //today
+                            String[] args = DateUtil.getQueryBetweenDay();
+                            if (fragment instanceof EventListWithCollapseToolBarFragment)
+                            {
+                                fragment.setToolbarTitle(list.get(groupPosition));
+                                ((EventListWithCollapseToolBarFragment) fragment).changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
+                            }
+                            else {
+                                fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
+                                fragment.setToolbarTitle(list.get(groupPosition));
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
+                            }
+                            break;
+                        case 1: //All
+                            if (fragment instanceof EventListWithCollapseToolBarFragment)
+                            {
+                                fragment.setToolbarTitle(list.get(groupPosition));
+                                ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId));
+                            }
+                            else {
+                                fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId));
+                                fragment.setToolbarTitle(list.get(groupPosition));
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
+                            }
+                            break;
+                        case 2: //week
+                            String[] args1 = DateUtil.getQueryBetweenWeek();
+                            if (fragment instanceof EventListWithCollapseToolBarFragment)
+                            {
+                                fragment.setToolbarTitle(list.get(groupPosition));
+                                ((EventListWithCollapseToolBarFragment) fragment).changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]);
+                            }
+                            else {
+                                fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]);
+                                fragment.setToolbarTitle(list.get(groupPosition));
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
+                            }
+                            break;
+                        case 3: //Collection Box
+                            if (fragment instanceof EventListWithCollapseToolBarFragment)
+                            {
+                                fragment.setToolbarTitle(list.get(groupPosition));
+                                ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
+                            }
+                            else {
+                                fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
+                                fragment.setToolbarTitle(list.get(groupPosition));
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
+                            }
+                            break;
+                        case 4: //Completed
+                            if (fragment instanceof EventListWithCollapseToolBarFragment)
+                            {
+                                fragment.setToolbarTitle(list.get(groupPosition));
+                                ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_COMPLETED, String.valueOf(userId), String.valueOf(dustinListId));
+                            }
+                            else {
+                                fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_COMPLETED, String.valueOf(userId), String.valueOf(dustinListId));
+                                fragment.setToolbarTitle(list.get(groupPosition));
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
+                            }
+                            break;
+                        case 5: //Dustbin
+                            if (!(fragment instanceof DustbinFragment)) {
+                                fragment = BaseEventListFragment.getInstance(DustbinFragment.class, drawer, QUERY_IN_LIST, String.valueOf(userId), String.valueOf(dustinListId));
+                                fragment.setToolbarTitle(list.get(groupPosition));
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
+                            }
+                            break;
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
                 }
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
@@ -172,35 +190,22 @@ public class MainActivity extends AppCompatActivity
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         //初始化数据库
         initData();
-        //加载fragment
+
+        //初始加载fragment
+        mNavMenu.setSelectedGroup(0);
         String[] arg = DateUtil.getQueryBetweenDay();
-        EventListWithCollapseToolBarFragment fragment = EventListWithCollapseToolBarFragment.getInstance(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), arg[0], arg[1]);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragmentContainer, fragment, "contentList")
-                .commit();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        //快速新建按钮
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        try {
+            EventListWithCollapseToolBarFragment fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), arg[0], arg[1]);
+            getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, fragment, "contentList").commit();
+            fragment.setToolbarTitle("Today");
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
