@@ -24,4 +24,7 @@
     <string name="password_error">Password Input Error !</string>
     <string name="email_error">Email Input Error</string>
     <string name="action_deleteAll">Empty</string>
+    <string name="bustbinReply">Reply</string>
+    <string name="bustbinDelete">Delete</string>
+    <string name="selected">Selected</string>
 </resources>
