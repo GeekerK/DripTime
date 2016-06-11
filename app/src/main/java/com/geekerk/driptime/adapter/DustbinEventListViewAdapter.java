@@ -75,6 +75,14 @@ public class DustbinEventListViewAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void removeItem(int position) {
+        mData.remove(position);
+    }
+
+    public ArrayList<EventBean> getData() {
+        return mData;
+    }
+
     class DustbinViewHolder {
         TextView mTitle;
         TextView mTime;

@@ -16,15 +16,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.DustbinEventListViewAdapter;
+import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.vo.EventBean;
-
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -60,7 +60,7 @@ public class DustbinFragment extends BaseEventListFragment {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)  //3.0一下注册上下文菜单
             registerForContextMenu(listView);
-        else {
+        else {  //3.0以后使用actionMode
             listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
             listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
                 @Override
@@ -85,15 +85,42 @@ public class DustbinFragment extends BaseEventListFragment {
 
                 @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-
-                        Log.i(TAG, "CheckedItemIds:"+listView.getCheckedItemPositions());
-                    // TODO: 2016/6/10 根据position去操作数据库
+                    Log.i(TAG, listView.getCheckedItemPositions().toString());
                     switch (item.getItemId()) {
                         case R.id.reply :
                             //恢复，删除清单为空
+                            for (int i=mAdapter.getCount()-1; i>=0; i--) {  //从下向上操作原因是 mAdapter.removeItem(i) 会影响到 mAdapter.getCount() 的取值
+                                if (listView.isItemChecked(i)) {
+                                    EventBean selected = (EventBean) mAdapter.getItem(i);
+                                    selected.setList(null);
+                                    try {
+                                        EventDao eventDao = new EventDao(mDatabaseHelper.getEventDao()); //数据库操作
+                                        eventDao.update(selected);
+                                        mAdapter.removeItem(i); //更新缓存
+                                        listView.setItemChecked(i, false);  //重置 listview 的 check 状态
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                            mAdapter.notifyDataSetChanged();
                             return true;
                         case R.id.delete :
                             //从数据库中删除记录
+                            for (int i=mAdapter.getCount()-1; i>=0; i--) {
+                                if (listView.isItemChecked(i)) {
+                                    EventBean selected = (EventBean) mAdapter.getItem(i);
+                                    try {
+                                        EventDao eventDao = new EventDao(mDatabaseHelper.getEventDao());
+                                        eventDao.delete(selected);
+                                        mAdapter.removeItem(i);
+                                        listView.setItemChecked(i, false);
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                            mAdapter.notifyDataSetChanged();
                             return true;
                     }
                     return false;
@@ -125,13 +152,31 @@ public class DustbinFragment extends BaseEventListFragment {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = menuInfo.position;
+        EventBean selected = (EventBean) mAdapter.getItem(position);
         // TODO: 2016/6/10 根据position去操作数据库
         switch (item.getItemId()) {
             case R.id.reply :
                 //恢复，删除清单为空
+                selected.setList(null);
+                try {
+                    EventDao eventDao = new EventDao(mDatabaseHelper.getEventDao()); //数据库操作
+                    eventDao.update(selected);
+                    mAdapter.removeItem(position);
+                    mAdapter.notifyDataSetChanged();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 return true;
             case R.id.delete :
                 //从数据库中删除记录
+                try {
+                    EventDao eventDao = new EventDao(mDatabaseHelper.getEventDao());
+                    eventDao.delete(selected);
+                    mAdapter.removeItem(position);
+                    mAdapter.notifyDataSetChanged();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 return true;
         }
         return super.onContextItemSelected(item);
@@ -140,9 +185,25 @@ public class DustbinFragment extends BaseEventListFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_search) {
+        if (id == R.id.action_empty) {
+            try {
+                EventDao eventDao = new EventDao(mDatabaseHelper.getEventDao());
+                eventDao.deleteCollection(mAdapter.getData());
+                mAdapter.getData().clear();
+                mAdapter.notifyDataSetChanged();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (mAdapter.getCount() == 0)
+            menu.setGroupVisible(R.id.group, false);
+        else
+            menu.setGroupVisible(R.id.group, true);
     }
 }
