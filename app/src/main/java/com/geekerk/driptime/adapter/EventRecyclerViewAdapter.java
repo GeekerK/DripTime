@@ -210,7 +210,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         List<ListBean> userList = null;
         try {
             ListDao listDao = new ListDao(helper.getListDao());
-            userList = listDao.queryByUserId(userId);
+            userList = listDao.queryByUserId(userId, false);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

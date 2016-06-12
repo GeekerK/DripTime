@@ -11,7 +11,7 @@
     <string name="today">Today</string>
     <string name="action_search">Search</string>
     <string name="action_edit">Edit</string>
-    <string name="complete">已完成</string>
+    <string name="complete">Complete</string>
     <string name="switch_to_login">Switch to login</string>
     <string name="register">Register</string>
     <string name="username">Username</string>
@@ -27,4 +27,8 @@
     <string name="bustbinReply">Reply</string>
     <string name="bustbinDelete">Delete</string>
     <string name="selected">Selected</string>
+    <string name="addList">Add List</string>
+    <string name="ok">Ok</string>
+    <string name="inputListName">Input New List\'s Name</string>
+    <string name="listExisted">List has been existed</string>
 </resources>

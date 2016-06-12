@@ -1,6 +1,8 @@
 package com.geekerk.driptime.nav;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Path;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +13,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.geekerk.driptime.R;
+import com.geekerk.driptime.db.DataBaseHelper;
+import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.utils.LayoutUtil;
+import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.NavBean;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,12 +33,32 @@ import java.util.List;
 public final class NavAdapter extends BaseExpandableListAdapter {
     private Context mContext;
     private List<NavBean> mGroups;
-    private List<List<String>> mItems;
+    private List<ListBean> mLists, mClosedLists;
+    private int mCurrentUserId;
 
-    public NavAdapter(Context context, List<NavBean> groups, List<List<String>> items) {
+    public NavAdapter(Context context, List<NavBean> groups) {
         mContext = context;
         mGroups = groups;
-        mItems = items;
+        mCurrentUserId = context.getSharedPreferences("user", Context.MODE_PRIVATE).getInt("currentUserID",-1);
+        initData();
+    }
+
+    public void initData() {
+        DataBaseHelper helper = OpenHelperManager.getHelper(mContext, DataBaseHelper.class);
+        try {
+            ListDao listDao = new ListDao(helper.getListDao());
+            mLists = listDao.queryCustomList(mCurrentUserId,false);
+            mClosedLists = listDao.queryCustomList(mCurrentUserId,true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (mLists == null)
+                mLists = new ArrayList<>();
+            if (mClosedLists == null)
+                mClosedLists = new ArrayList<>();
+            OpenHelperManager.releaseHelper();
+            helper = null;
+        }
     }
 
     @Override
@@ -50,33 +78,49 @@ public final class NavAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.nav_groups, null);
-        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutUtil.getPixelByDIP(mContext, 60)));
-
-        TextView textView = (TextView) view.findViewById(R.id.nav_groups_name);
-        textView.setText(mGroups.get(groupPosition).getmNavName());
-
-        ImageView imageViewIcon = (ImageView) view.findViewById(R.id.nav_groups_icon);
-        imageViewIcon.setImageResource(mGroups.get(groupPosition).getmIconResource());
-
-        FrameLayout frameLayoutMsg = (FrameLayout) view.findViewById(R.id.nav_groups_msg);
-        TextView textViewMsg = (TextView) view.findViewById(R.id.nav_msg_num);
-        textViewMsg.setText(String.valueOf(mGroups.get(groupPosition).getmMsgNum()));
-        frameLayoutMsg.setVisibility(mGroups.get(groupPosition).getmMsgNum() == 0 ? View.INVISIBLE : View.VISIBLE);
-        return view;
+        ItemViewHolder viewHolder;
+        if (convertView == null) {
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.nav_groups, null);
+            convertView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutUtil.getPixelByDIP(mContext, 60)));
+            viewHolder = new ItemViewHolder();
+            viewHolder.navTitleIv = (TextView) convertView.findViewById(R.id.nav_groups_name);
+            viewHolder.navIconIv = (ImageView) convertView.findViewById(R.id.nav_groups_icon);
+            viewHolder.navMsgView = convertView.findViewById(R.id.nav_groups_msg);
+            viewHolder.navMsgNumTv = (TextView) convertView.findViewById(R.id.nav_msg_num);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ItemViewHolder) convertView.getTag();
+        }
+        viewHolder.navTitleIv.setText(mGroups.get(groupPosition).getmNavName());
+        viewHolder.navIconIv.setImageResource(mGroups.get(groupPosition).getmIconResource());
+        viewHolder.navMsgNumTv.setText(String.valueOf(mGroups.get(groupPosition).getmMsgNum()));
+        viewHolder.navMsgView.setVisibility(mGroups.get(groupPosition).getmMsgNum() == 0 ? View.INVISIBLE : View.VISIBLE);
+        return convertView;
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return mItems.get(groupPosition).get(childPosition);
+        NavBean currentGroup = mGroups.get(groupPosition);
+        if (currentGroup.getmNavName().equals("Lists")) {
+            if (childPosition == mLists.size()) //这里是添加清单，没有对应的Object
+                return null;
+            else
+                return mLists.get(childPosition);
+        } else if (currentGroup.getmNavName().equals("ClosedLists")) {
+            return mClosedLists.get(childPosition);
+        }
+        return null;
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        if (mItems.size() <= groupPosition) {
-            return 0;
+        NavBean currentGroup = mGroups.get(groupPosition);
+        if (currentGroup.getmNavName().equals("Lists")) {
+            return mLists.size()+1; //清单列表中有一固定项 添加清单 ，所以这里返回Count要加1
+        } else if (currentGroup.getmNavName().equals("ClosedLists")) {
+            return mClosedLists.size();
         }
-        return mItems.get(groupPosition).size();
+        return 0;
     }
 
     @Override
@@ -86,19 +130,80 @@ public final class NavAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.nav_groups, null);
-        TextView textView = (TextView) view.findViewById(R.id.nav_groups_name);
-        textView.setText(mItems.get(groupPosition).get(childPosition));
-        return view;
+        ItemViewHolder viewHolder;
+        if (convertView == null) {
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.nav_groups, null);
+            convertView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutUtil.getPixelByDIP(mContext, 60)));
+            convertView.setPadding(mContext.getResources().getDimensionPixelSize(R.dimen.navChildPaddingleft),0,0,0);
+            viewHolder = new ItemViewHolder();
+            viewHolder.navTitleIv = (TextView) convertView.findViewById(R.id.nav_groups_name);
+            viewHolder.navIconIv = (ImageView) convertView.findViewById(R.id.nav_groups_icon);
+            viewHolder.navMsgView = convertView.findViewById(R.id.nav_groups_msg);
+            viewHolder.navMsgNumTv = (TextView) convertView.findViewById(R.id.nav_msg_num);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ItemViewHolder) convertView.getTag();
+        }
+        NavBean currentGroup = mGroups.get(groupPosition);
+        if (currentGroup.getmNavName().equals("Lists")) {   //清单列表中的
+            if (isLastChild) {
+                viewHolder.navTitleIv.setText(mContext.getResources().getText(R.string.addList));
+                viewHolder.navIconIv.setImageResource(R.mipmap.nav_additem);
+                viewHolder.navMsgView.setVisibility(View.GONE);
+            } else {
+                viewHolder.navTitleIv.setText(mLists.get(childPosition).getName());
+                viewHolder.navIconIv.setImageResource(R.mipmap.nav_nearlysevendays);
+                // TODO: 2016/6/12 设置清单里的事件数
+                viewHolder.navMsgView.setVisibility(View.GONE);
+            }
+        } else if (currentGroup.getmNavName().equals("ClosedLists")){   //已关闭清单中的
+            viewHolder.navTitleIv.setText(mLists.get(childPosition).getName());
+            viewHolder.navIconIv.setImageResource(R.mipmap.nav_nearlysevendays);
+            viewHolder.navMsgView.setVisibility(View.GONE);
+        }
+        return convertView;
+    }
+
+    //返回指定childPosition 所表示的清单ID
+    public int getListId(int groupPosition, int childPosition) {
+        NavBean currentGroup = mGroups.get(groupPosition);
+        if (currentGroup.getmNavName().equals("Lists")) {   //清单列表中的清单
+            return mLists.get(childPosition).getId();
+        } else if (currentGroup.getmNavName().equals("ClosedLists")){
+            return mClosedLists.get(childPosition).getId();
+        }
+        return 0;
+    }
+
+    public String getListName(int groupPosition, int childPosition) {
+        NavBean currentGroup = mGroups.get(groupPosition);
+        if (currentGroup.getmNavName().equals("Lists")) {   //清单列表中的清单
+            return mLists.get(childPosition).getName();
+        } else if (currentGroup.getmNavName().equals("ClosedLists")){
+            return mClosedLists.get(childPosition).getName();
+        }
+        return null;
+    }
+
+    class ItemViewHolder {
+        TextView navTitleIv;
+        ImageView navIconIv;
+        View navMsgView;
+        TextView navMsgNumTv;
     }
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean hasStableIds() {
         return true;
+    }
+
+    //指定位置是否是清单列表中的最后一个位置,即是否是添加清单的位置
+    public boolean isLastChild(int childPosition) {
+        return childPosition == mLists.size();
     }
 }

@@ -15,6 +15,8 @@ public class ListBean {
     private String name;
     @DatabaseField(canBeNull = false, columnName = "userID", foreign = true)
     private UserBean user;  //外键
+    @DatabaseField(columnName = "isClosed")
+    private boolean isClosed;
 
     public ListBean() {
     }
@@ -49,6 +51,14 @@ public class ListBean {
 
     public void setUser(UserBean user) {
         this.user = user;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
     }
 
     @Override

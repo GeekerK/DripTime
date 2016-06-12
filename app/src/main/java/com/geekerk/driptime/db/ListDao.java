@@ -36,8 +36,19 @@ public class ListDao {
         return null;
     }
 
-    //得到用户除垃圾箱外所有的清单
-    public List<ListBean> queryByUserId(int userId) throws SQLException {
-        return listDao.queryBuilder().where().eq("userID", userId).and().not().eq("listName", "垃圾桶").query();
+    //得到用户除垃圾箱外所有的未关闭清单
+    public List<ListBean> queryByUserId(int userId, boolean isClosed) throws SQLException {
+        return listDao.queryBuilder().where().eq("userID", userId).and().not().eq("listName", "垃圾桶")
+                .and().eq("isClosed", isClosed).query();
+    }
+
+    //返回用户的自定义的清单
+    public List<ListBean> queryCustomList(int userId, boolean isClosed) throws SQLException {
+        return listDao.queryBuilder().where().eq("userID", userId).and().eq("isClosed", isClosed).and()
+                .not().eq("listName","垃圾桶").and().not().eq("listName","收集箱").query();
+    }
+
+    public void create(ListBean listBean) throws SQLException {
+        listDao.create(listBean);
     }
 }

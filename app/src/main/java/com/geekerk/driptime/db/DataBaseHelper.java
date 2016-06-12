@@ -18,7 +18,7 @@ import java.sql.SQLException;
  */
 public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "DripTime.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     private Dao<EventBean, Integer> EventDao;
     private Dao<ListBean, Integer> ListDao;
     private Dao<UserBean, Integer> UserDao;

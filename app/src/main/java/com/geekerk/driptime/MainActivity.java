@@ -1,14 +1,17 @@
 package com.geekerk.driptime;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
+
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.ListDao;
@@ -18,6 +21,7 @@ import com.geekerk.driptime.fragment.EventListWithCollapseToolBarFragment;
 import com.geekerk.driptime.nav.NavAdapter;
 import com.geekerk.driptime.utils.DateUtil;
 import com.geekerk.driptime.vo.EventBean;
+import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.NavBean;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -26,8 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     //查询指定用户在一段时间内的所有未放到垃圾箱的事件，按ID降序
     private static final String BASE_QUERY =
@@ -38,12 +41,16 @@ public class MainActivity extends AppCompatActivity
     private static final String QUERY_IN_LIST = "select * from table_event where userId = ? and listId = ? order by id DESC";
     //查询指定用户未放到垃圾箱的所有已完成的事件
     private static final String QUERY_COMPLETED = "select * from table_event where userId = ? and isFinished = 1 and (listId <> ? or listId is null) order by id DESC";
+    //查询指定用户的指定清单中的事件
+    private static final String QUERY_BY_LIST = "select * from table_event where userId = ? and listId = ? order by id DESC";
+
     //当前用户Id，当前用户垃圾箱，收件箱ID
     private int userId, dustinListId, collectBoxListId;
     private ExpandableListView mNavMenu;
     private DataBaseHelper dataBaseHelper;
     private UserBean currentUser;
     private DrawerLayout drawer;
+    private NavAdapter mNavAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,25 +64,16 @@ public class MainActivity extends AppCompatActivity
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavMenu = (ExpandableListView) drawer.findViewById(R.id.nav_menu);
-        final List<String> list = new ArrayList<>();
-        list.add("Today");
-        list.add("All");
-        list.add("Nearly Seven Days");
-        list.add("Collection Box");
-        list.add("Completed");
-        list.add("Dustbin");
-        list.add("Add Item");
-        list.add("Settings");
-        ArrayList<List<String>> arrayList = new ArrayList<>();
 
-        List<NavBean> navBeanList = new ArrayList<>();
+        //初始化菜单数据
+        final List<NavBean> navBeanList = new ArrayList<>();
         NavBean navBeanToday = new NavBean(R.mipmap.nav_today, "Today", 3);
         NavBean navBeanAll = new NavBean(R.mipmap.nav_all, "All", 15);
         NavBean navBeanNearlySevenDays = new NavBean(R.mipmap.nav_nearlysevendays, "Nearly Seven Days", 28);
         NavBean navBeanCollectionBox = new NavBean(R.mipmap.nav_collectionbox, "Collection Box", 0);
         NavBean navBeanCompleted = new NavBean(R.mipmap.nav_completed, "Completed", 0);
         NavBean navBeanDustbin = new NavBean(R.mipmap.nav_dustbin, "Dustbin", 0);
-        NavBean navBeanAddItem = new NavBean(R.mipmap.nav_additem, "Add Item", 0);
+        NavBean navBeanAddItem = new NavBean(R.mipmap.nav_additem, "Lists", 0);
         NavBean navBeanSettings = new NavBean(R.mipmap.nav_settings, "Settings", 0);
         navBeanList.add(navBeanToday);
         navBeanList.add(navBeanAll);
@@ -85,7 +83,10 @@ public class MainActivity extends AppCompatActivity
         navBeanList.add(navBeanDustbin);
         navBeanList.add(navBeanAddItem);
         navBeanList.add(navBeanSettings);
-        mNavMenu.setAdapter(new NavAdapter(this, navBeanList, arrayList));
+        mNavAdapter = new NavAdapter(this, navBeanList);
+        mNavMenu.setAdapter(mNavAdapter);
+
+        //设置 Group Click 监听
         mNavMenu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
@@ -96,70 +97,82 @@ public class MainActivity extends AppCompatActivity
                             String[] args = DateUtil.getQueryBetweenDay();
                             if (fragment instanceof EventListWithCollapseToolBarFragment)
                             {
-                                fragment.setToolbarTitle(list.get(groupPosition));
+                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
                             }
                             else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
-                                fragment.setToolbarTitle(list.get(groupPosition));
+                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
+                            drawer.closeDrawer(GravityCompat.START);
                             break;
                         case 1: //All
                             if (fragment instanceof EventListWithCollapseToolBarFragment)
                             {
-                                fragment.setToolbarTitle(list.get(groupPosition));
+                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId));
                             }
                             else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId));
-                                fragment.setToolbarTitle(list.get(groupPosition));
+                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
+                            drawer.closeDrawer(GravityCompat.START);
                             break;
                         case 2: //week
                             String[] args1 = DateUtil.getQueryBetweenWeek();
                             if (fragment instanceof EventListWithCollapseToolBarFragment)
                             {
-                                fragment.setToolbarTitle(list.get(groupPosition));
+                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]);
                             }
                             else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]);
-                                fragment.setToolbarTitle(list.get(groupPosition));
+                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
+                            drawer.closeDrawer(GravityCompat.START);
                             break;
                         case 3: //Collection Box
                             if (fragment instanceof EventListWithCollapseToolBarFragment)
                             {
-                                fragment.setToolbarTitle(list.get(groupPosition));
+                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
                             }
                             else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
-                                fragment.setToolbarTitle(list.get(groupPosition));
+                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
+                            drawer.closeDrawer(GravityCompat.START);
                             break;
                         case 4: //Completed
                             if (fragment instanceof EventListWithCollapseToolBarFragment)
                             {
-                                fragment.setToolbarTitle(list.get(groupPosition));
+                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_COMPLETED, String.valueOf(userId), String.valueOf(dustinListId));
                             }
                             else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_COMPLETED, String.valueOf(userId), String.valueOf(dustinListId));
-                                fragment.setToolbarTitle(list.get(groupPosition));
+                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
+                            drawer.closeDrawer(GravityCompat.START);
                             break;
                         case 5: //Dustbin
                             if (!(fragment instanceof DustbinFragment)) {
                                 fragment = BaseEventListFragment.getInstance(DustbinFragment.class, drawer, QUERY_IN_LIST, String.valueOf(userId), String.valueOf(dustinListId));
-                                fragment.setToolbarTitle(list.get(groupPosition));
+                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
+                            drawer.closeDrawer(GravityCompat.START);
+                            break;
+                        case 6: //Lists
+                            if (mNavMenu.isGroupExpanded(groupPosition))
+                                mNavMenu.collapseGroup(groupPosition);
+                            else
+                                mNavMenu.expandGroup(groupPosition);
                             break;
                     }
                 } catch (IllegalAccessException e) {
@@ -167,8 +180,94 @@ public class MainActivity extends AppCompatActivity
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                 }
-                drawer.closeDrawer(GravityCompat.START);
                 return true;
+            }
+        });
+
+        mNavMenu.expandGroup(6);    //默认将Lists这个组打开
+
+        //------------------- Child Click监听 ---------------------------
+        mNavMenu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                NavBean currentGroup = navBeanList.get(groupPosition);
+                if(currentGroup.getmNavName().equals("Lists")){
+                    if (mNavAdapter.isLastChild(childPosition)) {   //新建清单
+                        //------ 这里显示对话框只是为测试功能用 -----
+                        final EditText editText = new EditText(MainActivity.this);
+                        editText.setHint(R.string.inputListName);
+                        new AlertDialog.Builder(MainActivity.this).setTitle(R.string.addList).setView(editText)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //检查清单是否存在
+                                        String listName = editText.getText().toString();
+                                        try {
+                                            ListDao listDao = new ListDao(dataBaseHelper.getListDao());
+                                            if(listDao.queryByUserIdAndListname(currentUser.getId(), listName) == null){
+                                                //清单不存在，添加到数据库
+                                                ListBean listBean = new ListBean(listName);
+                                                listBean.setUser(currentUser);
+                                                listDao.create(listBean);
+                                                mNavAdapter.initData();
+                                                mNavAdapter.notifyDataSetChanged();
+                                            } else {    //清单已存在
+                                                Toast.makeText(MainActivity.this, R.string.listExisted, Toast.LENGTH_SHORT).show();
+                                            }
+                                        } catch (SQLException e) {
+                                            e.printStackTrace();
+                                        }
+                                        //关闭对话框
+                                        dialog.dismiss();
+                                    }
+                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+                    } else {    //查看清单内容
+                        BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
+                        if (fragment instanceof EventListWithCollapseToolBarFragment)
+                        {
+                            fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
+                            ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
+
+                        }
+                        else {
+                            try {
+                                fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
+                                fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            } catch (InstantiationException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        drawer.closeDrawer(GravityCompat.START);    //关闭菜单
+                    }
+                } else if (currentGroup.getmNavName().equals("Closed Lists")) {
+                    BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
+                    if (fragment instanceof EventListWithCollapseToolBarFragment)
+                    {
+                        fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
+                        ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
+                    }
+                    else {
+                        try {
+                            fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
+                            fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (InstantiationException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+                return false;
             }
         });
 
@@ -215,16 +314,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     @Override
