@@ -48,9 +48,10 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
     private SimpleDateFormat simpleDateFormat;
     private int itemCount;
 
-    public EventRecyclerViewAdapter(Context c, ArrayList<EventBean> dataFromDB) {
+    public EventRecyclerViewAdapter(Context c, ArrayList<EventBean> dataFromDB, DataChangeListener listener) {
         context = c;
         simpleDateFormat = new SimpleDateFormat("k:mm");
+        mDataChangeListener = listener;
         setData(dataFromDB);
     }
 
@@ -77,6 +78,14 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ChannelViewHolder) {
             ((ChannelViewHolder) holder).setTitle(channelData.get(position));
+            //查询栏目下的数据，若为空则隐藏栏目名这一栏，主要是已完成有可能为空
+            String channelName = channelData.get(position);
+            if (channelName != null) {
+                if(data.get(channelName).size() == 0)
+                    ((ChannelViewHolder) holder).setVisible(View.GONE);
+                else
+                    ((ChannelViewHolder) holder).setVisible(View.VISIBLE);
+            }
         } else {
             EventBean eventBean = getEventAtPosition(position);
             ((EventViewHolder) holder).initScrollX();
@@ -150,6 +159,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         notifyDataSetChanged();
     }
 
+    //将数据按 时间 和 是否完成 分类
     private void parseData() {
         data = new LinkedHashMap<>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("M月d日 E");
@@ -158,7 +168,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         String lastTime = "";
         String time;
         for (EventBean event : dataFromDB) {
-            if (event.isFinished())
+            if (event.isFinished()) //已完成
                 completeDate.add(event);
             else {
                 time = simpleDateFormat.format(event.getReleaseTime());
@@ -178,11 +188,16 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
             data.put(lastTime, dummyData);
         data.put("已完成", completeDate);
         channelData = new SparseArray<>();
-        itemCount = 0;
+        itemCount = 0;  //计算RecyclerView的ItemCount， 当ItemCount = 1认为是没有数据的（即只有已完成栏目那一栏）
         for (String barTitleString : data.keySet()) {
             channelData.put(itemCount, barTitleString);
             itemCount += data.get(barTitleString).size() + 1;
         }
+        //数据为空，通知监听器
+        if(itemCount <= 1)
+            mDataChangeListener.emptyData();
+        else
+            mDataChangeListener.haveData();
     }
 
     //处理点击完成事件
@@ -297,6 +312,10 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         public void setTitle(String title) {
             textview.setText(title);
         }
+
+        public void setVisible(int visible) {
+            ((View)textview.getParent()).setVisibility(visible);
+        }
     }
 
     class EventViewHolder extends RecyclerView.ViewHolder {
@@ -346,5 +365,12 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         public void setDeadlineTitle(String deadline) {
             eventDeadline.setText(deadline);
         }
+    }
+
+    private DataChangeListener mDataChangeListener;
+
+    public interface DataChangeListener {
+        void emptyData();
+        void haveData();
     }
 }
