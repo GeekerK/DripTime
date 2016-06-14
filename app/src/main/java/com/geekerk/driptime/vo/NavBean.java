@@ -8,12 +8,12 @@ package com.geekerk.driptime.vo;
  */
 public final class NavBean {
     private int mIconResource;
-    private String mNavName;
+    private int mNavNameResource;
     private int mMsgNum;
 
-    public NavBean(int iconResource, String navName, int msgNum) {
+    public NavBean(int iconResource, int navNameResource, int msgNum) {
         mIconResource = iconResource;
-        mNavName = navName;
+        mNavNameResource = navNameResource;
         mMsgNum = msgNum;
     }
 
@@ -25,12 +25,12 @@ public final class NavBean {
         this.mIconResource = mIconResource;
     }
 
-    public String getmNavName() {
-        return mNavName;
+    public int getNavNameResource() {
+        return mNavNameResource;
     }
 
-    public void setmNavName(String mNavName) {
-        this.mNavName = mNavName;
+    public void setNavNameResource(int mNavNameResource) {
+        this.mNavNameResource = mNavNameResource;
     }
 
     public int getmMsgNum() {
@@ -45,7 +45,7 @@ public final class NavBean {
     public String toString() {
         return "NavBean{" +
                 "mIconResource=" + mIconResource +
-                ", mNavName='" + mNavName + '\'' +
+                ", mNavNameResource='" + mNavNameResource + '\'' +
                 ", mMsgNum=" + mMsgNum +
                 '}';
     }

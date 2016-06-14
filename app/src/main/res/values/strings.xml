@@ -1,9 +1,7 @@
 <resources>
     <string name="app_name">DripTime</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
     <string name="no_account_sign_up">Don\'t have an account? Sign up</string>
     <string name="sign_in">Sign in</string>
@@ -11,7 +9,7 @@
     <string name="today">Today</string>
     <string name="action_search">Search</string>
     <string name="action_edit">Edit</string>
-    <string name="complete">Complete</string>
+    <string name="completed">Completed</string>
     <string name="switch_to_login">Switch to login</string>
     <string name="register">Register</string>
     <string name="username">Username</string>
@@ -33,4 +31,11 @@
     <string name="listExisted">List has been existed</string>
     <string name="listEmptyFormat">%1$s has no Task</string>
     <string name="listEmptyCompleted">No Completed Task</string>
+    <string name="all">All</string>
+    <string name="nearly_seven_days">Nearly Seven Days</string>
+    <string name="collection_box">Collection Box</string>
+    <string name="dustbin">Dustbin</string>
+    <string name="lists">Lists</string>
+    <string name="closed_lists">Closed Lists</string>
+    <string name="settings">Settings</string>
 </resources>

@@ -89,7 +89,7 @@ public abstract class BaseEventListFragment extends Fragment {
         if (!TextUtils.isEmpty(mToolbarTitle))
             toolbar.setTitle(mToolbarTitle);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(), mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawer.setDrawerListener(toggle);
+        mDrawer.addDrawerListener(toggle);
         toggle.syncState();
     }
 }

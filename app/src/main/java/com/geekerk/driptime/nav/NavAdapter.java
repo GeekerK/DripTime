@@ -1,13 +1,11 @@
 package com.geekerk.driptime.nav;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Path;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,10 +29,15 @@ import java.util.List;
  * Time：14:52
  */
 public final class NavAdapter extends BaseExpandableListAdapter {
+    private static final String TAG = "NavAdapter";
     private Context mContext;
     private List<NavBean> mGroups;
     private List<ListBean> mLists, mClosedLists;
     private int mCurrentUserId;
+
+    public void setmGroups(List<NavBean> mGroups) {
+        this.mGroups = mGroups;
+    }
 
     public NavAdapter(Context context, List<NavBean> groups) {
         mContext = context;
@@ -52,12 +55,15 @@ public final class NavAdapter extends BaseExpandableListAdapter {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            OpenHelperManager.releaseHelper();
+            helper = null;
             if (mLists == null)
                 mLists = new ArrayList<>();
             if (mClosedLists == null)
                 mClosedLists = new ArrayList<>();
-            OpenHelperManager.releaseHelper();
-            helper = null;
+            //设置清单列表 和 已关闭清单列表 的数量
+            mGroups.get(6).setmMsgNum(mLists.size());
+            mGroups.get(7).setmMsgNum(mClosedLists.size());
         }
     }
 
@@ -91,7 +97,7 @@ public final class NavAdapter extends BaseExpandableListAdapter {
         } else {
             viewHolder = (ItemViewHolder) convertView.getTag();
         }
-        viewHolder.navTitleIv.setText(mGroups.get(groupPosition).getmNavName());
+        viewHolder.navTitleIv.setText(mGroups.get(groupPosition).getNavNameResource());
         viewHolder.navIconIv.setImageResource(mGroups.get(groupPosition).getmIconResource());
         viewHolder.navMsgNumTv.setText(String.valueOf(mGroups.get(groupPosition).getmMsgNum()));
         viewHolder.navMsgView.setVisibility(mGroups.get(groupPosition).getmMsgNum() == 0 ? View.INVISIBLE : View.VISIBLE);
@@ -101,12 +107,12 @@ public final class NavAdapter extends BaseExpandableListAdapter {
     @Override
     public Object getChild(int groupPosition, int childPosition) {
         NavBean currentGroup = mGroups.get(groupPosition);
-        if (currentGroup.getmNavName().equals("Lists")) {
+        if (currentGroup.getNavNameResource() == R.string.lists) {
             if (childPosition == mLists.size()) //这里是添加清单，没有对应的Object
                 return null;
             else
                 return mLists.get(childPosition);
-        } else if (currentGroup.getmNavName().equals("ClosedLists")) {
+        } else if (currentGroup.getNavNameResource() == R.string.closed_lists) {
             return mClosedLists.get(childPosition);
         }
         return null;
@@ -115,9 +121,9 @@ public final class NavAdapter extends BaseExpandableListAdapter {
     @Override
     public int getChildrenCount(int groupPosition) {
         NavBean currentGroup = mGroups.get(groupPosition);
-        if (currentGroup.getmNavName().equals("Lists")) {
+        if (currentGroup.getNavNameResource() == R.string.lists) {
             return mLists.size()+1; //清单列表中有一固定项 添加清单 ，所以这里返回Count要加1
-        } else if (currentGroup.getmNavName().equals("ClosedLists")) {
+        } else if (currentGroup.getNavNameResource() == R.string.closed_lists) {
             return mClosedLists.size();
         }
         return 0;
@@ -145,7 +151,7 @@ public final class NavAdapter extends BaseExpandableListAdapter {
             viewHolder = (ItemViewHolder) convertView.getTag();
         }
         NavBean currentGroup = mGroups.get(groupPosition);
-        if (currentGroup.getmNavName().equals("Lists")) {   //清单列表中的
+        if (currentGroup.getNavNameResource() == R.string.lists) {   //清单列表中的
             if (isLastChild) {
                 viewHolder.navTitleIv.setText(mContext.getResources().getText(R.string.addList));
                 viewHolder.navIconIv.setImageResource(R.mipmap.nav_additem);
@@ -156,7 +162,7 @@ public final class NavAdapter extends BaseExpandableListAdapter {
                 // TODO: 2016/6/12 设置清单里的事件数
                 viewHolder.navMsgView.setVisibility(View.GONE);
             }
-        } else if (currentGroup.getmNavName().equals("ClosedLists")){   //已关闭清单中的
+        } else if (currentGroup.getNavNameResource() == R.string.closed_lists){   //已关闭清单中的
             viewHolder.navTitleIv.setText(mLists.get(childPosition).getName());
             viewHolder.navIconIv.setImageResource(R.mipmap.nav_nearlysevendays);
             viewHolder.navMsgView.setVisibility(View.GONE);
@@ -167,9 +173,9 @@ public final class NavAdapter extends BaseExpandableListAdapter {
     //返回指定childPosition 所表示的清单ID
     public int getListId(int groupPosition, int childPosition) {
         NavBean currentGroup = mGroups.get(groupPosition);
-        if (currentGroup.getmNavName().equals("Lists")) {   //清单列表中的清单
+        if (currentGroup.getNavNameResource() == R.string.lists) {   //清单列表中的清单
             return mLists.get(childPosition).getId();
-        } else if (currentGroup.getmNavName().equals("ClosedLists")){
+        } else if (currentGroup.getNavNameResource() == R.string.closed_lists){
             return mClosedLists.get(childPosition).getId();
         }
         return 0;
@@ -177,9 +183,9 @@ public final class NavAdapter extends BaseExpandableListAdapter {
 
     public String getListName(int groupPosition, int childPosition) {
         NavBean currentGroup = mGroups.get(groupPosition);
-        if (currentGroup.getmNavName().equals("Lists")) {   //清单列表中的清单
+        if (currentGroup.getNavNameResource() == R.string.lists) {   //清单列表中的清单
             return mLists.get(childPosition).getName();
-        } else if (currentGroup.getmNavName().equals("ClosedLists")){
+        } else if (currentGroup.getNavNameResource() == R.string.closed_lists){
             return mClosedLists.get(childPosition).getName();
         }
         return null;

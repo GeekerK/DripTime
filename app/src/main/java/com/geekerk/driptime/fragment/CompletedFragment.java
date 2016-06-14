@@ -28,6 +28,9 @@ public class CompletedFragment extends BaseEventListFragment implements DataChan
         initToolBar((Toolbar) view.findViewById(R.id.toolbar));
         mAdapter = new CompletedEventExpandableListAdapter(getContext(), queryLocalDatabase(), this);
         mList.setAdapter(mAdapter);
+        //首次加载，展开全部组
+        for(int i=0; i<mAdapter.getGroupCount(); i++)
+            mList.expandGroup(i);
         return view;
     }
 

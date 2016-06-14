@@ -6,7 +6,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -51,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private UserBean currentUser;
     private DrawerLayout drawer;
     private NavAdapter mNavAdapter;
+    //今天，7天，所有 未完成的事件数目
+    private int mMsgNumToday, mMsgNumWeek, mMsgNumAll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,23 +66,44 @@ public class MainActivity extends AppCompatActivity {
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavMenu = (ExpandableListView) drawer.findViewById(R.id.nav_menu);
 
+        //初始化数据
+        dataBaseHelper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
+        //当前用户ID
+        userId = currentUser.getId();
+        //当前用户垃圾箱和收集箱的ListID
+        dustinListId = 0;
+        collectBoxListId = 0;
+        try {
+            ListDao listDao = new ListDao(dataBaseHelper.getListDao());
+            dustinListId = listDao.queryByUserIdAndListname(userId, "垃圾桶").getId();
+            collectBoxListId = listDao.queryByUserIdAndListname(userId, "收集箱").getId();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //获得未完成的事件数
+        mMsgNumToday = getTodayMsgNum();
+        mMsgNumWeek = getWeekMsgNum();
+        mMsgNumAll = getAllMsgNum();
+
         //初始化菜单数据
         final List<NavBean> navBeanList = new ArrayList<>();
-        NavBean navBeanToday = new NavBean(R.mipmap.nav_today, "Today", 3);
-        NavBean navBeanAll = new NavBean(R.mipmap.nav_all, "All", 15);
-        NavBean navBeanNearlySevenDays = new NavBean(R.mipmap.nav_nearlysevendays, "Nearly Seven Days", 28);
-        NavBean navBeanCollectionBox = new NavBean(R.mipmap.nav_collectionbox, "Collection Box", 0);
-        NavBean navBeanCompleted = new NavBean(R.mipmap.nav_completed, "Completed", 0);
-        NavBean navBeanDustbin = new NavBean(R.mipmap.nav_dustbin, "Dustbin", 0);
-        NavBean navBeanAddItem = new NavBean(R.mipmap.nav_additem, "Lists", 0);
-        NavBean navBeanSettings = new NavBean(R.mipmap.nav_settings, "Settings", 0);
+        NavBean navBeanToday = new NavBean(R.mipmap.nav_today, R.string.today, mMsgNumToday);
+        final NavBean navBeanAll = new NavBean(R.mipmap.nav_all, R.string.all, mMsgNumAll);
+        NavBean navBeanNearlySevenDays = new NavBean(R.mipmap.nav_nearlysevendays, R.string.nearly_seven_days, mMsgNumWeek);
+        NavBean navBeanCollectionBox = new NavBean(R.mipmap.nav_collectionbox, R.string.collection_box, 0);
+        NavBean navBeanCompleted = new NavBean(R.mipmap.nav_completed, R.string.completed, 0);
+        NavBean navBeanDustbin = new NavBean(R.mipmap.nav_dustbin, R.string.dustbin, 0);
+        NavBean navBeanLists = new NavBean(R.mipmap.nav_additem, R.string.lists, 0);
+        NavBean navBeanClosedLists = new NavBean(R.mipmap.nav_delete, R.string.closed_lists, 0);
+        NavBean navBeanSettings = new NavBean(R.mipmap.nav_settings, R.string.settings, 0);
         navBeanList.add(navBeanToday);
         navBeanList.add(navBeanAll);
         navBeanList.add(navBeanNearlySevenDays);
         navBeanList.add(navBeanCollectionBox);
         navBeanList.add(navBeanCompleted);
         navBeanList.add(navBeanDustbin);
-        navBeanList.add(navBeanAddItem);
+        navBeanList.add(navBeanLists);
+        navBeanList.add(navBeanClosedLists);
         navBeanList.add(navBeanSettings);
         mNavAdapter = new NavAdapter(this, navBeanList);
         mNavMenu.setAdapter(mNavAdapter);
@@ -97,12 +119,12 @@ public class MainActivity extends AppCompatActivity {
                             String[] args = DateUtil.getQueryBetweenDay();
                             if (fragment instanceof EventListWithCollapseToolBarFragment)
                             {
-                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
+                                fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
                             }
                             else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
-                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
+                                fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
                             drawer.closeDrawer(GravityCompat.START);
@@ -110,12 +132,12 @@ public class MainActivity extends AppCompatActivity {
                         case 1: //All
                             if (fragment instanceof EventListWithCollapseToolBarFragment)
                             {
-                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
+                                fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId));
                             }
                             else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId));
-                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
+                                fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
                             drawer.closeDrawer(GravityCompat.START);
@@ -124,12 +146,12 @@ public class MainActivity extends AppCompatActivity {
                             String[] args1 = DateUtil.getQueryBetweenWeek();
                             if (fragment instanceof EventListWithCollapseToolBarFragment)
                             {
-                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
+                                fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]);
                             }
                             else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]);
-                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
+                                fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
                             drawer.closeDrawer(GravityCompat.START);
@@ -137,12 +159,12 @@ public class MainActivity extends AppCompatActivity {
                         case 3: //Collection Box
                             if (fragment instanceof EventListWithCollapseToolBarFragment)
                             {
-                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
+                                fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
                             }
                             else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
-                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
+                                fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
                             drawer.closeDrawer(GravityCompat.START);
@@ -150,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                         case 4: //Completed
                             if (!(fragment instanceof CompletedFragment)) {
                                 fragment = BaseEventListFragment.getInstance(CompletedFragment.class, drawer, QUERY_COMPLETED, String.valueOf(userId), String.valueOf(dustinListId));
-                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
+                                fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
                             drawer.closeDrawer(GravityCompat.START);
@@ -158,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                         case 5: //Dustbin
                             if (!(fragment instanceof DustbinFragment)) {
                                 fragment = BaseEventListFragment.getInstance(DustbinFragment.class, drawer, QUERY_IN_LIST, String.valueOf(userId), String.valueOf(dustinListId));
-                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
+                                fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
                             drawer.closeDrawer(GravityCompat.START);
@@ -179,14 +201,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mNavMenu.expandGroup(6);    //默认将Lists这个组打开
+        mNavMenu.expandGroup(6);    //默认将Lists（清单）这个组打开
 
         //------------------- Child Click监听 ---------------------------
         mNavMenu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 NavBean currentGroup = navBeanList.get(groupPosition);
-                if(currentGroup.getmNavName().equals("Lists")){
+                if(currentGroup.getNavNameResource() == R.string.lists){
                     if (mNavAdapter.isLastChild(childPosition)) {   //新建清单
                         //------ 这里显示对话框只是为测试功能用 -----
                         final EditText editText = new EditText(MainActivity.this);
@@ -242,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         drawer.closeDrawer(GravityCompat.START);    //关闭菜单
                     }
-                } else if (currentGroup.getmNavName().equals("Closed Lists")) {
+                } else if (currentGroup.getNavNameResource() == R.string.closed_lists) {
                     BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
                     if (fragment instanceof EventListWithCollapseToolBarFragment)
                     {
@@ -266,18 +288,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        dataBaseHelper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
-        userId = currentUser.getId();
-        dustinListId = 0;
-        collectBoxListId = 0;
-        try {
-            ListDao listDao = new ListDao(dataBaseHelper.getListDao());
-            dustinListId = listDao.queryByUserIdAndListname(userId, "垃圾桶").getId();
-            collectBoxListId = listDao.queryByUserIdAndListname(userId, "收集箱").getId();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
 
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                mMsgNumToday = getTodayMsgNum();
+                mMsgNumWeek = getWeekMsgNum();
+                mMsgNumAll = getAllMsgNum();
+                if (navBeanList.get(0).getmMsgNum() != mMsgNumToday)
+                    navBeanList.get(0).setmMsgNum(mMsgNumToday);
+                if (navBeanList.get(1).getmMsgNum() != mMsgNumAll)
+                    navBeanList.get(1).setmMsgNum(mMsgNumAll);
+                if (navBeanList.get(2).getmMsgNum() != mMsgNumWeek)
+                    navBeanList.get(2).setmMsgNum(mMsgNumWeek);
+                mNavAdapter.setmGroups(navBeanList);
+                mNavAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
         //初始化数据库
         initData();
 
@@ -293,6 +334,42 @@ public class MainActivity extends AppCompatActivity {
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
+    }
+
+    private int getAllMsgNum() {
+        try {
+            return (int) dataBaseHelper.getEventDao().queryRawValue(
+                    "select count(*) from table_event where userId = ? and (listId <> ? or listId is null) and isFinished = 0",
+                    String.valueOf(currentUser.getId()), String.valueOf(dustinListId));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private int getWeekMsgNum() {
+        try {
+            String[] timeArgs = DateUtil.getQueryBetweenWeek();
+            return (int) dataBaseHelper.getEventDao().queryRawValue(
+                    "select count(*) from table_event where userId = ? and (listId <> ? or listId is null) and isFinished = 0 and (release_time between datetime(?) and datetime(?))",
+                    String.valueOf(currentUser.getId()), String.valueOf(dustinListId), timeArgs[0], timeArgs[1]);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    //查询当前一天内未完成的消息数目
+    private int getTodayMsgNum() {
+        try {
+            String[] timeArgs = DateUtil.getQueryBetweenDay();
+            return (int) dataBaseHelper.getEventDao().queryRawValue(
+                    "select count(*) from table_event where userId = ? and (listId <> ? or listId is null) and isFinished = 0 and release_time between datetime(?) and datetime(?)",
+                    String.valueOf(userId), String.valueOf(dustinListId), timeArgs[0], timeArgs[1]);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     @Override
