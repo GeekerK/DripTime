@@ -4,8 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.widget.TextView;
+
 import com.geekerk.driptime.MainActivity;
+import com.geekerk.driptime.R;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.EventRawRowMapper;
@@ -23,8 +29,8 @@ public abstract class BaseEventListFragment extends Fragment {
     protected String mQuery;
     protected String[] mQueryArgs;
     protected DrawerLayout mDrawer;
-    protected Toolbar mToolbar;
     protected String mToolbarTitle;
+    protected TextView emptyView;
 
     public static <T extends BaseEventListFragment> T getInstance(Class<T> c, DrawerLayout drawerLayout, String query, String... queryArgs) throws IllegalAccessException, java.lang.InstantiationException {
         T fragment = c.newInstance();
@@ -76,5 +82,14 @@ public abstract class BaseEventListFragment extends Fragment {
 
     public void setToolbarTitle(String title) {
         mToolbarTitle = title;
+    }
+
+    protected void initToolBar(Toolbar toolbar) {
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        if (!TextUtils.isEmpty(mToolbarTitle))
+            toolbar.setTitle(mToolbarTitle);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(), mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.setDrawerListener(toggle);
+        toggle.syncState();
     }
 }

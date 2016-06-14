@@ -41,21 +41,14 @@ public class DustbinFragment extends BaseEventListFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dustbin, container, false);
 
-        //------ 设置toolbar ------
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
-        if (!TextUtils.isEmpty(mToolbarTitle))
-            mToolbar.setTitle(mToolbarTitle);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(), mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawer.setDrawerListener(toggle);
-        toggle.syncState();
-        //------ end --------
+        //设置toolbar
+        initToolBar((Toolbar) view.findViewById(R.id.toolbar));
 
         data = queryLocalDatabase();
         final ListView listView = (ListView) view.findViewById(android.R.id.list);
         mAdapter = new DustbinEventListViewAdapter(getContext(), data);
         listView.setAdapter(mAdapter);
-        TextView emptyView = (TextView) view.findViewById(R.id.empty);
+        emptyView = (TextView) view.findViewById(R.id.empty);
         listView.setEmptyView(emptyView);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)  //3.0一下注册上下文菜单

@@ -47,6 +47,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
     private Context context;
     private SimpleDateFormat simpleDateFormat;
     private int itemCount;
+    private DataChangeListener mDataChangeListener;
 
     public EventRecyclerViewAdapter(Context c, ArrayList<EventBean> dataFromDB, DataChangeListener listener) {
         context = c;
@@ -201,7 +202,8 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
     }
 
     //处理点击完成事件
-    public void checkFinish(int position) {
+    public void checkFinish(LinearLayoutWithAction view) {
+        int position = ((RecyclerView)view.getParent()).getChildAdapterPosition(view);
         EventBean eventBean = getEventAtPosition(position);
         eventBean.setFinished(!eventBean.isFinished());
         DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
@@ -218,7 +220,8 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
     }
 
     //移动
-    public void moveEventAtPosition(int position) {
+    public void moveEventAtPosition(LinearLayoutWithAction view) {
+        int position = ((RecyclerView)view.getParent()).getChildAdapterPosition(view);
         //获得用户的清单列表
         int userId = context.getSharedPreferences("user", Context.MODE_PRIVATE).getInt("currentUserID", -1);
         DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
@@ -265,7 +268,8 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
     }
 
     //删除
-    public void deleteEventAtPosition(int position) {
+    public void deleteEventAtPosition(LinearLayoutWithAction view) {
+        int position = ((RecyclerView)view.getParent()).getChildAdapterPosition(view);
         final EventBean eventBean = getEventAtPosition(position);
         final DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
         SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -297,7 +301,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
     }
 
     //修改
-    public void modifyEventAtPosition(int position) {
+    public void modifyEventAtPosition(LinearLayoutWithAction view) {
 
     }
 
@@ -365,12 +369,5 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         public void setDeadlineTitle(String deadline) {
             eventDeadline.setText(deadline);
         }
-    }
-
-    private DataChangeListener mDataChangeListener;
-
-    public interface DataChangeListener {
-        void emptyData();
-        void haveData();
     }
 }

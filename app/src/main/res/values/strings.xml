@@ -32,4 +32,5 @@
     <string name="inputListName">Input New List\'s Name</string>
     <string name="listExisted">List has been existed</string>
     <string name="listEmptyFormat">%1$s has no Task</string>
+    <string name="listEmptyCompleted">No Completed Task</string>
 </resources>

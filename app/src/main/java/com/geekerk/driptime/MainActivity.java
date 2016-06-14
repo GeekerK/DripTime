@@ -15,6 +15,7 @@ import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.fragment.BaseEventListFragment;
+import com.geekerk.driptime.fragment.CompletedFragment;
 import com.geekerk.driptime.fragment.DustbinFragment;
 import com.geekerk.driptime.fragment.EventListWithCollapseToolBarFragment;
 import com.geekerk.driptime.nav.NavAdapter;
@@ -147,13 +148,8 @@ public class MainActivity extends AppCompatActivity {
                             drawer.closeDrawer(GravityCompat.START);
                             break;
                         case 4: //Completed
-                            if (fragment instanceof EventListWithCollapseToolBarFragment)
-                            {
-                                fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
-                                ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_COMPLETED, String.valueOf(userId), String.valueOf(dustinListId));
-                            }
-                            else {
-                                fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_COMPLETED, String.valueOf(userId), String.valueOf(dustinListId));
+                            if (!(fragment instanceof CompletedFragment)) {
+                                fragment = BaseEventListFragment.getInstance(CompletedFragment.class, drawer, QUERY_COMPLETED, String.valueOf(userId), String.valueOf(dustinListId));
                                 fragment.setToolbarTitle(navBeanList.get(groupPosition).getmNavName());
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }

@@ -193,39 +193,51 @@ public class LinearLayoutWithAction extends ViewGroup implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        RecyclerView parent = (RecyclerView) getParent();
-        int position = parent.getChildAdapterPosition(this);
+//        RecyclerView parent = (RecyclerView) getParent();
+//        int position = parent.getChildAdapterPosition(this);
         switch (v.getId()) {
             case R.id.moveButton:
                 Log.i(TAG, "moveButton");
-                eventDealInterface.moveEventAtPosition(position);
+//                eventDealInterface.moveEventAtPosition(position);
+                eventDealInterface.moveEventAtPosition(this);
                 scroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
                 invalidate();
                 break;
             case R.id.modifyButton:
                 Log.i(TAG, "modifyButton");
-                eventDealInterface.modifyEventAtPosition(position);
+//                eventDealInterface.modifyEventAtPosition(position);
+                eventDealInterface.modifyEventAtPosition(this);
                 scroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
                 invalidate();
                 break;
             case R.id.deleteButton:
                 Log.i(TAG, "deleteButton");
-                eventDealInterface.deleteEventAtPosition(position);
+//                eventDealInterface.deleteEventAtPosition(position);
+                eventDealInterface.deleteEventAtPosition(this);
                 break;
             case R.id.isDone_checkbox:
                 Log.i(TAG, "isDone_checkbox");
-                eventDealInterface.checkFinish(position);
+//                eventDealInterface.checkFinish(position);
+                eventDealInterface.checkFinish(this);
                 break;
         }
     }
 
     public interface EventDealInterface {
-        void checkFinish(int position);
+//        void checkFinish(int position);
+//
+//        void moveEventAtPosition(int position);
+//
+//        void deleteEventAtPosition(int position);
+//
+//        void modifyEventAtPosition(int position);
 
-        void moveEventAtPosition(int position);
+        void checkFinish(LinearLayoutWithAction view);
 
-        void deleteEventAtPosition(int position);
+        void moveEventAtPosition(LinearLayoutWithAction view);
 
-        void modifyEventAtPosition(int position);
+        void deleteEventAtPosition(LinearLayoutWithAction view);
+
+        void modifyEventAtPosition(LinearLayoutWithAction view);
     }
 }
