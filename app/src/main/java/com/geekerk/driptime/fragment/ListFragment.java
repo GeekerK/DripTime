@@ -34,23 +34,21 @@ import java.sql.SQLException;
 /**
  * Created by s21v on 2016/5/24.
  */
-public class EventListWithCollapseToolBarFragment extends BaseEventListFragment implements DataChangeListener {
+public class ListFragment extends BaseEventListFragment implements DataChangeListener {
     private static final String TAG = "CollapseToolBarFragment";
-    private RecyclerView recyclerView;
-    private EventRecyclerViewAdapter mAdapter;
-    private CollapsingToolbarLayout mCollapsingToolbarLayout;
+    protected RecyclerView recyclerView;
+    protected EventRecyclerViewAdapter mAdapter;
+    protected Toolbar mToolbar;
+    protected ListBean mCurrentList;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_today, container, false);
-        mCollapsingToolbarLayout = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
-        if (!TextUtils.isEmpty(mToolbarTitle))
-            mCollapsingToolbarLayout.setTitle(mToolbarTitle);
+        View view = inflater.inflate(R.layout.fragment_list, container, false);
         emptyView = (TextView) view.findViewById(R.id.empty);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        mAdapter = new EventRecyclerViewAdapter(getActivity(), queryLocalDatabase(), this, false);
+        mAdapter = new EventRecyclerViewAdapter(getActivity(), queryLocalDatabase(), this, true);
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {  //添加分割线
             @Override
@@ -67,7 +65,8 @@ public class EventListWithCollapseToolBarFragment extends BaseEventListFragment 
         });
 
         //设置toolbar
-        initToolBar((Toolbar) view.findViewById(R.id.toolbar));
+        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        initToolBar(mToolbar);
 
         //快速新建按钮
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
@@ -83,24 +82,35 @@ public class EventListWithCollapseToolBarFragment extends BaseEventListFragment 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.fragment_common_list, menu);
+        inflater.inflate(R.menu.fragment_list, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_search) { //搜索事件
+        if (id == R.id.menu_list_edit) { //编辑清单
+            if (mCurrentList != null) {
+                // TODO: 2016/6/15 编辑清单
+            }
+        } else if (id == R.id.menu_list_close) { //关闭清单
+            if (mCurrentList != null) {
+                try {
+                    ListDao listDao = new ListDao(mDatabaseHelper.getListDao());
+                    mCurrentList.setClosed(true);
+                    listDao.update(mCurrentList);
+                    Toast.makeText(getContext(), String.format(getResources().getString(R.string.listclose_success), mToolbarTitle), Toast.LENGTH_SHORT).show();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
             return true;
-        } else if (id == R.id.menu_edit) {    //批量编辑事件
-
         }
         return super.onOptionsItemSelected(item);
     }
 
     //改变查询条件，重新读取加载数据
     public void changeData(String baseQuery, String... queryArgs) {
-        mCollapsingToolbarLayout.setTitle(mToolbarTitle);
+        mToolbar.setTitle(mToolbarTitle);
         mQuery = baseQuery;
         this.mQueryArgs = queryArgs;
         mAdapter.setData(queryLocalDatabase());
@@ -117,5 +127,19 @@ public class EventListWithCollapseToolBarFragment extends BaseEventListFragment 
     public void haveData() {
         recyclerView.setVisibility(View.VISIBLE);
         emptyView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //查询当前用户
+        int userId = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE).getInt("currentUserID", -1);
+        //根据清单名查询清单
+        try {
+            ListDao listDao = new ListDao(mDatabaseHelper.getListDao());
+            mCurrentList = listDao.queryByUserIdAndListname(userId, mToolbarTitle);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

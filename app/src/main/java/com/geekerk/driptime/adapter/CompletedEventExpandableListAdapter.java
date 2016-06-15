@@ -152,6 +152,7 @@ public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapt
         } else {
             viewHolder = (ChildViewHolder) convertView.getTag();
         }
+        convertView.setScrollX(0);
         EventBean eventBean = (EventBean) getChild(groupPosition, childPosition);
         viewHolder.eventTitle.setText(eventBean.getTitle());
         viewHolder.eventPriority.setBackgroundResource(eventBean.getProrityColorRes());

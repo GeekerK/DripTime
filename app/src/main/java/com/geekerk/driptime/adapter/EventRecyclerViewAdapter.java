@@ -48,10 +48,12 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
     private SimpleDateFormat simpleDateFormat;
     private int itemCount;
     private DataChangeListener mDataChangeListener;
+    private boolean mIsListChannel; //是否操作清单
 
-    public EventRecyclerViewAdapter(Context c, ArrayList<EventBean> dataFromDB, DataChangeListener listener) {
+    public EventRecyclerViewAdapter(Context c, ArrayList<EventBean> dataFromDB, DataChangeListener listener, boolean isList) {
         context = c;
         simpleDateFormat = new SimpleDateFormat("k:mm");
+        mIsListChannel = isList;
         mDataChangeListener = listener;
         setData(dataFromDB);
     }
@@ -247,16 +249,25 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
                     public void onClick(DialogInterface dialog, int which) {
                         DataBaseHelper helper1 = OpenHelperManager.getHelper(context, DataBaseHelper.class);
                         ListBean selectedList = finalUserList.get(which);
-                        try {
-                            EventDao eventDao = new EventDao(helper1.getEventDao());
-                            eventBean.setList(selectedList);
-                            eventDao.update(eventBean);
+                        if(selectedList != eventBean.getList()) {   //更改了事件所属的清单
+                            try {
+                                EventDao eventDao = new EventDao(helper1.getEventDao());
+                                eventBean.setList(selectedList);
+                                eventDao.update(eventBean);
+                                if (mIsListChannel) {   //在清单中操作的话要修改数据源
+                                    dataFromDB.remove(eventBean);
+                                    parseData();
+                                    notifyDataSetChanged();
+                                }
+                                dialog.dismiss();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            } finally {
+                                OpenHelperManager.releaseHelper();
+                                helper1 = null;
+                            }
+                        } else {
                             dialog.dismiss();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        } finally {
-                            OpenHelperManager.releaseHelper();
-                            helper1 = null;
                         }
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

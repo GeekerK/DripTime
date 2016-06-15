@@ -51,4 +51,8 @@ public class ListDao {
     public void create(ListBean listBean) throws SQLException {
         listDao.create(listBean);
     }
+
+    public void update(ListBean currentList) throws SQLException {
+        listDao.update(currentList);
+    }
 }

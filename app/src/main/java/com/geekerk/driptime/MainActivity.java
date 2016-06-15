@@ -6,6 +6,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -14,9 +16,11 @@ import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.fragment.BaseEventListFragment;
+import com.geekerk.driptime.fragment.ClosedListFragment;
 import com.geekerk.driptime.fragment.CompletedFragment;
 import com.geekerk.driptime.fragment.DustbinFragment;
 import com.geekerk.driptime.fragment.EventListWithCollapseToolBarFragment;
+import com.geekerk.driptime.fragment.ListFragment;
 import com.geekerk.driptime.nav.NavAdapter;
 import com.geekerk.driptime.utils.DateUtil;
 import com.geekerk.driptime.vo.EventBean;
@@ -186,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
                             drawer.closeDrawer(GravityCompat.START);
                             break;
                         case 6: //Lists
+                        case 7: //Closed Lists
                             if (mNavMenu.isGroupExpanded(groupPosition))
                                 mNavMenu.collapseGroup(groupPosition);
                             else
@@ -245,15 +250,14 @@ public class MainActivity extends AppCompatActivity {
                         }).show();
                     } else {    //查看清单内容
                         BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
-                        if (fragment instanceof EventListWithCollapseToolBarFragment)
+                        if (fragment.getClass() == ListFragment.class)
                         {
                             fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
-                            ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
-
+                            ((ListFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                         }
                         else {
                             try {
-                                fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
+                                fragment = BaseEventListFragment.getInstance(ListFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                                 fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             } catch (IllegalAccessException e) {
@@ -266,14 +270,16 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } else if (currentGroup.getNavNameResource() == R.string.closed_lists) {
                     BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
-                    if (fragment instanceof EventListWithCollapseToolBarFragment)
+                    if (fragment instanceof ClosedListFragment)
                     {
+                        Log.i(TAG, "channel name:"+mNavAdapter.getListName(groupPosition, childPosition));
                         fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
-                        ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
+                        ((ClosedListFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                     }
                     else {
                         try {
-                            fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
+                            Log.i(TAG, "channel name:"+mNavAdapter.getListName(groupPosition, childPosition));
+                            fragment = BaseEventListFragment.getInstance(ClosedListFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                             fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
                             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                         } catch (IllegalAccessException e) {
@@ -290,12 +296,9 @@ public class MainActivity extends AppCompatActivity {
 
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-
-            }
-
+            public void onDrawerSlide(View drawerView, float slideOffset) {}
             @Override
-            public void onDrawerOpened(View drawerView) {
+            public void onDrawerOpened(View drawerView) {   //检查更新时间数目
                 mMsgNumToday = getTodayMsgNum();
                 mMsgNumWeek = getWeekMsgNum();
                 mMsgNumAll = getAllMsgNum();
@@ -308,17 +311,12 @@ public class MainActivity extends AppCompatActivity {
                 mNavAdapter.setmGroups(navBeanList);
                 mNavAdapter.notifyDataSetChanged();
             }
-
             @Override
-            public void onDrawerClosed(View drawerView) {
-
-            }
-
+            public void onDrawerClosed(View drawerView) {}
             @Override
-            public void onDrawerStateChanged(int newState) {
-
-            }
+            public void onDrawerStateChanged(int newState) {}
         });
+
         //初始化数据库
         initData();
 

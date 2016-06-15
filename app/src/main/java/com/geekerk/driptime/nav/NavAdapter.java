@@ -9,7 +9,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.ListDao;
@@ -17,7 +16,6 @@ import com.geekerk.driptime.utils.LayoutUtil;
 import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.NavBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +35,7 @@ public final class NavAdapter extends BaseExpandableListAdapter {
 
     public void setmGroups(List<NavBean> mGroups) {
         this.mGroups = mGroups;
+        initData();
     }
 
     public NavAdapter(Context context, List<NavBean> groups) {
@@ -46,6 +45,7 @@ public final class NavAdapter extends BaseExpandableListAdapter {
         initData();
     }
 
+    //更新清单数据
     public void initData() {
         DataBaseHelper helper = OpenHelperManager.getHelper(mContext, DataBaseHelper.class);
         try {
@@ -163,7 +163,7 @@ public final class NavAdapter extends BaseExpandableListAdapter {
                 viewHolder.navMsgView.setVisibility(View.GONE);
             }
         } else if (currentGroup.getNavNameResource() == R.string.closed_lists){   //已关闭清单中的
-            viewHolder.navTitleIv.setText(mLists.get(childPosition).getName());
+            viewHolder.navTitleIv.setText(mClosedLists.get(childPosition).getName());
             viewHolder.navIconIv.setImageResource(R.mipmap.nav_nearlysevendays);
             viewHolder.navMsgView.setVisibility(View.GONE);
         }
