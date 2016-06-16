@@ -28,4 +28,9 @@
     <style name="MyCheckBox" parent="@android:style/Widget.Material.Light.CompoundButton.CheckBox">
         <item name="android:button">@drawable/checkbox</item>
     </style>
+
+    <style name="InputHintTextAppearance" parent="android:TextAppearance">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">#89000000</item>
+    </style>
 </resources>

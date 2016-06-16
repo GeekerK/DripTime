@@ -43,4 +43,9 @@
     <string name="action_open">Open</string>
     <string name="listopen_success">%1$s has been opened</string>
     <string name="noList">No List</string>
+    <string name="done">Done</string>
+    <string name="addItem">Add Item</string>
+    <string name="priority">Priority</string>
+    <string name="startTime">Start Time</string>
+    <string name="deadline">Deadline</string>
 </resources>

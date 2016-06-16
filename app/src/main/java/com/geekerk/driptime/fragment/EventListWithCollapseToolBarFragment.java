@@ -1,6 +1,7 @@
 package com.geekerk.driptime.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.geekerk.driptime.AddItemActivity;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.DataChangeListener;
 import com.geekerk.driptime.adapter.EventRecyclerViewAdapter;
@@ -74,8 +76,7 @@ public class EventListWithCollapseToolBarFragment extends BaseEventListFragment 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(new Intent(getActivity(), AddItemActivity.class));
             }
         });
         return view;
