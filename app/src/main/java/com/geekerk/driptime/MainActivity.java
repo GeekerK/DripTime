@@ -7,11 +7,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
+
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.ListDao;
@@ -28,12 +28,13 @@ import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.NavBean;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ListFragment.onListChangeListener{
+public class MainActivity extends AppCompatActivity implements ListFragment.onListChangeListener {
     private static final String TAG = "MainActivity";
     //查询指定用户在一段时间内的所有未放到垃圾箱的事件，按ID降序
     private static final String BASE_QUERY =
@@ -121,12 +122,10 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                     switch (groupPosition) {
                         case 0: //today
                             String[] args = DateUtil.getQueryBetweenDay();
-                            if (fragment instanceof EventListWithCollapseToolBarFragment)
-                            {
+                            if (fragment instanceof EventListWithCollapseToolBarFragment) {
                                 fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
-                            }
-                            else {
+                            } else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
                                 fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
@@ -134,12 +133,10 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                             drawer.closeDrawer(GravityCompat.START);
                             break;
                         case 1: //All
-                            if (fragment instanceof EventListWithCollapseToolBarFragment)
-                            {
+                            if (fragment instanceof EventListWithCollapseToolBarFragment) {
                                 fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId));
-                            }
-                            else {
+                            } else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_ALL, String.valueOf(userId), String.valueOf(dustinListId));
                                 fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
@@ -148,12 +145,10 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                             break;
                         case 2: //week
                             String[] args1 = DateUtil.getQueryBetweenWeek();
-                            if (fragment instanceof EventListWithCollapseToolBarFragment)
-                            {
+                            if (fragment instanceof EventListWithCollapseToolBarFragment) {
                                 fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]);
-                            }
-                            else {
+                            } else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args1[0], args1[1]);
                                 fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
@@ -161,12 +156,10 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                             drawer.closeDrawer(GravityCompat.START);
                             break;
                         case 3: //Collection Box
-                            if (fragment instanceof EventListWithCollapseToolBarFragment)
-                            {
+                            if (fragment instanceof EventListWithCollapseToolBarFragment) {
                                 fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
-                            }
-                            else {
+                            } else {
                                 fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
                                 fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
@@ -213,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 NavBean currentGroup = navBeanList.get(groupPosition);
-                if(currentGroup.getNavNameResource() == R.string.lists){
+                if (currentGroup.getNavNameResource() == R.string.lists) {
                     if (mNavAdapter.isLastChild(childPosition)) {   //新建清单
                         //------ 这里显示对话框只是为测试功能用 -----
                         final EditText editText = new EditText(MainActivity.this);
@@ -226,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                                         String listName = editText.getText().toString();
                                         try {
                                             ListDao listDao = new ListDao(dataBaseHelper.getListDao());
-                                            if(listDao.queryByUserIdAndListname(currentUser.getId(), listName) == null){
+                                            if (listDao.queryByUserIdAndListname(currentUser.getId(), listName) == null) {
                                                 //清单不存在，添加到数据库
                                                 ListBean listBean = new ListBean(listName);
                                                 listBean.setUser(currentUser);
@@ -250,17 +243,15 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                         }).show();
                     } else {    //查看清单内容
                         BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
-                        if (fragment.getClass() == ListFragment.class)
-                        {
+                        if (fragment.getClass() == ListFragment.class) {
                             fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
-                            ((ListFragment)fragment).setListChangeListener(MainActivity.this);
+                            ((ListFragment) fragment).setListChangeListener(MainActivity.this);
                             ((ListFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
-                        }
-                        else {
+                        } else {
                             try {
                                 fragment = BaseEventListFragment.getInstance(ListFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                                 fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
-                                ((ListFragment)fragment).setListChangeListener(MainActivity.this);
+                                ((ListFragment) fragment).setListChangeListener(MainActivity.this);
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             } catch (IllegalAccessException e) {
                                 e.printStackTrace();
@@ -272,17 +263,15 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                     }
                 } else if (currentGroup.getNavNameResource() == R.string.closed_lists) {
                     BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
-                    if (fragment instanceof ClosedListFragment)
-                    {
+                    if (fragment instanceof ClosedListFragment) {
                         fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
-                        ((ClosedListFragment)fragment).setListChangeListener(MainActivity.this);
+                        ((ClosedListFragment) fragment).setListChangeListener(MainActivity.this);
                         ((ClosedListFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
-                    }
-                    else {
+                    } else {
                         try {
                             fragment = BaseEventListFragment.getInstance(ClosedListFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                             fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
-                            ((ClosedListFragment)fragment).setListChangeListener(MainActivity.this);
+                            ((ClosedListFragment) fragment).setListChangeListener(MainActivity.this);
                             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();
@@ -298,7 +287,9 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
 
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {}
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+            }
+
             @Override
             public void onDrawerOpened(View drawerView) {   //检查更新时间数目
                 mMsgNumToday = getTodayMsgNum();
@@ -313,10 +304,14 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                 mNavAdapter.setmGroups(navBeanList);
                 mNavAdapter.notifyDataSetChanged();
             }
+
             @Override
-            public void onDrawerClosed(View drawerView) {}
+            public void onDrawerClosed(View drawerView) {
+            }
+
             @Override
-            public void onDrawerStateChanged(int newState) {}
+            public void onDrawerStateChanged(int newState) {
+            }
         });
 
         //初始加载fragment

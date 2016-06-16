@@ -7,12 +7,12 @@
     tools:context="com.geekerk.driptime.MainActivity">
 
     <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/toolbar"
         android:background="?colorPrimary"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:minHeight="?android:actionBarSize"/>
+        android:minHeight="?android:actionBarSize"
+        android:theme="@style/AppTheme.AppBarOverlay" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"

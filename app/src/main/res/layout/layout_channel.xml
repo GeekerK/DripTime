@@ -10,8 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:gravity="center"
         android:layout_marginLeft="18dp"
+        android:gravity="center"
         android:text="@string/completed"
         android:textColor="#89000000"
         android:textSize="11sp" />

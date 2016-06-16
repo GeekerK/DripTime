@@ -31,18 +31,20 @@ public final class NavAdapter extends BaseExpandableListAdapter {
     private Context mContext;
     private List<NavBean> mGroups;
     private List<ListBean> mLists, mClosedLists;
-    private int mCurrentUserId;
-
-    public void setmGroups(List<NavBean> mGroups) {
-        this.mGroups = mGroups;
-        initData();
+    private ininitData();
     }
 
     public NavAdapter(Context context, List<NavBean> groups) {
         mContext = context;
         mGroups = groups;
         mCurrentUserId = context.getSharedPreferences("user", Context.MODE_PRIVATE).getInt("currentUserID",-1);
-        initData();
+
+t mCurrentUserId;
+
+    public void setmGroups(List<NavBean> mGroups) {
+        this.mGroups = mGroups;
+
+initData();
     }
 
     //更新清单数据
@@ -188,28 +190,32 @@ public final class NavAdapter extends BaseExpandableListAdapter {
         } else if (currentGroup.getNavNameResource() == R.string.closed_lists){
             return mClosedLists.get(childPosition).getName();
         }
-        return null;
+        r
+avMsgNumTv;
+    }
+
+    @Override
+    public boolean isChildSelectable(int groupPosition, int childPosition) {
+   View n
+eturn true;
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        r
+eturn true;
+    }
+
+    //指定位置是否是清单列表中的最后一个位置,即是否是添加清单的位置
+    public boolean isLastChild(int childPosition) {
+        return childPosition      r
+eturn null;
     }
 
     class ItemViewHolder {
         TextView navTitleIv;
         ImageView navIconIv;
         View navMsgView;
-        TextView navMsgNumTv;
-    }
-
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return true;
-    }
-
-    //指定位置是否是清单列表中的最后一个位置,即是否是添加清单的位置
-    public boolean isLastChild(int childPosition) {
-        return childPosition == mLists.size();
+        Text== mLists.size();
     }
 }
