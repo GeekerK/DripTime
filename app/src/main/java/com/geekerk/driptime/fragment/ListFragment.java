@@ -1,13 +1,14 @@
 package com.geekerk.driptime.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,15 +20,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.DataChangeListener;
 import com.geekerk.driptime.adapter.EventRecyclerViewAdapter;
 import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.ListBean;
+
+import org.w3c.dom.Text;
 
 import java.sql.SQLException;
 
@@ -40,6 +43,7 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
     protected EventRecyclerViewAdapter mAdapter;
     protected Toolbar mToolbar;
     protected ListBean mCurrentList;
+    protected onListChangeListener listChangeListener;
 
     @Nullable
     @Override
@@ -90,7 +94,43 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
         int id = item.getItemId();
         if (id == R.id.menu_list_edit) { //编辑清单
             if (mCurrentList != null) {
-                // TODO: 2016/6/15 编辑清单
+                final EditText editText = new EditText(getContext());
+                editText.setHint(R.string.inputListName);
+                new AlertDialog.Builder(getContext()).setTitle(R.string.addList).setView(editText)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //检查清单是否存在
+                                String listName = editText.getText().toString();
+                                if (TextUtils.isEmpty(listName)) {
+                                    Toast.makeText(getContext(), R.string.inputIsEmpty, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    try {
+                                        ListDao listDao = new ListDao(mDatabaseHelper.getListDao());
+                                        if(listDao.queryByUserIdAndListname(mCurrentList.getId(), listName) == null){
+                                            //新的清单名不存在，可以修改到数据库
+                                            mCurrentList.setName(listName);
+                                            listDao.update(mCurrentList);
+                                            //更改标题
+                                            mToolbarTitle = listName;
+                                            //通知activity清单数据改变
+                                            listChangeListener.listUpdate();
+                                        } else {    //清单已存在
+                                            Toast.makeText(getContext(), R.string.listExisted, Toast.LENGTH_SHORT).show();
+                                        }
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                    //关闭对话框
+                                    dialog.dismiss();
+                                }
+                            }
+                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
             }
         } else if (id == R.id.menu_list_close) { //关闭清单
             if (mCurrentList != null) {
@@ -141,5 +181,14 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public interface onListChangeListener {
+        void listUpdate();  //清单名字更新
+        void listDelete();  //清单删除
+    }
+
+    public void setListChangeListener(onListChangeListener listChangeListener) {
+        this.listChangeListener = listChangeListener;
     }
 }

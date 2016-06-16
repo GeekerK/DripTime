@@ -237,22 +237,22 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
             OpenHelperManager.releaseHelper();
             helper = null;
         }
-
+        //当前操作的事件
         final EventBean eventBean = getEventAtPosition(position);
-        int checkItem = userList.indexOf(eventBean.getList());
-
+        //当前事件的清单在列表中的索引
+        int checkItem = userList.indexOf(eventBean.getList())+1;
+        //清单dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final List<ListBean> finalUserList = userList;
-        builder.setTitle(R.string.move2list).setSingleChoiceItems(new ListBeanAdapter(userList, context), checkItem,
+        builder.setTitle(R.string.move2list).setSingleChoiceItems(new ListBeanAdapter(userList, context, checkItem), checkItem,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         DataBaseHelper helper1 = OpenHelperManager.getHelper(context, DataBaseHelper.class);
-                        ListBean selectedList = finalUserList.get(which);
-                        if(selectedList != eventBean.getList()) {   //更改了事件所属的清单
+                        if (which == 0) {   //清空list
                             try {
                                 EventDao eventDao = new EventDao(helper1.getEventDao());
-                                eventBean.setList(selectedList);
+                                eventBean.setList(null);
                                 eventDao.update(eventBean);
                                 if (mIsListChannel) {   //在清单中操作的话要修改数据源
                                     dataFromDB.remove(eventBean);
@@ -266,8 +266,28 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
                                 OpenHelperManager.releaseHelper();
                                 helper1 = null;
                             }
-                        } else {
-                            dialog.dismiss();
+                        } else {    //选择了清单
+                            ListBean selectedList = finalUserList.get(which-1);
+                            if(selectedList != eventBean.getList()) {   //更改了事件所属的清单
+                                try {
+                                    EventDao eventDao = new EventDao(helper1.getEventDao());
+                                    eventBean.setList(selectedList);
+                                    eventDao.update(eventBean);
+                                    if (mIsListChannel) {   //在清单中操作的话要修改数据源
+                                        dataFromDB.remove(eventBean);
+                                        parseData();
+                                        notifyDataSetChanged();
+                                    }
+                                    dialog.dismiss();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                } finally {
+                                    OpenHelperManager.releaseHelper();
+                                    helper1 = null;
+                                }
+                            } else {
+                                dialog.dismiss();
+                            }
                         }
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

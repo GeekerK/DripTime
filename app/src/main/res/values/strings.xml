@@ -15,7 +15,7 @@
     <string name="username">Username</string>
     <string name="enteremail">Enter E-mail</string>
     <string name="input_password">Enter Password</string>
-    <string name="inputIsEmpty">Is Empty</string>
+    <string name="inputIsEmpty">Input Is Empty</string>
     <string name="emailRepeat">Error : Registered Email !</string>
     <string name="move2list">Move To List</string>
     <string name="cancel">Cancel</string>
@@ -38,4 +38,9 @@
     <string name="lists">Lists</string>
     <string name="closed_lists">Closed Lists</string>
     <string name="settings">Settings</string>
+    <string name="action_close">Close</string>
+    <string name="listclose_success">%1$s has been closed</string>
+    <string name="action_open">Open</string>
+    <string name="listopen_success">%1$s has been opened</string>
+    <string name="noList">No List</string>
 </resources>

@@ -55,4 +55,8 @@ public class ListDao {
     public void update(ListBean currentList) throws SQLException {
         listDao.update(currentList);
     }
+
+    public void delete(ListBean mCurrentList) throws SQLException {
+        listDao.delete(mCurrentList);
+    }
 }

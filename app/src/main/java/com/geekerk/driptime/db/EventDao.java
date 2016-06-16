@@ -40,4 +40,8 @@ public class EventDao {
     public void deleteCollection(ArrayList<EventBean> list) throws SQLException {
         dao.delete(list);
     }
+
+    public void deleteByUserIdAndListId(int userId, int listId) throws SQLException {
+        dao.deleteBuilder().where().eq("userId", userId).and().eq("listId", listId);
+    }
 }

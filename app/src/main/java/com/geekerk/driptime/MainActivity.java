@@ -7,7 +7,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -33,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ListFragment.onListChangeListener{
     private static final String TAG = "MainActivity";
     //查询指定用户在一段时间内的所有未放到垃圾箱的事件，按ID降序
     private static final String BASE_QUERY =
@@ -253,12 +252,14 @@ public class MainActivity extends AppCompatActivity {
                         if (fragment.getClass() == ListFragment.class)
                         {
                             fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
+                            ((ListFragment)fragment).setListChangeListener(MainActivity.this);
                             ((ListFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                         }
                         else {
                             try {
                                 fragment = BaseEventListFragment.getInstance(ListFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                                 fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
+                                ((ListFragment)fragment).setListChangeListener(MainActivity.this);
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             } catch (IllegalAccessException e) {
                                 e.printStackTrace();
@@ -272,15 +273,15 @@ public class MainActivity extends AppCompatActivity {
                     BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
                     if (fragment instanceof ClosedListFragment)
                     {
-                        Log.i(TAG, "channel name:"+mNavAdapter.getListName(groupPosition, childPosition));
                         fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
+                        ((ClosedListFragment)fragment).setListChangeListener(MainActivity.this);
                         ((ClosedListFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                     }
                     else {
                         try {
-                            Log.i(TAG, "channel name:"+mNavAdapter.getListName(groupPosition, childPosition));
                             fragment = BaseEventListFragment.getInstance(ClosedListFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                             fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
+                            ((ClosedListFragment)fragment).setListChangeListener(MainActivity.this);
                             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();
@@ -420,5 +421,28 @@ public class MainActivity extends AppCompatActivity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void listUpdate() {
+        mNavAdapter.initData();
+        mNavAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void listDelete() {
+        listUpdate();
+        //切换fragment
+        String[] args = DateUtil.getQueryBetweenDay();
+        EventListWithCollapseToolBarFragment fragment = null;
+        try {
+            fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, BASE_QUERY, String.valueOf(userId), String.valueOf(dustinListId), args[0], args[1]);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+        fragment.setToolbarTitle(getResources().getString(R.string.today));
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
     }
 }

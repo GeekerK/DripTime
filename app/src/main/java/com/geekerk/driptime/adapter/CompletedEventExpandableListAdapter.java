@@ -220,7 +220,7 @@ public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapt
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         final List<ListBean> finalUserList = userList;
-        builder.setTitle(R.string.move2list).setSingleChoiceItems(new ListBeanAdapter(userList, mContext), checkItem,
+        builder.setTitle(R.string.move2list).setSingleChoiceItems(new ListBeanAdapter(userList, mContext, checkItem), checkItem,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
