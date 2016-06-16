@@ -1,171 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#d8d8d8">
+
     <LinearLayout
         android:id="@+id/toolbar"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:orientation="horizontal"
-        android:background="?attr/colorPrimary"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
-        <Button android:layout_width="wrap_content"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:orientation="horizontal"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <Button
+            android:id="@+id/cancel_action"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/cancel"
             android:background="@null"
-            android:textColor="@android:color/white"
             android:onClick="doClick"
-            android:id="@+id/cancel_action"/>
+            android:text="@string/cancel"
+            android:textColor="@android:color/white" />
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="center"
-            android:layout_gravity="center"
             android:text="@string/addItem"
             android:textColor="@android:color/white"
-            android:textSize="20dp"/>
-        <Button android:layout_width="wrap_content"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/done_action"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/done"
             android:background="@null"
-            android:textColor="@android:color/white"
-            android:id="@+id/done_action"
-            android:onClick="doClick"/>
+            android:onClick="doClick"
+            android:text="@string/done"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:padding="16dp"
+        android:id="@+id/content_inputlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:hint="Please enter content"
+        android:padding="16dp"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
-        app:hintTextAppearance="@style/InputHintTextAppearance"
-        android:hint="Please enter content"
-        android:layout_below="@id/toolbar"
-        android:id="@+id/content_inputlayout">
+        app:hintTextAppearance="@style/InputHintTextAppearance">
+
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:minHeight="@dimen/layout_event_height"
-            android:textSize="14sp"
             android:singleLine="false"
-            android:ellipsize="end"/>
+            android:textSize="14sp" />
     </android.support.design.widget.TextInputLayout>
 
     <LinearLayout
         android:id="@+id/prioritybar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/layout_event_height"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="16dp"
+        android:layout_below="@id/content_inputlayout"
         android:layout_marginLeft="16dp"
-        android:orientation="horizontal"
-        android:layout_below="@id/content_inputlayout">
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/priority"
-            android:textSize="14sp"
             android:gravity="center_vertical"
-            android:paddingLeft="4dp"/>
+            android:paddingLeft="4dp"
+            android:text="@string/priority"
+            android:textSize="14sp" />
 
         <ImageView
             android:id="@+id/priority_level_0"
-            android:background="@android:color/white"
-            android:src="@mipmap/priority_check"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_vertical"
+            android:background="@android:color/white"
             android:elevation="2dp"
-            android:onClick="doClick"/>
+            android:onClick="doClick"
+            android:src="@mipmap/priority_check" />
 
         <ImageView
             android:id="@+id/priority_level_2"
-            android:background="@color/priority_second"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
+            android:background="@color/priority_second"
             android:elevation="4dp"
-            android:onClick="doClick"/>
+            android:onClick="doClick" />
 
         <ImageView
             android:id="@+id/priority_level_1"
-            android:background="@color/priority_first"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_vertical"
+            android:background="@color/priority_first"
             android:elevation="4dp"
-            android:onClick="doClick"/>
+            android:onClick="doClick" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/startTimeBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/layout_event_height"
-        android:id="@+id/startTimeBar"
         android:layout_below="@id/prioritybar"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp">
+        android:layout_marginTop="16dp"
+        android:minHeight="@dimen/layout_event_height"
+        android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@string/startTime"/>
+            android:text="@string/startTime" />
+
         <TextView
-            android:layout_marginLeft="16dp"
             android:id="@+id/startTime"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/startTime"/>
+            android:text="@string/startTime" />
+
         <ImageButton
             android:id="@+id/startTime_bt"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@mipmap/calendar"
+            android:onClick="doClick"
             android:scaleType="centerCrop"
-            android:onClick="doClick"/>
+            android:src="@mipmap/calendar" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/layout_event_height"
         android:layout_below="@id/startTimeBar"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp">
+        android:layout_marginTop="16dp"
+        android:minHeight="@dimen/layout_event_height"
+        android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@string/startTime"/>
+            android:text="@string/startTime" />
+
         <TextView
-            android:layout_marginLeft="16dp"
             android:id="@+id/Deadline"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/deadline"/>
+            android:text="@string/deadline" />
+
         <ImageButton
             android:id="@+id/deadline_bt"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@mipmap/calendar"
+            android:onClick="doClick"
             android:scaleType="centerCrop"
-            android:onClick="doClick"/>
+            android:src="@mipmap/calendar" />
     </LinearLayout>
 </RelativeLayout>

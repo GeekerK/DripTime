@@ -32,7 +32,7 @@
             android:name=".RegisterActivity"
             android:launchMode="singleTask"
             android:theme="@style/ImageTranslucentTheme" />
-        <activity android:name=".AddItemActivity"/>
+        <activity android:name=".AddItemActivity" />
     </application>
 
 </manifest>

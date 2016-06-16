@@ -45,21 +45,21 @@ public class AddItemActivity extends AppCompatActivity {
 
     public void doClick(View view) {
         switch (view.getId()) {
-            case R.id.cancel_action :   //取消
+            case R.id.cancel_action:   //取消
                 break;
-            case R.id.done_action :     //完成
+            case R.id.done_action:     //完成
                 break;
-            case R.id.priority_level_0 :    //设置普通优先级
+            case R.id.priority_level_0:    //设置普通优先级
                 //设置优先级
                 //更新页面
                 break;
-            case R.id.priority_level_2 :    //设置2级优先级
+            case R.id.priority_level_2:    //设置2级优先级
                 break;
-            case R.id.priority_level_1 :    //设置1级优先级
+            case R.id.priority_level_1:    //设置1级优先级
                 break;
-            case R.id.startTime_bt :    //设置开始时间
+            case R.id.startTime_bt:    //设置开始时间
                 break;
-            case R.id.deadline_bt :     //设置截止时间
+            case R.id.deadline_bt:     //设置截止时间
                 break;
         }
     }
