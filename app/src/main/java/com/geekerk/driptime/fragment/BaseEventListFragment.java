@@ -92,4 +92,7 @@ public abstract class BaseEventListFragment extends Fragment {
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
     }
+
+    public abstract  void resetData();
+
 }

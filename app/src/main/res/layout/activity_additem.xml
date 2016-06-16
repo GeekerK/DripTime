@@ -82,7 +82,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_vertical"
-            android:elevation="2dp"
+            android:elevation="1dp"
             android:onClick="doClick"/>
 
         <ImageView
@@ -127,8 +127,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/startTime"/>
+            android:gravity="center" />
         <ImageButton
             android:id="@+id/startTime_bt"
             android:layout_width="48dp"
@@ -158,14 +157,13 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/deadline"/>
+            android:gravity="center" />
         <ImageButton
             android:id="@+id/deadline_bt"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@mipmap/calendar"
             android:scaleType="centerCrop"
-            android:onClick="doClick"/>
+            android:onClick="doClick" />
     </LinearLayout>
 </RelativeLayout>

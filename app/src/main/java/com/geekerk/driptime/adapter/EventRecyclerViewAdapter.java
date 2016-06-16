@@ -2,6 +2,7 @@ package com.geekerk.driptime.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
@@ -15,10 +16,13 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.geekerk.driptime.AddItemActivity;
+import com.geekerk.driptime.MainActivity;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.ListDao;
+import com.geekerk.driptime.fragment.BaseEventListFragment;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.ListBean;
@@ -52,7 +56,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     public EventRecyclerViewAdapter(Context c, ArrayList<EventBean> dataFromDB, DataChangeListener listener, boolean isList) {
         context = c;
-        simpleDateFormat = new SimpleDateFormat("k:mm");
+        simpleDateFormat = new SimpleDateFormat("HH:mm");
         mIsListChannel = isList;
         mDataChangeListener = listener;
         setData(dataFromDB);
@@ -333,7 +337,11 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     //修改
     public void modifyEventAtPosition(LinearLayoutWithAction view) {
-
+        int position = ((RecyclerView)view.getParent()).getChildAdapterPosition(view);
+        EventBean eventBean = getEventAtPosition(position);
+        Intent intent = new Intent(context, AddItemActivity.class);
+        intent.putExtra("modifyEvent", eventBean);
+        ((MainActivity)context).startActivityForResult(intent, 101);
     }
 
     class ChannelViewHolder extends RecyclerView.ViewHolder {

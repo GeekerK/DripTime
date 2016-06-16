@@ -1,6 +1,7 @@
 package com.geekerk.driptime;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -318,9 +319,6 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
             public void onDrawerStateChanged(int newState) {}
         });
 
-        //初始化数据库
-        initData();
-
         //初始加载fragment
         mNavMenu.setSelectedGroup(0);
         String[] arg = DateUtil.getQueryBetweenDay();
@@ -402,27 +400,6 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
         return dataBaseHelper;
     }
 
-    //添加模拟数据
-    private void initData() {
-        try {
-            //------ 事件 ------
-            EventDao eventDao = new EventDao(dataBaseHelper.getEventDao());
-            eventDao.deleteAll();
-            eventDao.create(new EventBean("测试测试4", null, new Date(116, 4, 26, 16, 0, 0), 0, false, currentUser));
-            eventDao.create(new EventBean("测试测试3", null, new Date(116, 4, 27, 16, 0, 0), 0, false, currentUser));
-            eventDao.create(new EventBean("测试测试2", null, new Date(116, 4, 28, 16, 0, 0), 0, false, currentUser));
-            eventDao.create(new EventBean("测试测试1", null, new Date(116, 4, 29, 16, 0, 0), 0, false, currentUser));
-            eventDao.create(new EventBean("Add a task with multiple attribute", null, new Date(), 1, false, currentUser));
-            eventDao.create(new EventBean("Set timezone in settings-Preference ", new Date(116, 4, 29, 14, 0, 0), new Date(), 0, false, currentUser));
-            eventDao.create(new EventBean("完成演示的PPT文稿，梳理讲解脉络", null, new Date(), 2, false, currentUser));
-            eventDao.create(new EventBean("新建一个目标清单，并完成", null, new Date(), 0, false, currentUser));
-            eventDao.create(new EventBean("回复Rick的邮件", null, new Date(), 3, true, currentUser));
-            eventDao.create(new EventBean("查找资料", null, new Date(), 3, true, currentUser));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void listUpdate() {
         mNavAdapter.initData();
@@ -444,5 +421,15 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
         }
         fragment.setToolbarTitle(getResources().getString(R.string.today));
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 101 && resultCode == RESULT_OK) {
+            BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
+            fragment.resetData();
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

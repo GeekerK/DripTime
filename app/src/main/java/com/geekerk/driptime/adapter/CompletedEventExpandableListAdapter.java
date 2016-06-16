@@ -2,6 +2,7 @@ package com.geekerk.driptime.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.geekerk.driptime.AddItemActivity;
+import com.geekerk.driptime.MainActivity;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
@@ -281,7 +284,17 @@ public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapt
 
     @Override
     public void modifyEventAtPosition(LinearLayoutWithAction view) {
+        int position = ((ExpandableListView)view.getParent()).getPositionForView(view);
+        EventBean eventBean = getEventAtPosition(position);
+        Intent intent = new Intent(mContext, AddItemActivity.class);
+        intent.putExtra("modifyEvent", eventBean);
+        ((MainActivity)mContext).startActivityForResult(intent, 101);
+    }
 
+    public void setData(ArrayList<EventBean> eventBeen) {
+        mDataFromDB = eventBeen;
+        parseData();
+        notifyDataSetChanged();
     }
 
     class ChildViewHolder{

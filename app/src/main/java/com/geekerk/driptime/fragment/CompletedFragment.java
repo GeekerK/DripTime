@@ -45,4 +45,9 @@ public class CompletedFragment extends BaseEventListFragment implements DataChan
         emptyView.setVisibility(View.GONE);
         mList.setVisibility(View.VISIBLE);
     }
+
+    @Override
+    public void resetData() {
+        mAdapter.setData(queryLocalDatabase());
+    }
 }

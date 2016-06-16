@@ -2,13 +2,16 @@ package com.geekerk.driptime.vo;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import java.io.Serializable;
 
 /**
  * 清单
  * Created by s21v on 2016/6/6.
  */
 @DatabaseTable(tableName = "table_list")
-public class ListBean {
+public class ListBean implements Serializable {
+    private static final long serialVersionUID = 1918600627920945379L;
+
     @DatabaseField(generatedId = true, columnName = "listId")
     private int id;
     @DatabaseField(columnName = "listName")

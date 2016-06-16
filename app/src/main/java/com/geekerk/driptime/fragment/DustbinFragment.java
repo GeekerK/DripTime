@@ -199,4 +199,9 @@ public class DustbinFragment extends BaseEventListFragment {
         else
             menu.setGroupVisible(R.id.group, true);
     }
+
+    @Override
+    public void resetData() {
+
+    }
 }

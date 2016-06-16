@@ -1,7 +1,9 @@
 package com.geekerk.driptime.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -23,6 +25,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.geekerk.driptime.AddItemActivity;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.DataChangeListener;
 import com.geekerk.driptime.adapter.EventRecyclerViewAdapter;
@@ -44,10 +48,11 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
     protected Toolbar mToolbar;
     protected ListBean mCurrentList;
     protected onListChangeListener listChangeListener;
+    protected FloatingActionButton fab;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         emptyView = (TextView) view.findViewById(R.id.empty);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
@@ -73,15 +78,24 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
         initToolBar(mToolbar);
 
         //快速新建按钮
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(getActivity(), AddItemActivity.class);
+                intent.putExtra("ListId", mCurrentList.getId());
+                startActivityForResult(intent, 100);
             }
         });
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 100 && resultCode == Activity.RESULT_OK){
+            //更新数据
+            mAdapter.setData(queryLocalDatabase());
+        }
     }
 
     @Override
@@ -181,6 +195,11 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void resetData() {
+        mAdapter.setData(queryLocalDatabase());
     }
 
     public interface onListChangeListener {

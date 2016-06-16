@@ -1,5 +1,6 @@
 package com.geekerk.driptime.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -76,10 +77,22 @@ public class EventListWithCollapseToolBarFragment extends BaseEventListFragment 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), AddItemActivity.class));
+                Intent intent = new Intent(getActivity(), AddItemActivity.class);
+                if ("Collection Box".equals(mToolbarTitle)) {
+                    intent.putExtra("ListId", Integer.valueOf(mQueryArgs[1]));
+                }
+                startActivityForResult(intent, 100);
             }
         });
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if ((requestCode == 100 || requestCode == 101) && resultCode == Activity.RESULT_OK){
+            //更新数据
+            mAdapter.setData(queryLocalDatabase());
+        }
     }
 
     @Override
@@ -118,5 +131,10 @@ public class EventListWithCollapseToolBarFragment extends BaseEventListFragment 
     public void haveData() {
         recyclerView.setVisibility(View.VISIBLE);
         emptyView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void resetData() {
+        mAdapter.setData(queryLocalDatabase());
     }
 }

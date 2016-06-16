@@ -4,15 +4,17 @@ import com.geekerk.driptime.R;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by s21v on 2016/5/26.
  */
 @DatabaseTable(tableName = "table_event")
-public class EventBean {
+public class EventBean implements Serializable{
     private static final String TAG = "EventBean";
+    private static final long serialVersionUID = 6405220463979523566L;
+
     @DatabaseField(columnName = "id", generatedId = true, dataType = DataType.INTEGER)
     private int id;
     @DatabaseField(columnName = "title", dataType = DataType.STRING)
@@ -118,12 +120,17 @@ public class EventBean {
         this.list = list;
     }
 
-    public UserBean getUser() {
-        return user;
-    }
-
     public void setUser(UserBean user) {
         this.user = user;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+        this.priorityLevel = priority.level;
+    }
+
+    public Priority getPriority() {
+        return priority;
     }
 
     @Override
