@@ -30,13 +30,13 @@ public class ListDao {
         collectionBox.setUser(userBean);
         listDao.create(dustin);
         listDao.create(collectionBox);
-        // ------------- 测试json ------------
-//        Log.i("ListDao", JsonUtil.getListBeanJson(dustin));
-        ArrayList<ListBean> lists = new ArrayList<>();
-        lists.add(dustin);
-        lists.add(collectionBox);
-        Log.i("ListDao", JsonUtil.getListBeanArrayJson(lists));
-        // -------------- end ---------------
+//        // ------------- 测试json ------------
+////        Log.i("ListDao", JsonUtil.getListBeanJson(dustin));
+//        ArrayList<ListBean> lists = new ArrayList<>();
+//        lists.add(dustin);
+//        lists.add(collectionBox);
+//        Log.i("ListDao", JsonUtil.getListBeanArrayJson(lists));
+//        // -------------- end ---------------
     }
 
     //通过userID,清单名称查找对应的清单,这里清单应该是唯一的（即同一用户下的清单不应该有重名的情况）

@@ -22,10 +22,6 @@ public class EventDao {
         dao.create(eventBean);
     }
 
-    public void deleteAll() throws SQLException {
-        dao.deleteBuilder().delete();
-    }
-
     public GenericRawResults<EventBean> queryRaw(String query, EventRawRowMapper eventRawRowMapper, String[] queryArgs) throws SQLException {
         return dao.queryRaw(query, eventRawRowMapper, queryArgs);
     }
@@ -38,7 +34,7 @@ public class EventDao {
         dao.delete(selected);
     }
 
-    public void deleteCollection(ArrayList<EventBean> list) throws SQLException {
+    public void deleteSet(ArrayList<EventBean> list) throws SQLException {
         dao.delete(list);
     }
 

@@ -261,8 +261,10 @@ public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapt
             int result = TransactionManager.callInTransaction(helper.getConnectionSource(), new Callable<Integer>() {
                 @Override
                 public Integer call() throws Exception {
+                    //获得用户垃圾桶的清单
                     ListDao listDao = new ListDao(helper.getListDao());
                     ListBean dustbinList = listDao.queryByUserIdAndListname(userId, "垃圾桶");
+                    //更新事件所在的清单
                     eventBean.setList(dustbinList);
                     EventDao eventDao = new EventDao(helper.getEventDao());
                     eventDao.update(eventBean);

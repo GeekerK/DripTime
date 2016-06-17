@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
+ * 新建事件，修改事件 的页面
  * Created by Administrator on 2016/6/16.
  */
 public class AddItemActivity extends AppCompatActivity {
@@ -79,7 +80,7 @@ public class AddItemActivity extends AppCompatActivity {
         lastPriority_iv = priorityCommon_iv;
 
         eventBean = (EventBean) getIntent().getSerializableExtra("modifyEvent");
-        if (eventBean == null) {
+        if (eventBean == null) {            //新建事件
             eventBean = new EventBean();
             //设置事件的当前用户
             eventBean.setUser(new UserBean(getSharedPreferences("user", MODE_PRIVATE).getInt("currentUserID", -1)));
@@ -91,7 +92,7 @@ public class AddItemActivity extends AppCompatActivity {
             eventBean.setPriority(EventBean.Priority.NORMAL_LEVEL);
             //默认设置
             eventBean.setFinished(false);
-        } else {
+        } else {    //修改事件
             isUpdate = true;
             title_ed.setText(eventBean.getTitle());
             switch (eventBean.getPriority()) {

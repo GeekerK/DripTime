@@ -181,7 +181,7 @@ public class DustbinFragment extends BaseEventListFragment {
         if (id == R.id.action_empty) {
             try {
                 EventDao eventDao = new EventDao(mDatabaseHelper.getEventDao());
-                eventDao.deleteCollection(mAdapter.getData());
+                eventDao.deleteSet(mAdapter.getData());
                 mAdapter.getData().clear();
                 mAdapter.notifyDataSetChanged();
             } catch (SQLException e) {

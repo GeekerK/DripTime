@@ -41,11 +41,9 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
             "select * from table_event where userId = ? and (listId <> ? or listId is null) and release_time between datetime(?) and datetime(?) order by id DESC";
     //查询指定用户的所有未放到垃圾箱的事件，按ID降序
     private static final String QUERY_ALL = "select * from table_event where userId = ? and (listId <> ? or listId is null) order by id DESC";
-    //查询指定用户下指定清单的所有事件，按ID降序
-    private static final String QUERY_IN_LIST = "select * from table_event where userId = ? and listId = ? order by id DESC";
     //查询指定用户未放到垃圾箱的所有已完成的事件
     private static final String QUERY_COMPLETED = "select * from table_event where userId = ? and isFinished = 1 and (listId <> ? or listId is null) order by id DESC";
-    //查询指定用户的指定清单中的事件
+    //查询指定用户的指定清单中的事件, 按ID降序
     private static final String QUERY_BY_LIST = "select * from table_event where userId = ? and listId = ? order by id DESC";
 
     //当前用户Id，当前用户垃圾箱，收件箱ID
@@ -158,9 +156,9 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                         case 3: //Collection Box
                             if (fragment instanceof EventListWithCollapseToolBarFragment) {
                                 fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
-                                ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
+                                ((EventListWithCollapseToolBarFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
                             } else {
-                                fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_IN_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
+                                fragment = BaseEventListFragment.getInstance(EventListWithCollapseToolBarFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(collectBoxListId));
                                 fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }
@@ -176,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                             break;
                         case 5: //Dustbin
                             if (!(fragment instanceof DustbinFragment)) {
-                                fragment = BaseEventListFragment.getInstance(DustbinFragment.class, drawer, QUERY_IN_LIST, String.valueOf(userId), String.valueOf(dustinListId));
+                                fragment = BaseEventListFragment.getInstance(DustbinFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(dustinListId));
                                 fragment.setToolbarTitle(getResources().getString(navBeanList.get(groupPosition).getNavNameResource()));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             }

@@ -56,7 +56,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     public EventRecyclerViewAdapter(Context c, ArrayList<EventBean> dataFromDB, DataChangeListener listener, boolean isList) {
         context = c;
-        simpleDateFormat = new SimpleDateFormat("HH:mm");
+        simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm");
         mIsListChannel = isList;
         mDataChangeListener = listener;
         setData(dataFromDB);
