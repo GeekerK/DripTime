@@ -31,20 +31,19 @@ public final class NavAdapter extends BaseExpandableListAdapter {
     private Context mContext;
     private List<NavBean> mGroups;
     private List<ListBean> mLists, mClosedLists;
-    private ininitData();
-    }
+    private int mCurrentUserId;
+
 
     public NavAdapter(Context context, List<NavBean> groups) {
         mContext = context;
         mGroups = groups;
         mCurrentUserId = context.getSharedPreferences("user", Context.MODE_PRIVATE).getInt("currentUserID",-1);
-
-t mCurrentUserId;
+        initData();
+    }
 
     public void setmGroups(List<NavBean> mGroups) {
         this.mGroups = mGroups;
-
-initData();
+        initData();
     }
 
     //更新清单数据
@@ -190,32 +189,28 @@ initData();
         } else if (currentGroup.getNavNameResource() == R.string.closed_lists){
             return mClosedLists.get(childPosition).getName();
         }
-        r
-avMsgNumTv;
+        return null;
     }
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-   View n
-eturn true;
+        return true;
     }
 
     @Override
     public boolean hasStableIds() {
-        r
-eturn true;
+        return true;
     }
 
     //指定位置是否是清单列表中的最后一个位置,即是否是添加清单的位置
     public boolean isLastChild(int childPosition) {
-        return childPosition      r
-eturn null;
+        return childPosition == mLists.size();
     }
 
     class ItemViewHolder {
         TextView navTitleIv;
         ImageView navIconIv;
         View navMsgView;
-        Text== mLists.size();
+        TextView navMsgNumTv;
     }
 }
