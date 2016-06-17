@@ -160,7 +160,6 @@ public final class NavAdapter extends BaseExpandableListAdapter {
             } else {
                 viewHolder.navTitleIv.setText(mLists.get(childPosition).getName());
                 viewHolder.navIconIv.setImageResource(R.mipmap.nav_nearlysevendays);
-                // TODO: 2016/6/12 设置清单里的事件数
                 viewHolder.navMsgView.setVisibility(View.GONE);
             }
         } else if (currentGroup.getNavNameResource() == R.string.closed_lists){   //已关闭清单中的

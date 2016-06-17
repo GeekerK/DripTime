@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -101,6 +102,20 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(this, "Email " + getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
                 return;
             } else {
+                // ------------- 与远程数据库交互 -----------
+                new AsyncTask<Void, Void, UserBean>() {
+                    @Override
+                    protected UserBean doInBackground(Void... params) {
+                        // TODO: 2016/6/17 调用native 
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(UserBean userBean) {
+                        super.onPostExecute(userBean);
+                    }
+                }.execute();
+                //-------------- end --------------------
                 DataBaseHelper helper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
                 try {
                     final UserDao userDao = new UserDao(helper.getUserDao());

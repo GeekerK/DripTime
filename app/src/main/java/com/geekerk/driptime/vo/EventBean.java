@@ -151,6 +151,14 @@ public class EventBean implements Serializable{
         return user;
     }
 
+    public void setReleaseTime(long release_time) {
+        setReleaseTime(new Date(release_time));
+    }
+
+    public void setDeadline(long deadline) {
+        setDeadline(new Date(deadline));
+    }
+
     public enum Priority {
         FIRST_LEVEL(R.color.priority_first, 1), //非常紧急
         SECOND_LEVEL(R.color.priority_second, 2),   //紧急

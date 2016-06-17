@@ -273,16 +273,16 @@ public class JsonUtil {
             eventJson.put("id", eventbean.getId());
             eventJson.put("title", eventbean.getTitle());
             eventJson.put("priorityLevel", eventbean.getPriorityLevel());
-            // TODO: 2016/6/17 时间类型待定
-//            eventJson.put("release_time", eventbean.getReleaseTime());
-//            eventJson.put("deadline", eventbean.getDeadline());
-            if(eventbean.getList() != null)
+            eventJson.put("release_time", eventbean.getReleaseTime().getTime());
+            if (eventbean.getReleaseTime() != null)     //截止事件可以为空值
+                eventJson.put("deadline", eventbean.getDeadline().getTime());
+            if(eventbean.getList() != null)     //所属清单可以为空值
                 eventJson.put("listId", eventbean.getList().getId());
             eventJson.put("userId", eventbean.getUser().getId());
             jsonObject.put("eventBean", eventJson);
             result = jsonObject.toString();
             // --------- 测试读取 ----------
-            JsonUtil.getEventBeanfromJson(result.getBytes());
+            JsonUtil.getEventBeanFromJson(result.getBytes());
             // --------- end ----------
             return result;
         } catch (JSONException e) {
@@ -291,7 +291,7 @@ public class JsonUtil {
         return result;
     }
 
-    public static EventBean getEventBeanfromJson (byte[] jsonInput) {
+    public static EventBean getEventBeanFromJson (byte[] jsonInput) {
         int msgCode;
         String msg;
         EventBean result = null;
@@ -304,14 +304,16 @@ public class JsonUtil {
             result.setId(eventJson.getInt("id"));
             result.setTitle(eventJson.getString("title"));
             result.setPriorityLevel(eventJson.getInt("priorityLevel"));
-            Log.i(TAG, eventJson.getString("release_time"));
-            // TODO: 2016/6/17 类型待地
-//            result.setReleaseTime((Date) eventJson.get("release_time"));
-//            result.setDeadline((Date) eventJson.get("deadline"));
+            result.setReleaseTime(eventJson.getLong("release_time"));
+            try {
+                result.setDeadline(eventJson.getLong("deadline"));
+            }catch (JSONException e) {
+                result.setDeadline(null);   //默认的截止时间
+            }
             try {
                 result.setList(new ListBean(eventJson.getInt("listId")));
             }catch (JSONException e) {
-                result.setList(null);
+                result.setList(null);   //默认的清单列表
             }
             result.setUser(new UserBean(eventJson.getInt("userId")));
             Log.i(TAG, "getListBeanFromJson : msgCode:"+msgCode+" , msg:"+msg+" , EventBean:"+result.toString());
@@ -335,9 +337,9 @@ public class JsonUtil {
                 eventJson.put("id", eventbean.getId());
                 eventJson.put("title", eventbean.getTitle());
                 eventJson.put("priorityLevel", eventbean.getPriorityLevel());
-                // TODO: 2016/6/17 时间类型待定
-//            eventJson.put("release_time", eventbean.getReleaseTime());
-//            eventJson.put("deadline", eventbean.getDeadline());
+                eventJson.put("release_time", eventbean.getReleaseTime().getTime());
+                if (eventbean.getReleaseTime() != null)     //截止事件可以为空值
+                    eventJson.put("deadline", eventbean.getDeadline().getTime());
                 if(eventbean.getList() != null)
                     eventJson.put("listId", eventbean.getList().getId());
                 eventJson.put("userId", eventbean.getUser().getId());
@@ -345,7 +347,6 @@ public class JsonUtil {
             }
             jsonObject.put("eventBeanArray", eventListJson);
             result = jsonObject.toString();
-
             //-------------- 测试读取 ------------
             JsonUtil.getEventBeanArrayFromJson(result.getBytes());
             //-------------- end -------------
@@ -374,12 +375,16 @@ public class JsonUtil {
                 eventbean.setId(eventObject.getInt("id"));
                 eventbean.setTitle(eventObject.getString("title"));
                 eventbean.setPriorityLevel(eventObject.getInt("priorityLevel"));
-                // TODO: 2016/6/17 设置发布时间，截至时间
-                //ListId 可能为空要做异常处理
+                eventbean.setReleaseTime(eventObject.getLong("release_time"));
+                try {
+                    eventbean.setDeadline(eventObject.getLong("deadline"));
+                }catch (JSONException e) {
+                    eventbean.setDeadline(null);   //默认的截止时间
+                }
                 try {
                     eventbean.setList(new ListBean(eventObject.getInt("listId")));
                 }catch (JSONException e) {
-                    eventbean.setList(null);
+                    eventbean.setList(null);    //默认的清单
                 }
                 eventbean.setUser(new UserBean(eventObject.getInt("userId")));
                 result.add(eventbean);
