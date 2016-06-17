@@ -1,9 +1,9 @@
 package com.geekerk.driptime.db;
 
+import android.util.Log;
 import com.geekerk.driptime.vo.EventBean;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -11,6 +11,7 @@ import java.util.ArrayList;
  * Created by s21v on 2016/6/7.
  */
 public class EventDao {
+    private static final String TAG = "EventDao";
     Dao<EventBean, Integer> dao;
 
     public EventDao(Dao<EventBean, Integer> dao) {

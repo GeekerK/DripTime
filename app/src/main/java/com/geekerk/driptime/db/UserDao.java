@@ -1,5 +1,8 @@
 package com.geekerk.driptime.db;
 
+import android.util.Log;
+
+import com.geekerk.driptime.utils.JsonUtil;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.dao.Dao;
 
@@ -17,6 +20,7 @@ public class UserDao {
     }
 
     public int create(UserBean userBean) throws SQLException {
+        Log.i("UserDao", JsonUtil.getUserBeanJson(userBean)); //测试Json
         return userDao.create(userBean);
     }
 

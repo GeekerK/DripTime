@@ -144,8 +144,11 @@ public class EventBean implements Serializable{
                 ", isFinished=" + isFinished +
                 ", list=" + list +
                 ", user=" + user +
-                ", priority=" + priority +
                 '}';
+    }
+
+    public UserBean getUser() {
+        return user;
     }
 
     public enum Priority {

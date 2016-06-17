@@ -1,7 +1,6 @@
 package com.geekerk.driptime.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -22,17 +20,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.geekerk.driptime.AddItemActivity;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.DataChangeListener;
 import com.geekerk.driptime.adapter.EventRecyclerViewAdapter;
-import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
-import com.geekerk.driptime.vo.ListBean;
-
-import java.sql.SQLException;
 
 /**
  * Created by s21v on 2016/5/24.

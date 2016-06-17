@@ -8,13 +8,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.TextView;
-
 import com.geekerk.driptime.MainActivity;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.EventRawRowMapper;
+import com.geekerk.driptime.utils.JsonUtil;
 import com.geekerk.driptime.vo.EventBean;
 import com.j256.ormlite.dao.GenericRawResults;
 import java.sql.SQLException;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
  * Created by Administrator on 2016/6/9.
  */
 public abstract class BaseEventListFragment extends Fragment {
+    private static final String TAG = "BaseEventListFragment";
     protected DataBaseHelper mDatabaseHelper;
     protected String mQuery;
     protected String[] mQueryArgs;
@@ -74,6 +76,9 @@ public abstract class BaseEventListFragment extends Fragment {
             EventDao eventDao = new EventDao(mDatabaseHelper.getEventDao());
             GenericRawResults<EventBean> results = eventDao.queryRaw(mQuery, new EventRawRowMapper(), mQueryArgs);
             data.addAll(results.getResults());
+            // ----------- 测试 json --------------
+            Log.i(TAG, JsonUtil.getEventBeanArrayJson(data));
+            // ---------- end --------------
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -93,6 +98,6 @@ public abstract class BaseEventListFragment extends Fragment {
         toggle.syncState();
     }
 
-    public abstract  void resetData();
+    public abstract void resetData();
 
 }

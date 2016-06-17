@@ -10,16 +10,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
-
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.db.UserDao;
+import com.geekerk.driptime.utils.JsonUtil;
 import com.geekerk.driptime.view.ClockViewGroup;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.misc.TransactionManager;
-
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class WelcomeActivity extends AppCompatActivity {
     private static final int CLOCK_GO = 1;
+    private static final String TAG = "WelcomeActivity";
     private ScheduledThreadPoolExecutor mExecutor;
     private Handler mHandler;
     private ClockViewGroup mClockViewGroup;
@@ -101,6 +102,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                     if (user == null) {
                                         user = new UserBean(Build.DEVICE, Build.DEVICE, Build.DEVICE);
                                         userDao.create(user);
+                                        //初始化用户默认的清单
                                         listDao.initUserList(user);
                                         userDao.refresh(user);
                                     }
