@@ -43,15 +43,15 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-//        new AsyncTask<Void, Void, Void>(
-//        ) {
-//            @Override
-//            protected Void doInBackground(Void... params) {
-//                String result = (String) JNIManager.getInstance().getEmbededResult("CREATE TABLE test(testId INTEGER PRIMARY KEY, testName TEXT)");
-//                Log.d("LIYAN", "JNI = " + result);
-//                return null;
-//            }
-//        }.execute();
+        new AsyncTask<Void, Void, Void>(
+        ) {
+            @Override
+            protected Void doInBackground(Void... params) {
+                String result = (String) JNIManager.getInstance().getEmbededResult("AndroidPhone : DripTime App!!");
+                Log.d("LIYAN", "JNI = " + result);
+                return null;
+            }
+        }.execute();
 
 
         mClockViewGroup = (ClockViewGroup) findViewById(R.id.clock);
