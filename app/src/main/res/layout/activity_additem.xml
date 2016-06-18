@@ -150,7 +150,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@string/startTime"/>
+            android:text="@string/deadline"/>
         <TextView
             android:layout_marginLeft="16dp"
             android:id="@+id/Deadline"

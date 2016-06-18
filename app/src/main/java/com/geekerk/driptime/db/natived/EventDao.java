@@ -1,9 +1,6 @@
 package com.geekerk.driptime.db.natived;
 
-import com.geekerk.driptime.db.EventRawRowMapper;
 import com.geekerk.driptime.vo.EventBean;
-import com.j256.ormlite.dao.GenericRawResults;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 

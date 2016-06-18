@@ -76,9 +76,9 @@ public abstract class BaseEventListFragment extends Fragment {
             EventDao eventDao = new EventDao(mDatabaseHelper.getEventDao());
             GenericRawResults<EventBean> results = eventDao.queryRaw(mQuery, new EventRawRowMapper(), mQueryArgs);
             data.addAll(results.getResults());
-            // ----------- 测试 json --------------
-            Log.i(TAG, JsonUtil.getEventBeanArrayJson(data));
-            // ---------- end --------------
+//            // ----------- 测试 json --------------
+//            Log.i(TAG, JsonUtil.getEventBeanArrayJson(data));
+//            // ---------- end --------------
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -102,20 +102,46 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(this, "Email " + getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
                 return;
             } else {
-                // ------------- 与远程数据库交互 -----------
-                new AsyncTask<Void, Void, UserBean>() {
-                    @Override
-                    protected UserBean doInBackground(Void... params) {
-                        // TODO: 2016/6/17 调用native 
-                        return null;
-                    }
+//                // ------------- 与远程数据库交互 -----------
+//                new AsyncTask<Void, Void, UserBean>() {
+//                    String userName;
+//                    String userPwd;
+//                    String userEmail;
+//                    @Override
+//                    protected void onPreExecute() {
+//                        userName = usernameEt.getText().toString();
+//                        userPwd = passwordEt.getText().toString();
+//                        userEmail = emailEt.getText().toString();
+//                    }
+//
+//                    @Override
+//                    protected UserBean doInBackground(Void... params) {
+//                        //检查邮箱是否已注册
+//                        if(com.geekerk.driptime.db.natived.UserDao.queryByEmail(userEmail) == null) {
+//                           return com.geekerk.driptime.db.natived.UserDao.create(userName, userEmail, SecureUtil.encodeBase64(userPwd));
+//                        }
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    protected void onPostExecute(UserBean userBean) {
+//                        if(userBean != null) {  //成功
+//                            //将当前用户id写入sharePreference
+//                            SharedPreferences preference = getSharedPreferences("user", MODE_PRIVATE);
+//                            preference.edit().putInt("currentUserID", userBean.getId()).commit();
+//                            //成功注册后跳转到主页面
+//                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+//                            intent.putExtra("currentUser", userBean);
+//                            startActivity(intent);
+//                            finish();
+//                        } else {
+//                            //输入的邮箱已被注册
+//                            Toast.makeText(RegisterActivity.this, R.string.emailRepeat, Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                }.execute();
+//                //-------------- end --------------------
 
-                    @Override
-                    protected void onPostExecute(UserBean userBean) {
-                        super.onPostExecute(userBean);
-                    }
-                }.execute();
-                //-------------- end --------------------
                 DataBaseHelper helper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
                 try {
                     final UserDao userDao = new UserDao(helper.getUserDao());

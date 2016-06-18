@@ -338,7 +338,7 @@ public class JsonUtil {
                 eventJson.put("title", eventbean.getTitle());
                 eventJson.put("priorityLevel", eventbean.getPriorityLevel());
                 eventJson.put("release_time", eventbean.getReleaseTime().getTime());
-                if (eventbean.getReleaseTime() != null)     //截止事件可以为空值
+                if (eventbean.getDeadline() != null)     //截止事件可以为空值
                     eventJson.put("deadline", eventbean.getDeadline().getTime());
                 if(eventbean.getList() != null)
                     eventJson.put("listId", eventbean.getList().getId());
