@@ -11,7 +11,9 @@ JNIEXPORT jobject JNICALL Java_com_geekerk_driptime_db_natived_JNIManager_getEmb
   (JNIEnv *env, jobject thiz, jstring string)
   {
         const char *sql = (*env)->GetStringUTFChars(env, string, NULL);
+        //调用网络功能进行网络传输
         char *result = socket_core(sql);
+        //返回结果值
         jstring resultObject = (*env)->NewStringUTF(env, result);
         (*env)->ReleaseStringUTFChars(env, string, sql);
         return resultObject;

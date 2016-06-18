@@ -47,7 +47,7 @@ public class WelcomeActivity extends AppCompatActivity {
         ) {
             @Override
             protected Void doInBackground(Void... params) {
-                String result = (String) JNIManager.getInstance().getEmbededResult("CREATE TABLE test(testId INTEGER PRIMARY KEY, testName TEXT)");
+                String result = (String) JNIManager.getInstance().getEmbededResult("AndroidPhone : DripTime App!!");
                 Log.d("LIYAN", "JNI = " + result);
                 return null;
             }
