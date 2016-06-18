@@ -2,6 +2,7 @@ package com.geekerk.driptime;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,14 +13,16 @@ import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.db.UserDao;
-import com.geekerk.driptime.utils.JsonUtil;
+import com.geekerk.driptime.db.natived.JNIManager;
 import com.geekerk.driptime.view.ClockViewGroup;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.misc.TransactionManager;
+
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -39,6 +42,17 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+
+        new AsyncTask<Void, Void, Void>(
+        ) {
+            @Override
+            protected Void doInBackground(Void... params) {
+                String result = (String) JNIManager.getInstance().getEmbededResult("CREATE TABLE test(testId INTEGER PRIMARY KEY, testName TEXT)");
+                Log.d("LIYAN", "JNI = " + result);
+                return null;
+            }
+        }.execute();
+
 
         mClockViewGroup = (ClockViewGroup) findViewById(R.id.clock);
         mHandler = new Handler() {
