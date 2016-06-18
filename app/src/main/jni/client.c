@@ -8,7 +8,7 @@
 #include <signal.h>
 
 #define PORT 8001
-#define IP "192.168.199.116"
+#define IP "192.168.199.210"
 
 //extern void sig_proccess(int signo);
 //extern void sig_pipe(int signo);
