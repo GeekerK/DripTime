@@ -7,6 +7,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -242,14 +243,16 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                     } else {    //查看清单内容
                         BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
                         if (fragment.getClass() == ListFragment.class) {
+                            Log.i(TAG, "查看清单内容 1 , groupPosition:"+groupPosition+", childPosition:"+childPosition+" , mNavAdapter.getListId(groupPosition, childPosition):"+mNavAdapter.getListId(groupPosition, childPosition));
                             fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
-                            ((ListFragment) fragment).setListChangeListener(MainActivity.this);
+//                            ((ListFragment) fragment).setListChangeListener(MainActivity.this);
                             ((ListFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                         } else {
                             try {
+                                Log.i(TAG, "查看清单内容 2 , groupPosition:"+groupPosition+", childPosition:"+childPosition+" , mNavAdapter.getListId(groupPosition, childPosition):"+mNavAdapter.getListId(groupPosition, childPosition));
                                 fragment = BaseEventListFragment.getInstance(ListFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
-                                fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
                                 ((ListFragment) fragment).setListChangeListener(MainActivity.this);
+                                fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, "contentList").commit();
                             } catch (IllegalAccessException e) {
                                 e.printStackTrace();
@@ -263,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                     BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
                     if (fragment instanceof ClosedListFragment) {
                         fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
-                        ((ClosedListFragment) fragment).setListChangeListener(MainActivity.this);
+//                        ((ClosedListFragment) fragment).setListChangeListener(MainActivity.this);
                         ((ClosedListFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                     } else {
                         try {

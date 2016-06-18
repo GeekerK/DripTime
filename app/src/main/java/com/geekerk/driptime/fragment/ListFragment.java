@@ -33,6 +33,7 @@ import com.geekerk.driptime.adapter.EventRecyclerViewAdapter;
 import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.ListBean;
+import com.geekerk.driptime.vo.UserBean;
 
 import org.w3c.dom.Text;
 
@@ -87,6 +88,8 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
                 startActivityForResult(intent, 100);
             }
         });
+
+        setCurrentListBean();
         return view;
     }
 
@@ -121,7 +124,7 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
                                 } else {
                                     try {
                                         ListDao listDao = new ListDao(mDatabaseHelper.getListDao());
-                                        if(listDao.queryByUserIdAndListname(mCurrentList.getId(), listName) == null){
+                                        if(listDao.queryByUserIdAndListname(mCurrentList.getUser().getId(), listName) == null){
                                             //新的清单名不存在，可以修改到数据库
                                             mCurrentList.setName(listName);
                                             listDao.update(mCurrentList);
@@ -167,7 +170,21 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
         mToolbar.setTitle(mToolbarTitle);
         mQuery = baseQuery;
         this.mQueryArgs = queryArgs;
+        setCurrentListBean();
         mAdapter.setData(queryLocalDatabase());
+    }
+
+    private void setCurrentListBean() {
+        if (mCurrentList == null) {
+            mCurrentList = new ListBean(Integer.parseInt(mQueryArgs[1]));
+            mCurrentList.setName(mToolbarTitle);
+            mCurrentList.setUser(new UserBean(Integer.parseInt(mQueryArgs[0])));
+        } else {
+            mCurrentList.setId(Integer.parseInt(mQueryArgs[1]));
+            mCurrentList.setName(mToolbarTitle);
+            mCurrentList.setUser(new UserBean(Integer.parseInt(mQueryArgs[0])));
+        }
+        mCurrentList.setClosed(false);
     }
 
     @Override
@@ -181,20 +198,6 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
     public void haveData() {
         recyclerView.setVisibility(View.VISIBLE);
         emptyView.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        //查询当前用户
-        int userId = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE).getInt("currentUserID", -1);
-        //根据清单名查询清单
-        try {
-            ListDao listDao = new ListDao(mDatabaseHelper.getListDao());
-            mCurrentList = listDao.queryByUserIdAndListname(userId, mToolbarTitle);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

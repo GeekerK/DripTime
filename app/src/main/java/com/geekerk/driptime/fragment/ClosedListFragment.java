@@ -10,8 +10,12 @@ import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.DataChangeListener;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.ListDao;
+import com.geekerk.driptime.vo.EventBean;
+import com.geekerk.driptime.vo.ListBean;
+import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.misc.TransactionManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 /**
@@ -52,10 +56,12 @@ public class ClosedListFragment extends ListFragment implements DataChangeListen
                 result = TransactionManager.callInTransaction(mDatabaseHelper.getConnectionSource(), new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        int userId = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE).getInt("currentUserID", -1);
                         //删除清单下的事件
                         EventDao eventDao = new EventDao(mDatabaseHelper.getEventDao());
-                        eventDao.deleteByUserIdAndListId(userId, mCurrentList.getId());
+//                        eventDao.deleteByUserIdAndListId(mCurrentList.getUser().getId(), mCurrentList.getId());
+                        ArrayList<EventBean> tmp = new ArrayList<EventBean>();
+                        tmp.addAll(eventDao.queryByUserIdAndListId(mCurrentList.getUser().getId(), mCurrentList.getId()));
+                        eventDao.deleteSet(tmp);
                         //删除清单
                         ListDao listDao = new ListDao(mDatabaseHelper.getListDao());
                         listDao.delete(mCurrentList);
@@ -71,5 +77,18 @@ public class ClosedListFragment extends ListFragment implements DataChangeListen
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setCurrentListBean() {
+        if (mCurrentList == null) {
+            mCurrentList = new ListBean(Integer.parseInt(mQueryArgs[1]));
+            mCurrentList.setName(mToolbarTitle);
+            mCurrentList.setUser(new UserBean(Integer.parseInt(mQueryArgs[0])));
+        } else {
+            mCurrentList.setId(Integer.parseInt(mQueryArgs[1]));
+            mCurrentList.setName(mToolbarTitle);
+            mCurrentList.setUser(new UserBean(Integer.parseInt(mQueryArgs[0])));
+        }
+        mCurrentList.setClosed(false);
     }
 }

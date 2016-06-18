@@ -4,8 +4,11 @@ import android.util.Log;
 import com.geekerk.driptime.vo.EventBean;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.stmt.Where;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by s21v on 2016/6/7.
@@ -40,5 +43,9 @@ public class EventDao {
 
     public void deleteByUserIdAndListId(int userId, int listId) throws SQLException {
         dao.deleteBuilder().where().eq("userId", userId).and().eq("listId", listId);
+    }
+
+    public List<EventBean> queryByUserIdAndListId(int userId, int listId) throws SQLException {
+        return dao.queryBuilder().where().eq("userId", userId).and().eq("listId", listId).query();
     }
 }
