@@ -99,9 +99,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
             ((EventViewHolder) holder).setEventTitle(eventBean.getTitle());
             ((EventViewHolder) holder).setEventPriority(eventBean.getProrityColorRes());
             if (eventBean.isFinished()) {
-                ((EventViewHolder) holder).setEventFinish(true);
+                ((EventViewHolder) holder).setEventFinish(true, android.R.color.white);
             } else {
-                ((EventViewHolder) holder).setEventFinish(false);
+                ((EventViewHolder) holder).setEventFinish(false, eventBean.getProrityColorRes());
                 if (holder instanceof EventHaveDeadlineViewHolder)
                     ((EventHaveDeadlineViewHolder) holder).setDeadlineTitle(simpleDateFormat.format(eventBean.getDeadline()));
             }
@@ -383,13 +383,15 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
             eventPriority.setBackgroundResource(colorRes);
         }
 
-        public void setEventFinish(boolean isFinish) {
+        public void setEventFinish(boolean isFinish, int colorRes) {
             eventFinish.setChecked(isFinish);
             if (isFinish) {
                 eventTitle.setTextColor(Color.argb(89, 0, 0, 0));
             } else {
                 eventTitle.setTextColor(Color.BLACK);
             }
+            //修改优先级的颜色，完成时是白色，未完成时显示的优先级的颜色
+            eventPriority.setBackgroundResource(colorRes);
         }
 
         public void initScrollX() {

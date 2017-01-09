@@ -9,7 +9,7 @@
         android:id="@+id/event_priority"
         android:layout_width="3dp"
         android:layout_height="match_parent"
-        android:background="@color/priority_first" />
+        android:background="@color/priority_normal" />
 
     <CheckBox
         android:id="@+id/isDone_checkbox"

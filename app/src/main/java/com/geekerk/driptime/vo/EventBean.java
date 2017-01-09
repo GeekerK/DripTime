@@ -44,10 +44,7 @@ public class EventBean implements Serializable{
         this.priorityLevel = priorityLevel;
         this.isFinished = isFinished;
         this.user = user;
-        for (Priority p : Priority.values()) {
-            if (p.level == priorityLevel)
-                priority = p;
-        }
+        this.priority = Priority.getPriority(this.priorityLevel);
     }
 
     public EventBean(String title, Date deadline, Date releaseTime, int priorityLevel, boolean isFinished, UserBean user) {
@@ -84,10 +81,7 @@ public class EventBean implements Serializable{
 
     public void setPriorityLevel(int priorityLevel) {
         this.priorityLevel = priorityLevel;
-        for (Priority p : Priority.values()) {
-            if (p.level == priorityLevel)
-                priority = p;
-        }
+        this.priority = Priority.getPriority(this.priorityLevel);
     }
 
     public boolean isFinished() {
@@ -96,8 +90,8 @@ public class EventBean implements Serializable{
 
     public void setFinished(boolean finished) {
         isFinished = finished;
-        if (isFinished)
-            setPriorityLevel(3);  //已完成
+//        if (isFinished)
+//            setPriorityLevel(3);  //已完成
     }
 
     public int getId() {
@@ -160,13 +154,15 @@ public class EventBean implements Serializable{
     }
 
     public enum Priority {
-        FIRST_LEVEL(R.color.priority_first, 1), //非常紧急
-        SECOND_LEVEL(R.color.priority_second, 2),   //紧急
-        THIRD_LEVEL(R.color.priority_third, 3), //已完成
-        NORMAL_LEVEL(android.R.color.white, 0);
+        NORMAL_LEVEL(R.color.priority_normal, 0),    //普通
+        SECOND_LEVEL(R.color.priority_second_level, 1),   //紧急
+        FIRST_LEVEL(R.color.priority_first_level, 2); //非常紧急
 
-        private int level;
+//        THIRD_LEVEL(R.color.priority_third, 3), //已完成
+//        NORMAL_LEVEL(android.R.color.white, 0);
+
         private int colorRes;
+        private int level;
 
         Priority(int colorRes, int level) {
             this.level = level;
@@ -174,11 +170,16 @@ public class EventBean implements Serializable{
         }
 
         public static Priority getPriority(int level) {
-            for (Priority priority : Priority.values()) {
-                if (priority.level == level)
-                    return priority;
+            switch (level) {
+                case 0:
+                    return NORMAL_LEVEL;
+                case 1:
+                    return SECOND_LEVEL;
+                case 2:
+                    return FIRST_LEVEL;
+                default:
+                    return NORMAL_LEVEL;
             }
-            return null;
         }
     }
 }
