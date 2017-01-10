@@ -2,6 +2,7 @@ package com.geekerk.driptime;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.geekerk.driptime.db.DataBaseHelper;
@@ -66,6 +68,11 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
             currentUser = (UserBean) savedInstanceState.getSerializable("currentUser");
         else
             currentUser = (UserBean) getIntent().getSerializableExtra("currentUser");
+        //设置用户名
+        TextView userName = (TextView) findViewById(R.id.nav_username);
+        //若不是用默认的账号登录，则显示用户名， 默认的账号是在用户跳过登录时的应用根据Build.DEVICE分配的。
+        if (!(currentUser.getName().equals(Build.DEVICE) && currentUser.getEmail().equals(Build.DEVICE)))
+            userName.setText(currentUser.getName());
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavMenu = (ExpandableListView) drawer.findViewById(R.id.nav_menu);
