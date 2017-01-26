@@ -3,13 +3,16 @@ package com.geekerk.driptime.utils;
 import android.util.JsonReader;
 import android.util.JsonWriter;
 import android.util.Log;
+
 import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.UserBean;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,7 +21,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * 解析json数据,生成json数据
@@ -64,7 +66,7 @@ public class JsonUtil {
     }
 
     //从Json输入流中读取数据，并生成UserBean
-    public static UserBean getUserBeanFromJson (byte[] jsonInput) {
+    public static UserBean getUserBeanFromJson(byte[] jsonInput) {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(jsonInput);
         JsonReader jsonReader = new JsonReader(new InputStreamReader(byteArrayInputStream, Charset.forName("utf-8")));
         int msgCode = 0;
@@ -72,7 +74,7 @@ public class JsonUtil {
         UserBean userBean = null;
         try {
             jsonReader.beginObject();
-            while(jsonReader.hasNext()) {
+            while (jsonReader.hasNext()) {
                 String elementName = jsonReader.nextName();
                 if ("msgCode".equals(elementName))
                     msgCode = jsonReader.nextInt();
@@ -81,7 +83,7 @@ public class JsonUtil {
                 else if ("userBean".equals(elementName)) {
                     jsonReader.beginObject();
                     userBean = new UserBean();
-                    while(jsonReader.hasNext()) {
+                    while (jsonReader.hasNext()) {
                         String elementName1 = jsonReader.nextName();
                         if ("userId".equals(elementName1))
                             userBean.setId(jsonReader.nextInt());
@@ -96,9 +98,9 @@ public class JsonUtil {
                 }
             }
             jsonReader.endObject();
-            Log.i(TAG, "getUserBeanFromJson : msgCode:"+msgCode+" , msg:"+msg+" , userBean:"+userBean.toString());
+            Log.i(TAG, "getUserBeanFromJson : msgCode:" + msgCode + " , msg:" + msg + " , userBean:" + userBean.toString());
         } catch (IOException e) {
-            Log.i(TAG, "getUserBeanFromJson ：msgCode:"+msgCode+" , msg:"+msg);
+            Log.i(TAG, "getUserBeanFromJson ：msgCode:" + msgCode + " , msg:" + msg);
             e.printStackTrace();
         } finally {
             try {
@@ -112,7 +114,7 @@ public class JsonUtil {
     }
 
     //生成单个ListBean的json数据
-    public static String getListBeanJson (ListBean listBean) {
+    public static String getListBeanJson(ListBean listBean) {
         String result = null;
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1024);
         JsonWriter jsonWriter = new JsonWriter(new BufferedWriter(new OutputStreamWriter(byteArrayOutputStream, Charset.forName("utf-8"))));
@@ -147,7 +149,7 @@ public class JsonUtil {
     }
 
     //从Json输入流中解析ListBean
-    public static ListBean getListBeanFromJson (byte[] jsonInput) {
+    public static ListBean getListBeanFromJson(byte[] jsonInput) {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(jsonInput);
         JsonReader jsonReader = new JsonReader(new InputStreamReader(byteArrayInputStream, Charset.forName("utf-8")));
         int msgCode = 0;
@@ -155,7 +157,7 @@ public class JsonUtil {
         ListBean listBean = null;
         try {
             jsonReader.beginObject();
-            while(jsonReader.hasNext()) {
+            while (jsonReader.hasNext()) {
                 String elementName = jsonReader.nextName();
                 if ("msgCode".equals(elementName))
                     msgCode = jsonReader.nextInt();
@@ -164,7 +166,7 @@ public class JsonUtil {
                 else if ("listBean".equals(elementName)) {
                     jsonReader.beginObject();
                     listBean = new ListBean();
-                    while(jsonReader.hasNext()) {
+                    while (jsonReader.hasNext()) {
                         String elementName1 = jsonReader.nextName();
                         if ("listId".equals(elementName1))
                             listBean.setId(jsonReader.nextInt());
@@ -180,9 +182,9 @@ public class JsonUtil {
                 }
             }
             jsonReader.endObject();
-            Log.i(TAG, "getListBeanFromJson : msgCode:"+msgCode+" , msg:"+msg+" , ListBean:"+listBean.toString());
+            Log.i(TAG, "getListBeanFromJson : msgCode:" + msgCode + " , msg:" + msg + " , ListBean:" + listBean.toString());
         } catch (IOException e) {
-            Log.i(TAG, "getListBeanFromJson ：msgCode:"+msgCode+" , msg:"+msg);
+            Log.i(TAG, "getListBeanFromJson ：msgCode:" + msgCode + " , msg:" + msg);
             e.printStackTrace();
         } finally {
             try {
@@ -196,7 +198,7 @@ public class JsonUtil {
     }
 
     //生成ListBean数组的json
-    public static String getListBeanArrayJson (ArrayList<ListBean> lists) {
+    public static String getListBeanArrayJson(ArrayList<ListBean> lists) {
         String result = null;
         ByteArrayOutputStream byteArrayOutPutStream = new ByteArrayOutputStream(1024);
         JsonWriter jsonWriter = new JsonWriter(new BufferedWriter(new OutputStreamWriter(byteArrayOutPutStream, Charset.forName("utf-8"))));
@@ -246,7 +248,7 @@ public class JsonUtil {
             msg = jsonObject.getString("msg");
             JSONArray jsonArray = jsonObject.getJSONArray("listBeanArray");
             result = new ArrayList<>();
-            for (int i=0; i<jsonArray.length(); i++) {
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject listJson = jsonArray.getJSONObject(i);
                 ListBean listbean = new ListBean(listJson.getInt("listId"));
                 listbean.setName(listJson.getString("listName"));
@@ -254,7 +256,7 @@ public class JsonUtil {
                 listbean.setUser(new UserBean(listJson.getInt("userID")));
                 result.add(listbean);
             }
-            Log.i(TAG, "getListBeanFromJson : msgCode:"+msgCode+" , msg:"+msg+" , ListBeanArray:"+result.toString());
+            Log.i(TAG, "getListBeanFromJson : msgCode:" + msgCode + " , msg:" + msg + " , ListBeanArray:" + result.toString());
             return result;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -276,7 +278,7 @@ public class JsonUtil {
             eventJson.put("release_time", eventbean.getReleaseTime().getTime());
             if (eventbean.getReleaseTime() != null)     //截止事件可以为空值
                 eventJson.put("deadline", eventbean.getDeadline().getTime());
-            if(eventbean.getList() != null)     //所属清单可以为空值
+            if (eventbean.getList() != null)     //所属清单可以为空值
                 eventJson.put("listId", eventbean.getList().getId());
             eventJson.put("userId", eventbean.getUser().getId());
             jsonObject.put("eventBean", eventJson);
@@ -291,7 +293,7 @@ public class JsonUtil {
         return result;
     }
 
-    public static EventBean getEventBeanFromJson (byte[] jsonInput) {
+    public static EventBean getEventBeanFromJson(byte[] jsonInput) {
         int msgCode;
         String msg;
         EventBean result = null;
@@ -307,16 +309,16 @@ public class JsonUtil {
             result.setReleaseTime(eventJson.getLong("release_time"));
             try {
                 result.setDeadline(eventJson.getLong("deadline"));
-            }catch (JSONException e) {
+            } catch (JSONException e) {
                 result.setDeadline(null);   //默认的截止时间
             }
             try {
                 result.setList(new ListBean(eventJson.getInt("listId")));
-            }catch (JSONException e) {
+            } catch (JSONException e) {
                 result.setList(null);   //默认的清单列表
             }
             result.setUser(new UserBean(eventJson.getInt("userId")));
-            Log.i(TAG, "getListBeanFromJson : msgCode:"+msgCode+" , msg:"+msg+" , EventBean:"+result.toString());
+            Log.i(TAG, "getListBeanFromJson : msgCode:" + msgCode + " , msg:" + msg + " , EventBean:" + result.toString());
             return result;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -325,14 +327,14 @@ public class JsonUtil {
     }
 
     //生成EventBean数组的json
-    public static String getEventBeanArrayJson (ArrayList<EventBean> events) {
+    public static String getEventBeanArrayJson(ArrayList<EventBean> events) {
         String result = null;
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("msgCode", 1);
             jsonObject.put("msg", "操作成功");
             JSONArray eventListJson = new JSONArray();
-            for(EventBean eventbean : events) {
+            for (EventBean eventbean : events) {
                 JSONObject eventJson = new JSONObject();
                 eventJson.put("id", eventbean.getId());
                 eventJson.put("title", eventbean.getTitle());
@@ -340,7 +342,7 @@ public class JsonUtil {
                 eventJson.put("release_time", eventbean.getReleaseTime().getTime());
                 if (eventbean.getDeadline() != null)     //截止事件可以为空值
                     eventJson.put("deadline", eventbean.getDeadline().getTime());
-                if(eventbean.getList() != null)
+                if (eventbean.getList() != null)
                     eventJson.put("listId", eventbean.getList().getId());
                 eventJson.put("userId", eventbean.getUser().getId());
                 eventListJson.put(eventJson);
@@ -358,7 +360,7 @@ public class JsonUtil {
     }
 
     //从Json输入流中解析EventBean数组
-    public static ArrayList<EventBean> getEventBeanArrayFromJson (byte[] jsonInput) {
+    public static ArrayList<EventBean> getEventBeanArrayFromJson(byte[] jsonInput) {
         int msgCode;
         String msg;
         ArrayList<EventBean> result = null;
@@ -369,7 +371,7 @@ public class JsonUtil {
             msg = jsonObject.getString("msg");
             JSONArray jsonArray = jsonObject.getJSONArray("eventBeanArray");
             result = new ArrayList<>();
-            for(int i=0; i<jsonArray.length(); i++) {
+            for (int i = 0; i < jsonArray.length(); i++) {
                 EventBean eventbean = new EventBean();
                 JSONObject eventObject = (JSONObject) jsonArray.get(i);
                 eventbean.setId(eventObject.getInt("id"));
@@ -378,18 +380,18 @@ public class JsonUtil {
                 eventbean.setReleaseTime(eventObject.getLong("release_time"));
                 try {
                     eventbean.setDeadline(eventObject.getLong("deadline"));
-                }catch (JSONException e) {
+                } catch (JSONException e) {
                     eventbean.setDeadline(null);   //默认的截止时间
                 }
                 try {
                     eventbean.setList(new ListBean(eventObject.getInt("listId")));
-                }catch (JSONException e) {
+                } catch (JSONException e) {
                     eventbean.setList(null);    //默认的清单
                 }
                 eventbean.setUser(new UserBean(eventObject.getInt("userId")));
                 result.add(eventbean);
             }
-            Log.i(TAG, "getEventBeanArrayFromJson : msgCode:"+msgCode+" , msg:"+msg+" , EventBeanArray:"+result.toString());
+            Log.i(TAG, "getEventBeanArrayFromJson : msgCode:" + msgCode + " , msg:" + msg + " , EventBeanArray:" + result.toString());
             return result;
         } catch (JSONException e) {
             e.printStackTrace();

@@ -1,7 +1,6 @@
 package com.geekerk.driptime.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -9,13 +8,11 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,8 +31,6 @@ import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.UserBean;
-
-import org.w3c.dom.Text;
 
 import java.sql.SQLException;
 
@@ -95,7 +90,7 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 100 && resultCode == Activity.RESULT_OK){
+        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
             //更新数据
             mAdapter.setData(queryLocalDatabase());
         }
@@ -124,7 +119,7 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
                                 } else {
                                     try {
                                         ListDao listDao = new ListDao(mDatabaseHelper.getListDao());
-                                        if(listDao.queryByUserIdAndListname(mCurrentList.getUser().getId(), listName) == null){
+                                        if (listDao.queryByUserIdAndListname(mCurrentList.getUser().getId(), listName) == null) {
                                             //新的清单名不存在，可以修改到数据库
                                             mCurrentList.setName(listName);
                                             listDao.update(mCurrentList);
@@ -205,12 +200,13 @@ public class ListFragment extends BaseEventListFragment implements DataChangeLis
         mAdapter.setData(queryLocalDatabase());
     }
 
-    public interface onListChangeListener {
-        void listUpdate();  //清单名字更新
-        void listDelete();  //清单删除
-    }
-
     public void setListChangeListener(onListChangeListener listChangeListener) {
         this.listChangeListener = listChangeListener;
+    }
+
+    public interface onListChangeListener {
+        void listUpdate();  //清单名字更新
+
+        void listDelete();  //清单删除
     }
 }

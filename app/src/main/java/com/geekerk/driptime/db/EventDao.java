@@ -1,10 +1,8 @@
 package com.geekerk.driptime.db;
 
-import android.util.Log;
 import com.geekerk.driptime.vo.EventBean;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
-import com.j256.ormlite.stmt.Where;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

@@ -3,10 +3,7 @@ package com.geekerk.driptime.fragment;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.ContextMenu;
@@ -20,10 +17,12 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.DustbinEventListViewAdapter;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.vo.EventBean;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -58,16 +57,16 @@ public class DustbinFragment extends BaseEventListFragment {
             listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
                 @Override
                 public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                    mode.setTitle(getResources().getString(R.string.selected)+": "+listView.getCheckedItemCount());
+                    mode.setTitle(getResources().getString(R.string.selected) + ": " + listView.getCheckedItemCount());
                     mAdapter.notifyDataSetChanged();
                 }
 
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                     MenuInflater inflater = mode.getMenuInflater();
-                    inflater.inflate(R.menu.context_dustbin_list,menu);
+                    inflater.inflate(R.menu.context_dustbin_list, menu);
                     mAdapter.setIsLongPress(true);
-                    mode.setTitle(getResources().getString(R.string.selected)+": "+listView.getCheckedItemCount());
+                    mode.setTitle(getResources().getString(R.string.selected) + ": " + listView.getCheckedItemCount());
                     return true;
                 }
 
@@ -80,9 +79,9 @@ public class DustbinFragment extends BaseEventListFragment {
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                     Log.i(TAG, listView.getCheckedItemPositions().toString());
                     switch (item.getItemId()) {
-                        case R.id.reply :
+                        case R.id.reply:
                             //恢复，删除清单为空
-                            for (int i=mAdapter.getCount()-1; i>=0; i--) {  //从下向上操作原因是 mAdapter.removeItem(i) 会影响到 mAdapter.getCount() 的取值
+                            for (int i = mAdapter.getCount() - 1; i >= 0; i--) {  //从下向上操作原因是 mAdapter.removeItem(i) 会影响到 mAdapter.getCount() 的取值
                                 if (listView.isItemChecked(i)) {
                                     EventBean selected = (EventBean) mAdapter.getItem(i);
                                     selected.setList(null);
@@ -98,9 +97,9 @@ public class DustbinFragment extends BaseEventListFragment {
                             }
                             mAdapter.notifyDataSetChanged();
                             return true;
-                        case R.id.delete :
+                        case R.id.delete:
                             //从数据库中删除记录
-                            for (int i=mAdapter.getCount()-1; i>=0; i--) {
+                            for (int i = mAdapter.getCount() - 1; i >= 0; i--) {
                                 if (listView.isItemChecked(i)) {
                                     EventBean selected = (EventBean) mAdapter.getItem(i);
                                     try {
@@ -148,7 +147,7 @@ public class DustbinFragment extends BaseEventListFragment {
         EventBean selected = (EventBean) mAdapter.getItem(position);
         // TODO: 2016/6/10 根据position去操作数据库
         switch (item.getItemId()) {
-            case R.id.reply :
+            case R.id.reply:
                 //恢复，删除清单为空
                 selected.setList(null);
                 try {
@@ -160,7 +159,7 @@ public class DustbinFragment extends BaseEventListFragment {
                     e.printStackTrace();
                 }
                 return true;
-            case R.id.delete :
+            case R.id.delete:
                 //从数据库中删除记录
                 try {
                     EventDao eventDao = new EventDao(mDatabaseHelper.getEventDao());

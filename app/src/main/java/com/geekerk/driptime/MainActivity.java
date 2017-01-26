@@ -16,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.geekerk.driptime.db.DataBaseHelper;
-import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.fragment.BaseEventListFragment;
 import com.geekerk.driptime.fragment.ClosedListFragment;
@@ -26,7 +25,6 @@ import com.geekerk.driptime.fragment.EventListWithCollapseToolBarFragment;
 import com.geekerk.driptime.fragment.ListFragment;
 import com.geekerk.driptime.nav.NavAdapter;
 import com.geekerk.driptime.utils.DateUtil;
-import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.NavBean;
 import com.geekerk.driptime.vo.UserBean;
@@ -34,7 +32,6 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ListFragment.onListChangeListener {
@@ -250,13 +247,13 @@ public class MainActivity extends AppCompatActivity implements ListFragment.onLi
                     } else {    //查看清单内容
                         BaseEventListFragment fragment = (BaseEventListFragment) getSupportFragmentManager().findFragmentByTag("contentList");
                         if (fragment.getClass() == ListFragment.class) {
-                            Log.i(TAG, "查看清单内容 1 , groupPosition:"+groupPosition+", childPosition:"+childPosition+" , mNavAdapter.getListId(groupPosition, childPosition):"+mNavAdapter.getListId(groupPosition, childPosition));
+                            Log.i(TAG, "查看清单内容 1 , groupPosition:" + groupPosition + ", childPosition:" + childPosition + " , mNavAdapter.getListId(groupPosition, childPosition):" + mNavAdapter.getListId(groupPosition, childPosition));
                             fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));
 //                            ((ListFragment) fragment).setListChangeListener(MainActivity.this);
                             ((ListFragment) fragment).changeData(QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                         } else {
                             try {
-                                Log.i(TAG, "查看清单内容 2 , groupPosition:"+groupPosition+", childPosition:"+childPosition+" , mNavAdapter.getListId(groupPosition, childPosition):"+mNavAdapter.getListId(groupPosition, childPosition));
+                                Log.i(TAG, "查看清单内容 2 , groupPosition:" + groupPosition + ", childPosition:" + childPosition + " , mNavAdapter.getListId(groupPosition, childPosition):" + mNavAdapter.getListId(groupPosition, childPosition));
                                 fragment = BaseEventListFragment.getInstance(ListFragment.class, drawer, QUERY_BY_LIST, String.valueOf(userId), String.valueOf(mNavAdapter.getListId(groupPosition, childPosition)));
                                 ((ListFragment) fragment).setListChangeListener(MainActivity.this);
                                 fragment.setToolbarTitle(mNavAdapter.getListName(groupPosition, childPosition));

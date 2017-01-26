@@ -5,16 +5,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,7 +40,7 @@ import java.util.concurrent.Callable;
  * 已完成Adapter
  * Created by s21v on 2016/6/14.
  */
-public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapter implements LinearLayoutWithAction.EventDealInterface{
+public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapter implements LinearLayoutWithAction.EventDealInterface {
     private static final String TAG = "CompletedAdapter";
     private ArrayList<EventBean> mDataFromDB;
     private LinkedHashMap<String, ArrayList<EventBean>> mData;   //栏目名称和对应的数据列表
@@ -66,17 +62,17 @@ public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapt
         String lastTime = "";
         String time;
         for (EventBean event : mDataFromDB) {
-                time = simpleDateFormat.format(event.getReleaseTime());
-                if (event.getReleaseTime().getDate() == new Date().getDate())
-                    time = "今天 " + time;
-                if (lastTime.equals(""))
-                    lastTime = time;
-                if (!time.equals(lastTime)) {  //时间不同说明是新的时间事件序列开始了
-                    mData.put(lastTime, dummyData);  //保存之前的数据
-                    dummyData = new ArrayList<>();
-                    lastTime = time;
-                }
-                dummyData.add(event);
+            time = simpleDateFormat.format(event.getReleaseTime());
+            if (event.getReleaseTime().getDate() == new Date().getDate())
+                time = "今天 " + time;
+            if (lastTime.equals(""))
+                lastTime = time;
+            if (!time.equals(lastTime)) {  //时间不同说明是新的时间事件序列开始了
+                mData.put(lastTime, dummyData);  //保存之前的数据
+                dummyData = new ArrayList<>();
+                lastTime = time;
+            }
+            dummyData.add(event);
         }
         if (!TextUtils.isEmpty(lastTime))
             mData.put(lastTime, dummyData);
@@ -146,7 +142,7 @@ public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapt
         ChildViewHolder viewHolder;
         if (convertView == null) {
             convertView = new LinearLayoutWithAction(mContext, R.layout.layout_event, R.dimen.layout_event_height);
-            ((LinearLayoutWithAction)convertView).setEventDealInterface(this);
+            ((LinearLayoutWithAction) convertView).setEventDealInterface(this);
             viewHolder = new ChildViewHolder();
             viewHolder.eventTitle = (TextView) convertView.findViewById(R.id.event_title_tv);
             viewHolder.eventFinish = (CheckBox) convertView.findViewById(R.id.isDone_checkbox);
@@ -170,10 +166,10 @@ public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapt
 
     private EventBean getEventAtPosition(int position) {
         int current = 1;
-        for(int i=0; i<mChannelData.size(); i++, current++) {
+        for (int i = 0; i < mChannelData.size(); i++, current++) {
             ArrayList<EventBean> list = mData.get(mChannelData.get(i));
-            for (int j=0; j<list.size(); j++) {
-                if(current == position) {
+            for (int j = 0; j < list.size(); j++) {
+                if (current == position) {
                     return list.get(j);
                 } else
                     current++;
@@ -184,7 +180,7 @@ public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapt
 
     @Override
     public void checkFinish(LinearLayoutWithAction view) {
-        int position = ((ExpandableListView)view.getParent()).getPositionForView(view);
+        int position = ((ExpandableListView) view.getParent()).getPositionForView(view);
         EventBean eventBean = getEventAtPosition(position);
         eventBean.setFinished(!eventBean.isFinished());
         DataBaseHelper helper = OpenHelperManager.getHelper(mContext, DataBaseHelper.class);
@@ -203,7 +199,7 @@ public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapt
 
     @Override
     public void moveEventAtPosition(LinearLayoutWithAction view) {
-        int position = ((ExpandableListView)view.getParent()).getPositionForView(view);
+        int position = ((ExpandableListView) view.getParent()).getPositionForView(view);
         //获得用户的清单列表
         int userId = mContext.getSharedPreferences("user", Context.MODE_PRIVATE).getInt("currentUserID", -1);
         DataBaseHelper helper = OpenHelperManager.getHelper(mContext, DataBaseHelper.class);
@@ -251,7 +247,7 @@ public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapt
 
     @Override
     public void deleteEventAtPosition(LinearLayoutWithAction view) {
-        int position = ((ExpandableListView)view.getParent()).getPositionForView(view);
+        int position = ((ExpandableListView) view.getParent()).getPositionForView(view);
         final EventBean eventBean = getEventAtPosition(position);
         final DataBaseHelper helper = OpenHelperManager.getHelper(mContext, DataBaseHelper.class);
         SharedPreferences sharedPreferences = mContext.getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -286,11 +282,11 @@ public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapt
 
     @Override
     public void modifyEventAtPosition(LinearLayoutWithAction view) {
-        int position = ((ExpandableListView)view.getParent()).getPositionForView(view);
+        int position = ((ExpandableListView) view.getParent()).getPositionForView(view);
         EventBean eventBean = getEventAtPosition(position);
         Intent intent = new Intent(mContext, AddItemActivity.class);
         intent.putExtra("modifyEvent", eventBean);
-        ((MainActivity)mContext).startActivityForResult(intent, 101);
+        ((MainActivity) mContext).startActivityForResult(intent, 101);
     }
 
     public void setData(ArrayList<EventBean> eventBeen) {
@@ -299,13 +295,13 @@ public class CompletedEventExpandableListAdapter extends BaseExpandableListAdapt
         notifyDataSetChanged();
     }
 
-    class ChildViewHolder{
+    class ChildViewHolder {
         TextView eventTitle;
         CheckBox eventFinish;
         View eventPriority;
     }
 
-    class GroupViewHolder{
+    class GroupViewHolder {
         TextView channelTitle;
         ImageView groupExpand;
     }

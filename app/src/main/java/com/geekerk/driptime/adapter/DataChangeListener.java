@@ -6,5 +6,6 @@ package com.geekerk.driptime.adapter;
  */
 public interface DataChangeListener {
     void emptyData();
+
     void haveData();
 }

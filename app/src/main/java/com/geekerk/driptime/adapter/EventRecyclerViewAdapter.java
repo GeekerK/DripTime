@@ -22,7 +22,6 @@ import com.geekerk.driptime.R;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.ListDao;
-import com.geekerk.driptime.fragment.BaseEventListFragment;
 import com.geekerk.driptime.view.LinearLayoutWithAction;
 import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.ListBean;
@@ -88,7 +87,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
             //查询栏目下的数据，若为空则隐藏栏目名这一栏，主要是已完成有可能为空
             String channelName = channelData.get(position);
             if (channelName != null) {
-                if(data.get(channelName).size() == 0)
+                if (data.get(channelName).size() == 0)
                     ((ChannelViewHolder) holder).setVisible(View.GONE);
                 else
                     ((ChannelViewHolder) holder).setVisible(View.VISIBLE);
@@ -201,7 +200,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
             itemCount += data.get(barTitleString).size() + 1;
         }
         //数据为空，通知监听器
-        if(itemCount <= 1)
+        if (itemCount <= 1)
             mDataChangeListener.emptyData();
         else
             mDataChangeListener.haveData();
@@ -209,7 +208,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     //处理点击完成事件
     public void checkFinish(LinearLayoutWithAction view) {
-        int position = ((RecyclerView)view.getParent()).getChildAdapterPosition(view);
+        int position = ((RecyclerView) view.getParent()).getChildAdapterPosition(view);
         EventBean eventBean = getEventAtPosition(position);
         eventBean.setFinished(!eventBean.isFinished());
         DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
@@ -227,7 +226,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     //移动
     public void moveEventAtPosition(LinearLayoutWithAction view) {
-        int position = ((RecyclerView)view.getParent()).getChildAdapterPosition(view);
+        int position = ((RecyclerView) view.getParent()).getChildAdapterPosition(view);
         //获得用户的清单列表
         int userId = context.getSharedPreferences("user", Context.MODE_PRIVATE).getInt("currentUserID", -1);
         DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
@@ -244,7 +243,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         //当前操作的事件
         final EventBean eventBean = getEventAtPosition(position);
         //当前事件的清单在列表中的索引
-        int checkItem = userList.indexOf(eventBean.getList())+1;
+        int checkItem = userList.indexOf(eventBean.getList()) + 1;
         //清单dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final List<ListBean> finalUserList = userList;
@@ -271,8 +270,8 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
                                 helper1 = null;
                             }
                         } else {    //选择了清单
-                            ListBean selectedList = finalUserList.get(which-1);
-                            if(selectedList != eventBean.getList()) {   //更改了事件所属的清单
+                            ListBean selectedList = finalUserList.get(which - 1);
+                            if (selectedList != eventBean.getList()) {   //更改了事件所属的清单
                                 try {
                                     EventDao eventDao = new EventDao(helper1.getEventDao());
                                     eventBean.setList(selectedList);
@@ -304,7 +303,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     //删除
     public void deleteEventAtPosition(LinearLayoutWithAction view) {
-        int position = ((RecyclerView)view.getParent()).getChildAdapterPosition(view);
+        int position = ((RecyclerView) view.getParent()).getChildAdapterPosition(view);
         final EventBean eventBean = getEventAtPosition(position);
         final DataBaseHelper helper = OpenHelperManager.getHelper(context, DataBaseHelper.class);
         SharedPreferences sharedPreferences = context.getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -337,11 +336,11 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
 
     //修改
     public void modifyEventAtPosition(LinearLayoutWithAction view) {
-        int position = ((RecyclerView)view.getParent()).getChildAdapterPosition(view);
+        int position = ((RecyclerView) view.getParent()).getChildAdapterPosition(view);
         EventBean eventBean = getEventAtPosition(position);
         Intent intent = new Intent(context, AddItemActivity.class);
         intent.putExtra("modifyEvent", eventBean);
-        ((MainActivity)context).startActivityForResult(intent, 101);
+        ((MainActivity) context).startActivityForResult(intent, 101);
     }
 
     class ChannelViewHolder extends RecyclerView.ViewHolder {
@@ -357,7 +356,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter implements Li
         }
 
         public void setVisible(int visible) {
-            ((View)textview.getParent()).setVisibility(visible);
+            ((View) textview.getParent()).setVisibility(visible);
         }
     }
 

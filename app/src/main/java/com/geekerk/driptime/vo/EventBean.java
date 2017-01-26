@@ -4,6 +4,7 @@ import com.geekerk.driptime.R;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -11,7 +12,7 @@ import java.util.Date;
  * Created by s21v on 2016/5/26.
  */
 @DatabaseTable(tableName = "table_event")
-public class EventBean implements Serializable{
+public class EventBean implements Serializable {
     private static final String TAG = "EventBean";
     private static final long serialVersionUID = 6405220463979523566L;
 
@@ -63,12 +64,20 @@ public class EventBean implements Serializable{
         return deadline;
     }
 
+    public void setDeadline(long deadline) {
+        setDeadline(new Date(deadline));
+    }
+
     public void setDeadline(Date deadline) {
         this.deadline = deadline;
     }
 
     public Date getReleaseTime() {
         return releaseTime;
+    }
+
+    public void setReleaseTime(long release_time) {
+        setReleaseTime(new Date(release_time));
     }
 
     public void setReleaseTime(Date releaseTime) {
@@ -114,17 +123,13 @@ public class EventBean implements Serializable{
         this.list = list;
     }
 
-    public void setUser(UserBean user) {
-        this.user = user;
+    public Priority getPriority() {
+        return priority;
     }
 
     public void setPriority(Priority priority) {
         this.priority = priority;
         this.priorityLevel = priority.level;
-    }
-
-    public Priority getPriority() {
-        return priority;
     }
 
     @Override
@@ -145,12 +150,8 @@ public class EventBean implements Serializable{
         return user;
     }
 
-    public void setReleaseTime(long release_time) {
-        setReleaseTime(new Date(release_time));
-    }
-
-    public void setDeadline(long deadline) {
-        setDeadline(new Date(deadline));
+    public void setUser(UserBean user) {
+        this.user = user;
     }
 
     public enum Priority {

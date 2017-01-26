@@ -1,14 +1,10 @@
 package com.geekerk.driptime.db;
 
-import android.util.Log;
-
-import com.geekerk.driptime.utils.JsonUtil;
 import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,7 +52,7 @@ public class ListDao {
     //返回用户的自定义的清单
     public List<ListBean> queryCustomList(int userId, boolean isClosed) throws SQLException {
         return listDao.queryBuilder().where().eq("userID", userId).and().eq("isClosed", isClosed).and()
-                .not().eq("listName","垃圾桶").and().not().eq("listName","收集箱").query();
+                .not().eq("listName", "垃圾桶").and().not().eq("listName", "收集箱").query();
     }
 
     public void create(ListBean listBean) throws SQLException {

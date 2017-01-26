@@ -9,6 +9,7 @@ import android.widget.CheckedTextView;
 
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.vo.ListBean;
+
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ public class ListBeanAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return data.size()+1;
+        return data.size() + 1;
     }
 
     @Override
@@ -55,7 +56,7 @@ public class ListBeanAdapter extends BaseAdapter {
         if (position == 0)
             holder.textView.setText(R.string.noList);
         else
-            holder.textView.setText(data.get(position-1).getName());
+            holder.textView.setText(data.get(position - 1).getName());
         holder.textView.setChecked(currentCheckItem == position);
         return convertView;
     }

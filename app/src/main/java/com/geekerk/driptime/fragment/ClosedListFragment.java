@@ -1,11 +1,11 @@
 package com.geekerk.driptime.fragment;
 
-import android.content.Context;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.DataChangeListener;
 import com.geekerk.driptime.db.EventDao;
@@ -14,6 +14,7 @@ import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.misc.TransactionManager;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;

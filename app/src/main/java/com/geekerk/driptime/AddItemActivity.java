@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.CalendarView;
 import android.widget.EditText;
@@ -27,6 +26,7 @@ import com.geekerk.driptime.vo.EventBean;
 import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -86,7 +86,7 @@ public class AddItemActivity extends AppCompatActivity {
             eventBean.setUser(new UserBean(getSharedPreferences("user", MODE_PRIVATE).getInt("currentUserID", -1)));
             //如果有清单，设置清单
             int listId = getIntent().getIntExtra("ListId", -1);
-            if(listId != -1)
+            if (listId != -1)
                 eventBean.setList(new ListBean(listId));
             //设置默认的优先级
             eventBean.setPriority(EventBean.Priority.NORMAL_LEVEL);
@@ -116,18 +116,18 @@ public class AddItemActivity extends AppCompatActivity {
 
     public void doClick(View view) {
         switch (view.getId()) {
-            case R.id.cancel_action :   //取消
+            case R.id.cancel_action:   //取消
                 setResult(Activity.RESULT_CANCELED);
                 finish();
                 break;
-            case R.id.done_action :     //完成
+            case R.id.done_action:     //完成
                 //检查title,起始时间是否为空
                 String title = title_ed.getText().toString();
                 if (TextUtils.isEmpty(title)) {
-                    Toast.makeText(this, "Content "+getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Content " + getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
                     return;
-                } else if (eventBean.getReleaseTime() == null){
-                    Toast.makeText(this, "StartTime "+getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
+                } else if (eventBean.getReleaseTime() == null) {
+                    Toast.makeText(this, "StartTime " + getResources().getString(R.string.inputIsEmpty), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 //更新数据
@@ -147,24 +147,24 @@ public class AddItemActivity extends AppCompatActivity {
                     Toast.makeText(this, "添加数据库失败", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.priority_level_0 :    //设置普通优先级
+            case R.id.priority_level_0:    //设置普通优先级
                 //设置优先级
                 eventBean.setPriority(EventBean.Priority.NORMAL_LEVEL);
                 //更新页面
                 updatePriorityView(priorityCommon_iv);
                 break;
-            case R.id.priority_level_2 :    //设置2级优先级
+            case R.id.priority_level_2:    //设置2级优先级
                 eventBean.setPriority(EventBean.Priority.SECOND_LEVEL);
                 updatePriorityView(prioritySecond_iv);
                 break;
-            case R.id.priority_level_1 :    //设置1级优先级
+            case R.id.priority_level_1:    //设置1级优先级
                 eventBean.setPriority(EventBean.Priority.FIRST_LEVEL);
                 updatePriorityView(priorityFirst_iv);
                 break;
-            case R.id.startTime_bt :    //设置开始时间
+            case R.id.startTime_bt:    //设置开始时间
                 showCalendarDialog(true);
                 break;
-            case R.id.deadline_bt :     //设置截止时间
+            case R.id.deadline_bt:     //设置截止时间
                 showCalendarDialog(false);
                 break;
         }
@@ -226,7 +226,7 @@ public class AddItemActivity extends AppCompatActivity {
                     dialog.dismiss();
                 }
             }).show();
-        }else {
+        } else {
             builder.setTitle(getResources().getString(R.string.setDeadline)).setView(view).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

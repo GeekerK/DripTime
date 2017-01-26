@@ -12,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.geekerk.driptime.AddItemActivity;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.DataChangeListener;
@@ -81,7 +81,7 @@ public class EventListWithCollapseToolBarFragment extends BaseEventListFragment 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if ((requestCode == 100 || requestCode == 101) && resultCode == Activity.RESULT_OK){
+        if ((requestCode == 100 || requestCode == 101) && resultCode == Activity.RESULT_OK) {
             //更新数据
             mAdapter.setData(queryLocalDatabase());
         }

@@ -1,7 +1,6 @@
 package com.geekerk.driptime.nav;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +8,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.ListDao;
@@ -16,6 +16,7 @@ import com.geekerk.driptime.utils.LayoutUtil;
 import com.geekerk.driptime.vo.ListBean;
 import com.geekerk.driptime.vo.NavBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public final class NavAdapter extends BaseExpandableListAdapter {
     public NavAdapter(Context context, List<NavBean> groups) {
         mContext = context;
         mGroups = groups;
-        mCurrentUserId = context.getSharedPreferences("user", Context.MODE_PRIVATE).getInt("currentUserID",-1);
+        mCurrentUserId = context.getSharedPreferences("user", Context.MODE_PRIVATE).getInt("currentUserID", -1);
         initData();
     }
 
@@ -51,8 +52,8 @@ public final class NavAdapter extends BaseExpandableListAdapter {
         DataBaseHelper helper = OpenHelperManager.getHelper(mContext, DataBaseHelper.class);
         try {
             ListDao listDao = new ListDao(helper.getListDao());
-            mLists = listDao.queryCustomList(mCurrentUserId,false);
-            mClosedLists = listDao.queryCustomList(mCurrentUserId,true);
+            mLists = listDao.queryCustomList(mCurrentUserId, false);
+            mClosedLists = listDao.queryCustomList(mCurrentUserId, true);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -123,7 +124,7 @@ public final class NavAdapter extends BaseExpandableListAdapter {
     public int getChildrenCount(int groupPosition) {
         NavBean currentGroup = mGroups.get(groupPosition);
         if (currentGroup.getNavNameResource() == R.string.lists) {
-            return mLists.size()+1; //清单列表中有一固定项 添加清单 ，所以这里返回Count要加1
+            return mLists.size() + 1; //清单列表中有一固定项 添加清单 ，所以这里返回Count要加1
         } else if (currentGroup.getNavNameResource() == R.string.closed_lists) {
             return mClosedLists.size();
         }
@@ -141,7 +142,7 @@ public final class NavAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.nav_groups, null);
             convertView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LayoutUtil.getPixelByDIP(mContext, 60)));
-            convertView.setPadding(mContext.getResources().getDimensionPixelSize(R.dimen.navChildPaddingleft),0,0,0);
+            convertView.setPadding(mContext.getResources().getDimensionPixelSize(R.dimen.navChildPaddingleft), 0, 0, 0);
             viewHolder = new ItemViewHolder();
             viewHolder.navTitleIv = (TextView) convertView.findViewById(R.id.nav_groups_name);
             viewHolder.navIconIv = (ImageView) convertView.findViewById(R.id.nav_groups_icon);
@@ -162,7 +163,7 @@ public final class NavAdapter extends BaseExpandableListAdapter {
                 viewHolder.navIconIv.setImageResource(R.mipmap.nav_nearlysevendays);
                 viewHolder.navMsgView.setVisibility(View.GONE);
             }
-        } else if (currentGroup.getNavNameResource() == R.string.closed_lists){   //已关闭清单中的
+        } else if (currentGroup.getNavNameResource() == R.string.closed_lists) {   //已关闭清单中的
             viewHolder.navTitleIv.setText(mClosedLists.get(childPosition).getName());
             viewHolder.navIconIv.setImageResource(R.mipmap.nav_nearlysevendays);
             viewHolder.navMsgView.setVisibility(View.GONE);
@@ -175,7 +176,7 @@ public final class NavAdapter extends BaseExpandableListAdapter {
         NavBean currentGroup = mGroups.get(groupPosition);
         if (currentGroup.getNavNameResource() == R.string.lists) {   //清单列表中的清单
             return mLists.get(childPosition).getId();
-        } else if (currentGroup.getNavNameResource() == R.string.closed_lists){
+        } else if (currentGroup.getNavNameResource() == R.string.closed_lists) {
             return mClosedLists.get(childPosition).getId();
         }
         return 0;
@@ -185,7 +186,7 @@ public final class NavAdapter extends BaseExpandableListAdapter {
         NavBean currentGroup = mGroups.get(groupPosition);
         if (currentGroup.getNavNameResource() == R.string.lists) {   //清单列表中的清单
             return mLists.get(childPosition).getName();
-        } else if (currentGroup.getNavNameResource() == R.string.closed_lists){
+        } else if (currentGroup.getNavNameResource() == R.string.closed_lists) {
             return mClosedLists.get(childPosition).getName();
         }
         return null;

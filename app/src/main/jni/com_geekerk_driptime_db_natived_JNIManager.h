@@ -12,8 +12,9 @@ extern "C" {
  * Method:    getEmbededResult
  * Signature: (Ljava/lang/String;)Ljava/lang/Object;
  */
-JNIEXPORT jobject JNICALL Java_com_geekerk_driptime_db_natived_JNIManager_getEmbededResult
-  (JNIEnv *, jobject, jstring);
+JNIEXPORT jobject
+JNICALL Java_com_geekerk_driptime_db_natived_JNIManager_getEmbededResult
+        (JNIEnv * , jobject, jstring);
 
 #ifdef __cplusplus
 }

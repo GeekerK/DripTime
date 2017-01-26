@@ -8,16 +8,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.TextView;
+
 import com.geekerk.driptime.MainActivity;
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.EventDao;
 import com.geekerk.driptime.db.EventRawRowMapper;
-import com.geekerk.driptime.utils.JsonUtil;
 import com.geekerk.driptime.vo.EventBean;
 import com.j256.ormlite.dao.GenericRawResults;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -90,7 +90,7 @@ public abstract class BaseEventListFragment extends Fragment {
     }
 
     protected void initToolBar(Toolbar toolbar) {
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         if (!TextUtils.isEmpty(mToolbarTitle))
             toolbar.setTitle(mToolbarTitle);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(), mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

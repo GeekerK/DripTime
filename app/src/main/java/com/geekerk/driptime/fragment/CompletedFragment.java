@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.adapter.CompletedEventExpandableListAdapter;
 import com.geekerk.driptime.adapter.DataChangeListener;
@@ -15,7 +16,7 @@ import com.geekerk.driptime.adapter.DataChangeListener;
 /**
  * Created by s21v on 2016/6/14.
  */
-public class CompletedFragment extends BaseEventListFragment implements DataChangeListener{
+public class CompletedFragment extends BaseEventListFragment implements DataChangeListener {
     private ExpandableListView mList;
     private CompletedEventExpandableListAdapter mAdapter;
 
@@ -29,7 +30,7 @@ public class CompletedFragment extends BaseEventListFragment implements DataChan
         mAdapter = new CompletedEventExpandableListAdapter(getContext(), queryLocalDatabase(), this);
         mList.setAdapter(mAdapter);
         //首次加载，展开全部组
-        for(int i=0; i<mAdapter.getGroupCount(); i++)
+        for (int i = 0; i < mAdapter.getGroupCount(); i++)
             mList.expandGroup(i);
         return view;
     }

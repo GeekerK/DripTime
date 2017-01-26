@@ -10,9 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
@@ -46,7 +44,7 @@ public class ClockViewGroup extends RelativeLayout {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         //利用canvas实现抗锯齿效果
-        PaintFlagsDrawFilter paintFlagsDrawFilter = new PaintFlagsDrawFilter(0, Paint.FILTER_BITMAP_FLAG|Paint.ANTI_ALIAS_FLAG);
+        PaintFlagsDrawFilter paintFlagsDrawFilter = new PaintFlagsDrawFilter(0, Paint.FILTER_BITMAP_FLAG | Paint.ANTI_ALIAS_FLAG);
         canvas.setDrawFilter(paintFlagsDrawFilter);
         super.dispatchDraw(canvas);
     }
@@ -83,13 +81,13 @@ public class ClockViewGroup extends RelativeLayout {
         float secondDegrees = secondIv.getRotation();
 
         boolean flag = false;
-        secondDegrees += ((newSec-curSec)+60)%60 * 6;
+        secondDegrees += ((newSec - curSec) + 60) % 60 * 6;
         curSec = newSec;
         if (newMin != curMin) {
             flag = true;
-            minuteDegrees += ((newMin-curMin)+60)%60 * 6;
+            minuteDegrees += ((newMin - curMin) + 60) % 60 * 6;
             curMin = newMin;
-            hourDegrees += ((newMin-curMin)+60)%60 * 0.5;
+            hourDegrees += ((newMin - curMin) + 60) % 60 * 0.5;
         }
         if (newHour != curHour) {
             hourDegrees = (newHour - 3) * 30;

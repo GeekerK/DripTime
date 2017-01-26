@@ -7,13 +7,16 @@ package com.geekerk.driptime.db.natived;
  * Time：13:25
  */
 public final class JNIManager {
+    private static JNIManager sJNIManager;
+
     static {
         System.loadLibrary("Embeded");
     }
 
-    private static JNIManager sJNIManager;
+    private JNIManager() {
+    }
 
-    private JNIManager(){};
+    ;
 
     public static JNIManager getInstance() {
         if (sJNIManager == null) {

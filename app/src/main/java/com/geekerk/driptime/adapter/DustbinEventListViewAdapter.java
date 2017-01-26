@@ -8,8 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.geekerk.driptime.R;
 import com.geekerk.driptime.vo.EventBean;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -63,7 +65,7 @@ public class DustbinEventListViewAdapter extends BaseAdapter {
         viewHolder.mTime.setText(mSimpleDateFormat.format(eventBean.getReleaseTime()));
         if (mIsLongPress) {
             viewHolder.mCheckBox.setVisibility(View.VISIBLE);
-            viewHolder.mCheckBox.setChecked(((ListView)parent).isItemChecked(position));
+            viewHolder.mCheckBox.setChecked(((ListView) parent).isItemChecked(position));
         } else {
             viewHolder.mCheckBox.setVisibility(View.INVISIBLE);
         }
