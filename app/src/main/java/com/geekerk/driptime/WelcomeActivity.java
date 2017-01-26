@@ -2,7 +2,6 @@ package com.geekerk.driptime;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,13 +10,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
 import com.geekerk.driptime.db.DataBaseHelper;
 import com.geekerk.driptime.db.ListDao;
 import com.geekerk.driptime.db.UserDao;
-import com.geekerk.driptime.db.natived.JNIManager;
 import com.geekerk.driptime.view.ClockViewGroup;
 import com.geekerk.driptime.vo.UserBean;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -33,7 +30,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class WelcomeActivity extends AppCompatActivity {
     private static final int CLOCK_GO = 1;
-    private static final String TAG = "WelcomeActivity";
     private ScheduledThreadPoolExecutor mExecutor;
     private Handler mHandler;
     private ClockViewGroup mClockViewGroup;
@@ -42,17 +38,6 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-
-        new AsyncTask<Void, Void, Void>(
-        ) {
-            @Override
-            protected Void doInBackground(Void... params) {
-                String result = (String) JNIManager.getInstance().getEmbededResult("AndroidPhone : DripTime App!!");
-                Log.d("LIYAN", "JNI = " + result);
-                return null;
-            }
-        }.execute();
-
 
         mClockViewGroup = (ClockViewGroup) findViewById(R.id.clock);
         mHandler = new Handler() {
